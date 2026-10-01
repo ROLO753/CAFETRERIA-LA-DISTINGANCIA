@@ -12,7 +12,7 @@
       --dark: #1a1a2e;
       --muted: #6b7280;
       --bg: #f5f1ff;
-      --card: rgba(255,255,255,0.95);
+      --card: rgba(255,255,255,0.98);
       --soft: #fff7f2;
       --green: #34c759;
       --green-dark: #00a854;
@@ -92,16 +92,6 @@
       background: linear-gradient(135deg, #ffd60a, #ffb700);
       color: #000;
       box-shadow: 0 8px 20px rgba(255, 214, 10, 0.4);
-    }
-
-    .phone-pill {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 700;
-      white-space: nowrap;
-      display: none;
     }
 
     .cart-icon {
@@ -291,147 +281,81 @@
       box-shadow: 0 12px 30px rgba(255, 59, 48, 0.35);
     }
 
-    .menu-grid {
+    .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 22px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
     }
 
-    .category-card {
+    .product-card {
       background: var(--card);
-      border-radius: 24px;
+      border-radius: 18px;
       overflow: hidden;
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,0.5);
-      transition: transform 0.2s ease;
-    }
-
-    .category-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
-    }
-
-    .card-cover {
-      height: 120px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-cover::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      filter: saturate(1.2) brightness(0.95);
-    }
-
-    .cover-sandwich { background-image: url("https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=80"); }
-    .cover-yaroa { background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"); }
-    .cover-picaderas { background-image: url("https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80"); }
-    .cover-empanadas { background-image: url("https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80"); }
-    .cover-batidas { background-image: url("https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=900&q=80"); }
-    .cover-jugos { background-image: url("https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=900&q=80"); }
-    .cover-otros { background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80"); }
-
-    .card-cover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.1));
-    }
-
-    .category-head {
-      position: relative;
-      z-index: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 18px 12px;
-      margin-top: -40px;
+      flex-direction: column;
     }
 
-    .category-head h2 {
-      background: rgba(255,255,255,0.95);
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 50px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f5f1ff, #ede9ff);
+    }
+
+    .product-info {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-name {
+      font-weight: 800;
+      font-size: 1.05rem;
       color: var(--dark);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 1.08rem;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+      margin-bottom: 8px;
+      line-height: 1.3;
     }
 
-    .category-head .badge {
+    .product-price {
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 7px 10px;
-      border-radius: 999px;
-      box-shadow: 0 10px 20px rgba(255, 59, 48, 0.25);
-    }
-
-    .items {
-      list-style: none;
-      padding: 0 18px 18px;
-    }
-
-    .item-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 6px;
-      border-bottom: 1px dashed rgba(0,0,0,0.08);
-    }
-
-    .item-row:last-child {
-      border-bottom: none;
-    }
-
-    .item-info {
-      flex: 1;
-    }
-
-    .item-name {
-      color: var(--dark);
-      font-weight: 600;
-    }
-
-    .price-tag {
-      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-      color: #d92817;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 8px;
       font-weight: 800;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
     }
 
-    .item-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .add-btn {
+    .add-to-cart-btn {
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 800;
-      font-size: 1.1rem;
       transition: 0.2s ease;
       box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
+      margin-top: auto;
     }
 
-    .add-btn:hover {
-      transform: scale(1.08);
+    .add-to-cart-btn:hover {
+      transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
+    }
+
+    .add-to-cart-btn:active {
+      transform: scale(0.98);
     }
 
     .cart-panel {
@@ -628,15 +552,15 @@
         width: 100%;
         right: -100%;
       }
+
+      .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
     }
 
     @media (max-width: 520px) {
-      .phone-pill {
-        display: none;
-      }
-
-      .hero {
-        padding-top: 40px;
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .cart-panel {
@@ -658,7 +582,6 @@
         <div class="brand-mark">☕</div>
         <span>Cafetería La Distingancia</span>
       </div>
-      <div class="phone-pill">📞 829-906-9055</div>
     </div>
     <div class="cart-icon" onclick="toggleCart()">
       🛒
@@ -670,7 +593,7 @@
     <div class="hero-copy">
       <div class="tag">🥘 Menú del día</div>
       <h1>Delicias que enamoran</h1>
-      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Selecciona tus productos, agrega al carrito y confirma tu pedido.</p>
+      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Agrega lo que te guste y confirma tu pedido.</p>
       <div class="hero-actions">
         <a class="cta-btn secondary" href="#menu">📋 Ver menú</a>
       </div>
@@ -703,401 +626,8 @@
       <button class="chip" data-filter="jugos">Jugos</button>
     </div>
 
-    <div class="menu-grid">
-      <article class="category-card" data-category="sandwich">
-        <div class="card-cover cover-sandwich"></div>
-        <div class="category-head">
-          <h2>🥪 Sandwichs</h2>
-          <span class="badge">12</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Jamón y Queso</div>
-              <span class="price-tag">RD$ 250</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jamón y Queso', 250)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Salami y Queso</div>
-              <span class="price-tag">RD$ 280</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Salami y Queso', 280)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Queso solo</div>
-              <span class="price-tag">RD$ 220</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Queso solo', 220)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Pollo</div>
-              <span class="price-tag">RD$ 260</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Pollo', 260)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Pollo y Queso</div>
-              <span class="price-tag">RD$ 300</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Pollo y Queso', 300)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Tuna solo</div>
-              <span class="price-tag">RD$ 270</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Tuna solo', 270)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Tuna y Queso</div>
-              <span class="price-tag">RD$ 310</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Tuna y Queso', 310)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Completo</div>
-              <span class="price-tag">RD$ 320</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Completo', 320)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Club Sandwich con Papas</div>
-              <span class="price-tag">RD$ 420</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Club Sandwich con Papas', 420)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Huevo y Queso</div>
-              <span class="price-tag">RD$ 240</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Huevo y Queso', 240)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Huevo y Salami</div>
-              <span class="price-tag">RD$ 270</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Huevo y Salami', 270)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Huevo</div>
-              <span class="price-tag">RD$ 200</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Huevo', 200)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="yaroa">
-        <div class="card-cover cover-yaroa"></div>
-        <div class="category-head">
-          <h2>🍟 Yaroa</h2>
-          <span class="badge">3</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Pequeñas</div>
-              <span class="price-tag">RD$ 350</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Yaroa Pequeñas', 350)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Grandes</div>
-              <span class="price-tag">RD$ 450</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Yaroa Grandes', 450)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Mixta</div>
-              <span class="price-tag">RD$ 500</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Yaroa Mixta', 500)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="picaderas">
-        <div class="card-cover cover-picaderas"></div>
-        <div class="category-head">
-          <h2>🍗 Picaderas</h2>
-          <span class="badge">7</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Salami</div>
-              <span class="price-tag">RD$ 280</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Salami Picadera', 280)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Longaniza</div>
-              <span class="price-tag">RD$ 290</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Longaniza', 290)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Chuleta</div>
-              <span class="price-tag">RD$ 320</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Chuleta', 320)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Costillas</div>
-              <span class="price-tag">RD$ 380</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Costillas', 380)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Jamón</div>
-              <span class="price-tag">RD$ 260</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jamón Picadera', 260)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Queso Frito</div>
-              <span class="price-tag">RD$ 240</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Queso Frito', 240)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Pechuga Frita</div>
-              <span class="price-tag">RD$ 350</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Pechuga Frita', 350)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="empanadas">
-        <div class="card-cover cover-empanadas"></div>
-        <div class="category-head">
-          <h2>🥟 Empanadas</h2>
-          <span class="badge">3</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Pollo y Queso</div>
-              <span class="price-tag">RD$ 120</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Empanada Pollo y Queso', 120)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Jamón y Queso</div>
-              <span class="price-tag">RD$ 120</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Empanada Jamón y Queso', 120)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Queso</div>
-              <span class="price-tag">RD$ 110</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Empanada Queso', 110)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="sandwich">
-        <div class="card-cover cover-otros"></div>
-        <div class="category-head">
-          <h2>🍔 Hamburguesas</h2>
-          <span class="badge">1</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Carne de Res</div>
-              <span class="price-tag">RD$ 380</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Hamburguesa Carne de Res', 380)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="batidas">
-        <div class="card-cover cover-batidas"></div>
-        <div class="category-head">
-          <h2>🥤 Batidas</h2>
-          <span class="badge">3</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Lechoza</div>
-              <span class="price-tag">RD$ 180</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Batida Lechoza', 180)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Guineo</div>
-              <span class="price-tag">RD$ 180</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Batida Guineo', 180)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Chinola y Leche</div>
-              <span class="price-tag">RD$ 200</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Batida Chinola y Leche', 200)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="jugos">
-        <div class="card-cover cover-jugos"></div>
-        <div class="category-head">
-          <h2>🍹 Jugos Naturales</h2>
-          <span class="badge">5</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Chinola</div>
-              <span class="price-tag">RD$ 150</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jugo Chinola', 150)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Cereza</div>
-              <span class="price-tag">RD$ 150</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jugo Cereza', 150)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Chinola Avena</div>
-              <span class="price-tag">RD$ 180</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jugo Chinola Avena', 180)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Limón Avena</div>
-              <span class="price-tag">RD$ 180</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jugo Limón Avena', 180)">+</button>
-            </div>
-          </li>
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Limón</div>
-              <span class="price-tag">RD$ 130</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Jugo Limón', 130)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
-
-      <article class="category-card" data-category="sandwich">
-        <div class="card-cover cover-otros"></div>
-        <div class="category-head">
-          <h2>🌮 Otros</h2>
-          <span class="badge">1</span>
-        </div>
-        <ul class="items">
-          <li class="item-row">
-            <div class="item-info">
-              <div class="item-name">Burritos</div>
-              <span class="price-tag">RD$ 250</span>
-            </div>
-            <div class="item-controls">
-              <button class="add-btn" onclick="addToCart('Burrito', 250)">+</button>
-            </div>
-          </li>
-        </ul>
-      </article>
+    <div class="products-grid" id="products-grid">
+      <!-- Los productos se cargan aquí con JavaScript -->
     </div>
   </main>
 
@@ -1130,7 +660,84 @@
   </div>
 
   <script>
+    const products = [
+      // Sandwiches
+      { name: 'Jamón y Queso', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Jamón+y+Queso' },
+      { name: 'Salami y Queso', price: 280, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso' },
+      { name: 'Queso solo', price: 220, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo' },
+      { name: 'Pollo', price: 260, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo' },
+      { name: 'Pollo y Queso', price: 300, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso' },
+      { name: 'Tuna solo', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+solo' },
+      { name: 'Tuna y Queso', price: 310, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+y+Queso' },
+      { name: 'Completo', price: 320, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Completo' },
+      { name: 'Club Sandwich con Papas', price: 420, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Club+Sandwich' },
+      { name: 'Huevo y Queso', price: 240, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso' },
+      { name: 'Huevo y Salami', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami' },
+      { name: 'Huevo', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo' },
+
+      // Yaroa
+      { name: 'Yaroa Pequeñas', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña' },
+      { name: 'Yaroa Grandes', price: 450, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande' },
+      { name: 'Yaroa Mixta', price: 500, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta' },
+
+      // Picaderas
+      { name: 'Salami Picadera', price: 280, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Salami' },
+      { name: 'Longaniza', price: 290, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza' },
+      { name: 'Chuleta', price: 320, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta' },
+      { name: 'Costillas', price: 380, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas' },
+      { name: 'Jamón Picadera', price: 260, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón' },
+      { name: 'Queso Frito', price: 240, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito' },
+      { name: 'Pechuga Frita', price: 350, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita' },
+
+      // Empanadas
+      { name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso' },
+      { name: 'Empanada Jamón y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Jamón+Queso' },
+      { name: 'Empanada Queso', price: 110, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Queso' },
+
+      // Hamburguesas
+      { name: 'Hamburguesa Carne de Res', price: 380, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Hamburguesa' },
+
+      // Batidas
+      { name: 'Batida Lechoza', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Lechoza' },
+      { name: 'Batida Guineo', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Guineo' },
+      { name: 'Batida Chinola y Leche', price: 200, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Chinola' },
+
+      // Jugos
+      { name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola' },
+      { name: 'Jugo Cereza', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Cereza' },
+      { name: 'Jugo Chinola Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola+Avena' },
+      { name: 'Jugo Limón Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Limón+Avena' },
+      { name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Limón' },
+
+      // Otros
+      { name: 'Burrito', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Burrito' }
+    ];
+
     let cart = {};
+    let currentFilter = 'all';
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+
+      products.forEach(product => {
+        if (currentFilter !== 'all' && product.category !== currentFilter) return;
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="product-image">
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>
+            <button class="add-to-cart-btn" onclick="addToCart('${product.name}', ${product.price})">
+              ➕ Agregar
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
 
     function addToCart(productName, price) {
       if (!cart[productName]) {
@@ -1138,6 +745,7 @@
       }
       cart[productName].quantity++;
       updateCart();
+      toggleCart();
     }
 
     function removeFromCart(productName) {
@@ -1271,21 +879,18 @@ Nos vemos pronto en Cafetería La Distingancia
 
     // Filtros
     const filterButtons = document.querySelectorAll('.chip');
-    const categoryCards = document.querySelectorAll('.category-card');
-
     filterButtons.forEach(button => {
       button.addEventListener('click', () => {
         const filter = button.dataset.filter;
+        currentFilter = filter;
         filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
-
-        categoryCards.forEach(card => {
-          const showAll = filter === 'all';
-          const sameCategory = card.dataset.category === filter;
-          card.style.display = showAll || sameCategory ? 'block' : 'none';
-        });
+        renderProducts();
       });
     });
+
+    // Inicializar
+    renderProducts();
   </script>
 
 </body>

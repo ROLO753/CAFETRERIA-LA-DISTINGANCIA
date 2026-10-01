@@ -6,16 +6,18 @@
   <title>Cafetería La Distingancia | Menú</title>
   <style>
     :root {
-      --primary: #d9381e;
-      --primary-dark: #8f1607;
-      --secondary: #f7c948;
-      --dark: #1f2430;
+      --primary: #ff3b30;
+      --primary-dark: #d92817;
+      --secondary: #ffd60a;
+      --dark: #1a1a2e;
       --muted: #6b7280;
-      --bg: #f8f4f2;
-      --card: rgba(255,255,255,0.9);
+      --bg: #f5f1ff;
+      --card: rgba(255,255,255,0.95);
       --soft: #fff7f2;
-      --green: #25d366;
-      --shadow: 0 18px 40px rgba(0,0,0,0.08);
+      --green: #34c759;
+      --green-dark: #00a854;
+      --accent: #00d4ff;
+      --shadow: 0 18px 40px rgba(0,0,0,0.1);
     }
 
     * {
@@ -31,10 +33,19 @@
 
     body {
       background:
-        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
-        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80") center/cover fixed;
+        linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       color: var(--dark);
       line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     a {
@@ -45,10 +56,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(17, 17, 17, 0.35);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, #ff3b30, #d92817);
+      box-shadow: 0 8px 32px rgba(255, 59, 48, 0.3);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -60,6 +69,7 @@
       align-items: center;
       gap: 12px;
       color: white;
+      flex: 1;
     }
 
     .brand {
@@ -68,6 +78,7 @@
       gap: 12px;
       font-weight: 800;
       letter-spacing: 0.5px;
+      font-size: 1.1rem;
     }
 
     .brand-mark {
@@ -78,14 +89,14 @@
       align-items: center;
       justify-content: center;
       font-size: 1.3rem;
-      background: linear-gradient(135deg, var(--secondary), #ffb703);
-      color: var(--dark);
-      box-shadow: 0 8px 20px rgba(255,183,3,0.4);
+      background: linear-gradient(135deg, #ffd60a, #ffb700);
+      color: #000;
+      box-shadow: 0 8px 20px rgba(255, 214, 10, 0.4);
     }
 
     .phone-pill {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
       border-radius: 999px;
       padding: 10px 16px;
       font-weight: 700;
@@ -96,33 +107,41 @@
     .cart-icon {
       position: relative;
       cursor: pointer;
-      font-size: 1.5rem;
-      padding: 8px 12px;
-      background: rgba(255,255,255,0.08);
+      font-size: 1.8rem;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.15);
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
       transition: 0.2s ease;
+      animation: pulse 2s infinite;
     }
 
     .cart-icon:hover {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.08);
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     .cart-count {
       position: absolute;
       top: -6px;
       right: -6px;
-      background: var(--primary);
-      color: white;
+      background: linear-gradient(135deg, #ffd60a, #ffb700);
+      color: #000;
       font-size: 0.7rem;
       font-weight: 800;
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px rgba(217,56,30,0.3);
+      box-shadow: 0 4px 15px rgba(255, 214, 10, 0.5);
     }
 
     .hero {
@@ -142,11 +161,11 @@
 
     .tag {
       display: inline-flex;
-      padding: 8px 14px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.18);
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 0.5px;
       margin-bottom: 18px;
@@ -159,13 +178,13 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       margin-bottom: 18px;
-      text-shadow: 0 8px 25px rgba(0,0,0,0.18);
+      text-shadow: 0 8px 25px rgba(0,0,0,0.3);
     }
 
     .hero-copy p {
       max-width: 620px;
       font-size: 1.08rem;
-      color: rgba(255,255,255,0.9);
+      color: rgba(255,255,255,0.95);
       margin-bottom: 24px;
     }
 
@@ -184,27 +203,27 @@
       border-radius: 999px;
       font-weight: 800;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     }
 
     .cta-btn:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
 
     .cta-btn.primary {
-      background: linear-gradient(135deg, var(--secondary), #ffb703);
-      color: var(--dark);
+      background: linear-gradient(135deg, #ffd60a, #ffb700);
+      color: #000;
     }
 
     .cta-btn.secondary {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.15);
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
     }
 
     .hero-card {
       background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.25);
       border-radius: 26px;
       padding: 18px;
       backdrop-filter: blur(15px);
@@ -217,7 +236,7 @@
       padding: 18px;
       border-radius: 20px;
       background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.15);
       margin-bottom: 14px;
     }
 
@@ -228,7 +247,7 @@
     .mini-card strong {
       display: block;
       font-size: 0.9rem;
-      opacity: 0.75;
+      opacity: 0.8;
       margin-bottom: 6px;
     }
 
@@ -240,7 +259,7 @@
     .menu-section {
       max-width: 1200px;
       margin: 10px auto 0;
-      padding: 20px 20px 120px;
+      padding: 20px 20px 40px;
     }
 
     .filter-bar {
@@ -252,23 +271,24 @@
     }
 
     .chip {
-      border: 1px solid rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.65);
+      border: 2px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.8);
       backdrop-filter: blur(8px);
       color: var(--dark);
-      padding: 11px 18px;
+      padding: 12px 20px;
       border-radius: 999px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
 
     .chip.active, .chip:hover {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       border-color: transparent;
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 59, 48, 0.35);
     }
 
     .menu-grid {
@@ -282,12 +302,13 @@
       border-radius: 24px;
       overflow: hidden;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.5);
       transition: transform 0.2s ease;
     }
 
     .category-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
     }
 
     .card-cover {
@@ -302,7 +323,7 @@
       inset: 0;
       background-size: cover;
       background-position: center;
-      filter: saturate(1.1);
+      filter: saturate(1.2) brightness(0.95);
     }
 
     .cover-sandwich { background-image: url("https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=80"); }
@@ -317,7 +338,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0.1));
+      background: linear-gradient(to top, rgba(0,0,0,0.4), rgba(0,0,0,0.1));
     }
 
     .category-head {
@@ -331,7 +352,7 @@
     }
 
     .category-head h2 {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.95);
       color: var(--dark);
       display: inline-flex;
       align-items: center;
@@ -339,17 +360,17 @@
       padding: 10px 14px;
       border-radius: 999px;
       font-size: 1.08rem;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
     }
 
     .category-head .badge {
-      background: var(--primary);
+      background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       font-size: 0.72rem;
       font-weight: 700;
       padding: 7px 10px;
       border-radius: 999px;
-      box-shadow: 0 10px 20px rgba(217,56,30,0.2);
+      box-shadow: 0 10px 20px rgba(255, 59, 48, 0.25);
     }
 
     .items {
@@ -380,8 +401,8 @@
     }
 
     .price-tag {
-      background: #fff3ef;
-      color: var(--primary);
+      background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+      color: #d92817;
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 0.75rem;
@@ -395,7 +416,7 @@
     }
 
     .add-btn {
-      background: var(--primary);
+      background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       border: none;
       width: 32px;
@@ -405,12 +426,12 @@
       font-weight: 800;
       font-size: 1.1rem;
       transition: 0.2s ease;
-      box-shadow: 0 4px 10px rgba(217,56,30,0.2);
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
     }
 
     .add-btn:hover {
-      transform: scale(1.05);
-      background: var(--primary-dark);
+      transform: scale(1.08);
+      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
     .cart-panel {
@@ -433,7 +454,7 @@
     }
 
     .cart-header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       padding: 20px;
       display: flex;
@@ -444,6 +465,7 @@
 
     .cart-header h3 {
       font-size: 1.3rem;
+      font-weight: 800;
     }
 
     .close-btn {
@@ -469,14 +491,14 @@
     }
 
     .cart-item {
-      background: #f8f9fa;
+      background: linear-gradient(135deg, #f5f1ff, #ede9ff);
       border-radius: 12px;
       padding: 12px;
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #e9ecef;
+      border: 1px solid rgba(102, 126, 234, 0.2);
     }
 
     .cart-item-info {
@@ -490,7 +512,7 @@
     }
 
     .cart-item-price {
-      color: var(--primary);
+      color: #ff3b30;
       font-weight: 700;
       font-size: 0.9rem;
       margin-top: 4px;
@@ -503,7 +525,7 @@
     }
 
     .qty-btn {
-      background: var(--primary);
+      background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       border: none;
       width: 28px;
@@ -515,7 +537,7 @@
     }
 
     .qty-btn:hover {
-      background: var(--primary-dark);
+      transform: scale(1.08);
     }
 
     .qty-display {
@@ -544,34 +566,39 @@
     .cart-footer {
       border-top: 2px solid #e9ecef;
       padding: 18px;
-      background: #f8f9fa;
+      background: linear-gradient(135deg, #f5f1ff, #ede9ff);
     }
 
     .cart-total {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: var(--dark);
       margin-bottom: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
     }
 
     .checkout-btn {
       width: 100%;
       padding: 16px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--green), #1ed760);
+      background: linear-gradient(135deg, #34c759, #00a854);
       color: white;
       border: none;
       font-weight: 800;
       cursor: pointer;
       transition: 0.2s ease;
-      box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+      box-shadow: 0 8px 20px rgba(52, 199, 89, 0.3);
+      font-size: 1rem;
     }
 
     .checkout-btn:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(52, 199, 89, 0.4);
     }
 
     .checkout-btn:disabled {
@@ -582,7 +609,7 @@
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0,0,0,0.4);
       z-index: 150;
       display: none;
     }
@@ -616,6 +643,10 @@
         width: 100%;
         right: -100%;
       }
+
+      .menu-section {
+        padding-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -639,7 +670,7 @@
     <div class="hero-copy">
       <div class="tag">🥘 Menú del día</div>
       <h1>Delicias que enamoran</h1>
-      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Selecciona tus productos y confirma tu pedido por WhatsApp.</p>
+      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Selecciona tus productos, agrega al carrito y confirma tu pedido.</p>
       <div class="hero-actions">
         <a class="cta-btn secondary" href="#menu">📋 Ver menú</a>
       </div>
@@ -736,8 +767,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">S.Tuna y Queso</div>
-              <span class="price-tag">RD$ 200</span>
+              <div class="item-name">Tuna y Queso</div>
+              <span class="price-tag">RD$ 310</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Tuna y Queso', 310)">+</button>
@@ -745,8 +776,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">S.Completo</div>
-              <span class="price-tag">RD$ 200</span>
+              <div class="item-name">Completo</div>
+              <span class="price-tag">RD$ 320</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Completo', 320)">+</button>
@@ -755,7 +786,7 @@
           <li class="item-row">
             <div class="item-info">
               <div class="item-name">Club Sandwich con Papas</div>
-              <span class="price-tag">RD$ 400</span>
+              <span class="price-tag">RD$ 420</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Club Sandwich con Papas', 420)">+</button>
@@ -763,8 +794,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">S.Huevo y Queso</div>
-              <span class="price-tag">RD$ 125</span>
+              <div class="item-name">Huevo y Queso</div>
+              <span class="price-tag">RD$ 240</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Huevo y Queso', 240)">+</button>
@@ -772,8 +803,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">S.Huevo y Salami</div>
-              <span class="price-tag">RD$ 125</span>
+              <div class="item-name">Huevo y Salami</div>
+              <span class="price-tag">RD$ 270</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Huevo y Salami', 270)">+</button>
@@ -781,8 +812,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">S.Huevo</div>
-              <span class="price-tag">RD$ 100</span>
+              <div class="item-name">Huevo</div>
+              <span class="price-tag">RD$ 200</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Huevo', 200)">+</button>
@@ -801,7 +832,7 @@
           <li class="item-row">
             <div class="item-info">
               <div class="item-name">Pequeñas</div>
-              <span class="price-tag">RD$ 225</span>
+              <span class="price-tag">RD$ 350</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Yaroa Pequeñas', 350)">+</button>
@@ -809,8 +840,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">Mediana</div>
-              <span class="price-tag">RD$ 275</span>
+              <div class="item-name">Grandes</div>
+              <span class="price-tag">RD$ 450</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Yaroa Grandes', 450)">+</button>
@@ -818,8 +849,8 @@
           </li>
           <li class="item-row">
             <div class="item-info">
-              <div class="item-name">Grande</div>
-              <span class="price-tag">RD$ 350</span>
+              <div class="item-name">Mixta</div>
+              <span class="price-tag">RD$ 500</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Yaroa Mixta', 500)">+</button>
@@ -838,7 +869,7 @@
           <li class="item-row">
             <div class="item-info">
               <div class="item-name">Salami</div>
-              <span class="price-tag">RD$ 150+</span>
+              <span class="price-tag">RD$ 280</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Salami Picadera', 280)">+</button>
@@ -847,7 +878,7 @@
           <li class="item-row">
             <div class="item-info">
               <div class="item-name">Longaniza</div>
-              <span class="price-tag">RD$ 150+</span>
+              <span class="price-tag">RD$ 290</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Longaniza', 290)">+</button>
@@ -856,7 +887,7 @@
           <li class="item-row">
             <div class="item-info">
               <div class="item-name">Chuleta</div>
-              <span class="price-tag">RD$ 150+</span>
+              <span class="price-tag">RD$ 320</span>
             </div>
             <div class="item-controls">
               <button class="add-btn" onclick="addToCart('Chuleta', 320)">+</button>
@@ -1075,7 +1106,7 @@
   
   <div class="cart-panel" id="cart-panel">
     <div class="cart-header">
-      <h3>Tu Pedido</h3>
+      <h3>🛒 Tu Pedido</h3>
       <button class="close-btn" onclick="closeCart()">✕</button>
     </div>
 
@@ -1089,11 +1120,11 @@
 
     <div class="cart-footer">
       <div class="cart-total">
-        <span>Total:</span>
+        <span>💰 Total:</span>
         <span id="cart-total">RD$ 0</span>
       </div>
       <button class="checkout-btn" id="checkout-btn" onclick="checkout()" disabled>
-        Confirmar Pedido por WhatsApp
+        ✅ Confirmar Pedido por WhatsApp
       </button>
     </div>
   </div>
@@ -1148,8 +1179,8 @@
           html += `
             <div class="cart-item">
               <div class="cart-item-info">
-                <div class="cart-item-name">${productName}</div>
-                <div class="cart-item-price">RD$ ${item.price} x ${item.quantity}</div>
+                <div class="cart-item-name">🍽️ ${productName}</div>
+                <div class="cart-item-price">RD$ ${item.price.toLocaleString('es-DO')} x ${item.quantity}</div>
               </div>
               <div class="cart-item-qty">
                 <button class="qty-btn" onclick="removeFromCart('${productName}')">−</button>
@@ -1189,18 +1220,45 @@
         return;
       }
 
-      let message = '*Pedido de Cafetería La Distingancia:* \n\n';
+      let message = `
+✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕
+✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+
+🍽️ *MIS PRODUCTOS:*
+━━━━━━━━━━━━━━━━━━━━━
+
+`;
       let total = 0;
 
-      items.forEach(productName => {
+      items.forEach((productName, index) => {
         const item = cart[productName];
         const subtotal = item.price * item.quantity;
         total += subtotal;
-        message += `• ${productName}\n   Cantidad: ${item.quantity} x RD$ ${item.price.toLocaleString('es-DO')}\n\n`;
+        const emoji = ['🥪', '🍟', '🍗', '🥟', '🍔', '🥤', '🍹'][index % 7];
+        message += `${emoji} *${productName}*\n`;
+        message += `   📦 Cant: ${item.quantity}\n`;
+        message += `   💵 Precio: RD$ ${item.price.toLocaleString('es-DO')} c/u\n`;
+        message += `   💰 Subtotal: RD$ ${subtotal.toLocaleString('es-DO')}\n\n`;
       });
 
-      message += `*Total: RD$ ${total.toLocaleString('es-DO')}*\n\n`;
-      message += 'Por favor confirmar disponibilidad y horario de entrega.';
+      message += `━━━━━━━━━━━━━━━━━━━━━
+💳 *TOTAL A PAGAR:*
+🎯 RD$ ${total.toLocaleString('es-DO')}
+━━━━━━━━━━━━━━━━━━━━━
+
+📍 *Detalles del pedido:*
+• Por favor confirmar disponibilidad
+• Indicar horario de entrega preferido
+• Cualquier comentario adicional
+
+⏰ *Horario de atención:*
+Abierto todos los días
+
+📞 *Gracias por tu compra!* 🙏
+Nos vemos pronto en Cafetería La Distingancia
+
+✨✨✨✨✨✨✨✨✨✨✨✨✨✨`;
 
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/18299069055?text=${encodedMessage}`;
@@ -1232,6 +1290,3 @@
 
 </body>
 </html>
-   
-
-     

@@ -49,15 +49,16 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.12);
-    }
-
-    .topbar {
-      max-width: 1200px;
-      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 16px 20px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       color: white;
     }
 
@@ -89,6 +90,39 @@
       padding: 10px 16px;
       font-weight: 700;
       white-space: nowrap;
+      display: none;
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: 0.2s ease;
+    }
+
+    .cart-icon:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(217,56,30,0.3);
     }
 
     .hero {
@@ -323,56 +357,238 @@
       padding: 0 18px 18px;
     }
 
-    .items li {
+    .item-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
       padding: 12px 6px;
       border-bottom: 1px dashed rgba(0,0,0,0.08);
-      font-weight: 600;
     }
 
-    .items li:last-child {
+    .item-row:last-child {
       border-bottom: none;
     }
 
-    .item-name {
+    .item-info {
       flex: 1;
-      color: var(--dark);
     }
 
-    .price {
+    .item-name {
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .price-tag {
       background: #fff3ef;
       color: var(--primary);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 0.82rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
       font-weight: 800;
-      white-space: nowrap;
     }
 
-    .floating-order {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      width: min(94%, 430px);
-    }
-
-    .floating-order a {
+    .item-controls {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
-      width: 100%;
-      padding: 16px 24px;
-      border-radius: 999px;
+      gap: 8px;
+    }
+
+    .add-btn {
+      background: var(--primary);
       color: white;
-      font-weight: 900;
-      background: linear-gradient(135deg, #1ed760, var(--green));
-      box-shadow: 0 16px 35px rgba(37,211,102,0.3);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 1.1rem;
+      transition: 0.2s ease;
+      box-shadow: 0 4px 10px rgba(217,56,30,0.2);
+    }
+
+    .add-btn:hover {
+      transform: scale(1.05);
+      background: var(--primary-dark);
+    }
+
+    .cart-panel {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -8px 0 25px rgba(0,0,0,0.15);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .cart-panel.open {
+      right: 0;
+    }
+
+    .cart-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cart-header h3 {
+      font-size: 1.3rem;
+    }
+
+    .close-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      transition: 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .cart-item {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #e9ecef;
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .cart-item-price {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .qty-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .qty-display {
+      font-weight: 700;
+      color: var(--dark);
+      width: 24px;
+      text-align: center;
+    }
+
+    .empty-cart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+      text-align: center;
+      padding: 20px;
+    }
+
+    .empty-cart-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .cart-footer {
+      border-top: 2px solid #e9ecef;
+      padding: 18px;
+      background: #f8f9fa;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 12px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--green), #1ed760);
+      color: white;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 8px 20px rgba(37,211,102,0.3);
+    }
+
+    .checkout-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .checkout-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 150;
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
     }
 
     @media (max-width: 820px) {
@@ -381,21 +597,13 @@
         text-align: center;
       }
 
-      .hero-copy p {
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .hero-actions {
-        justify-content: center;
+      .cart-panel {
+        width: 100%;
+        right: -100%;
       }
     }
 
     @media (max-width: 520px) {
-      .topbar {
-        padding: 14px 16px;
-      }
-
       .phone-pill {
         display: none;
       }
@@ -404,9 +612,9 @@
         padding-top: 40px;
       }
 
-      .menu-section {
-        padding-left: 14px;
-        padding-right: 14px;
+      .cart-panel {
+        width: 100%;
+        right: -100%;
       }
     }
   </style>
@@ -421,17 +629,18 @@
       </div>
       <div class="phone-pill">📞 829-906-9055</div>
     </div>
+    <div class="cart-icon" onclick="toggleCart()">
+      🛒
+      <div class="cart-count" id="cart-count" style="display: none;">0</div>
+    </div>
   </header>
 
   <section class="hero">
     <div class="hero-copy">
       <div class="tag">🥘 Menú del día</div>
       <h1>Delicias que enamoran</h1>
-      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Haz tu pedido fácilmente por WhatsApp.</p>
+      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Selecciona tus productos y confirma tu pedido por WhatsApp.</p>
       <div class="hero-actions">
-        <a class="cta-btn primary" href="https://wa.me/18299069055?text=Hola%2C%20quiero%20hacer%20un%20pedido%20de%20la%20Cafeter%C3%ADa%20La%20Distingancia." target="_blank" rel="noopener">
-          💬 Pedir por WhatsApp
-        </a>
         <a class="cta-btn secondary" href="#menu">📋 Ver menú</a>
       </div>
     </div>
@@ -471,12 +680,114 @@
           <span class="badge">12</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Jamón y Queso</span><span class="price">RD$ 125</span></li>
-          <li><span class="item-name">Salami y Queso</span><span class="price">RD$ 150</span></li>
-          <li><span class="item-name">Queso solo</span><span class="price">RD$ 150</span></li>
-          <li><span class="item-name">Pollo</span><span class="price">RD$ 130</span></li>
-          <li><span class="item-name">Pollo y Queso</span><span class="price">RD$ 150</span></li>
-          <li><span class="item-name">Tuna y Queso</span><span class="price">RD$ 200</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Jamón y Queso</div>
+              <span class="price-tag">RD$ 250</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jamón y Queso', 250)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Salami y Queso</div>
+              <span class="price-tag">RD$ 280</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Salami y Queso', 280)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Queso solo</div>
+              <span class="price-tag">RD$ 220</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Queso solo', 220)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Pollo</div>
+              <span class="price-tag">RD$ 260</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Pollo', 260)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Pollo y Queso</div>
+              <span class="price-tag">RD$ 300</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Pollo y Queso', 300)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Tuna solo</div>
+              <span class="price-tag">RD$ 270</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Tuna solo', 270)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Tuna y Queso</div>
+              <span class="price-tag">RD$ 310</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Tuna y Queso', 310)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Completo</div>
+              <span class="price-tag">RD$ 320</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Completo', 320)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Club Sandwich con Papas</div>
+              <span class="price-tag">RD$ 420</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Club Sandwich con Papas', 420)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Huevo y Queso</div>
+              <span class="price-tag">RD$ 240</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Huevo y Queso', 240)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Huevo y Salami</div>
+              <span class="price-tag">RD$ 270</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Huevo y Salami', 270)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Huevo</div>
+              <span class="price-tag">RD$ 200</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Huevo', 200)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -487,9 +798,33 @@
           <span class="badge">3</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Pequeñas</span><span class="price">RD$ 225</span></li>
-          <li><span class="item-name">Mediana</span><span class="price">RD$ 275</span></li>
-          <li><span class="item-name">Grande</span><span class="price">RD$ 350</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Pequeñas</div>
+              <span class="price-tag">RD$ 350</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Yaroa Pequeñas', 350)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Grandes</div>
+              <span class="price-tag">RD$ 450</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Yaroa Grandes', 450)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Mixta</div>
+              <span class="price-tag">RD$ 500</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Yaroa Mixta', 500)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -500,11 +835,69 @@
           <span class="badge">7</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Salami</span><span class="price">RD$ 150+</span></li>
-          <li><span class="item-name">Longaniza</span><span class="price">RD$ 150+</span></li>
-          <li><span class="item-name">Chuleta</span><span class="price">RD$ 150+</span></li>
-          <li><span class="item-name">Costillas</span><span class="price">RD$ 150+</span></li>
-          <li><span class="item-name">Queso Frito</span><span class="price">RD$ 150+</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Salami</div>
+              <span class="price-tag">RD$ 280</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Salami Picadera', 280)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Longaniza</div>
+              <span class="price-tag">RD$ 290</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Longaniza', 290)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Chuleta</div>
+              <span class="price-tag">RD$ 320</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Chuleta', 320)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Costillas</div>
+              <span class="price-tag">RD$ 380</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Costillas', 380)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Jamón</div>
+              <span class="price-tag">RD$ 260</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jamón Picadera', 260)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Queso Frito</div>
+              <span class="price-tag">RD$ 240</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Queso Frito', 240)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Pechuga Frita</div>
+              <span class="price-tag">RD$ 350</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Pechuga Frita', 350)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -515,9 +908,33 @@
           <span class="badge">3</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Pollo y Queso</span><span class="price">RD$ 50</span></li>
-          <li><span class="item-name">Jamón y Queso</span><span class="price">RD$ 50</span></li>
-          <li><span class="item-name">Queso</span><span class="price">RD$ 50</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Pollo y Queso</div>
+              <span class="price-tag">RD$ 120</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Empanada Pollo y Queso', 120)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Jamón y Queso</div>
+              <span class="price-tag">RD$ 120</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Empanada Jamón y Queso', 120)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Queso</div>
+              <span class="price-tag">RD$ 110</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Empanada Queso', 110)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -528,7 +945,15 @@
           <span class="badge">1</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Carne de Res</span><span class="price">RD$ 250</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Carne de Res</div>
+              <span class="price-tag">RD$ 380</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Hamburguesa Carne de Res', 380)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -539,9 +964,33 @@
           <span class="badge">3</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Lechoza</span><span class="price">RD$ 100</span></li>
-          <li><span class="item-name">Guineo</span><span class="price">RD$ 100</span></li>
-          <li><span class="item-name">Chinola y Leche</span><span class="price">RD$ 100</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Lechoza</div>
+              <span class="price-tag">RD$ 180</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Batida Lechoza', 180)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Guineo</div>
+              <span class="price-tag">RD$ 180</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Batida Guineo', 180)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Chinola y Leche</div>
+              <span class="price-tag">RD$ 200</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Batida Chinola y Leche', 200)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -552,11 +1001,51 @@
           <span class="badge">5</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Chinola</span><span class="price">RD$ 60</span></li>
-          <li><span class="item-name">Cereza</span><span class="price">RD$ 60</span></li>
-          <li><span class="item-name">Chinola Avena</span><span class="price">RD$ 60</span></li>
-          <li><span class="item-name">Limón Avena</span><span class="price">RD$ 60</span></li>
-          <li><span class="item-name">Limón</span><span class="price">RD$ 60</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Chinola</div>
+              <span class="price-tag">RD$ 150</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jugo Chinola', 150)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Cereza</div>
+              <span class="price-tag">RD$ 150</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jugo Cereza', 150)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Chinola Avena</div>
+              <span class="price-tag">RD$ 180</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jugo Chinola Avena', 180)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Limón Avena</div>
+              <span class="price-tag">RD$ 180</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jugo Limón Avena', 180)">+</button>
+            </div>
+          </li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Limón</div>
+              <span class="price-tag">RD$ 130</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Jugo Limón', 130)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
 
@@ -567,32 +1056,175 @@
           <span class="badge">1</span>
         </div>
         <ul class="items">
-          <li><span class="item-name">Burritos</span><span class="price">RD$ 250</span></li>
+          <li class="item-row">
+            <div class="item-info">
+              <div class="item-name">Burritos</div>
+              <span class="price-tag">RD$ 250</span>
+            </div>
+            <div class="item-controls">
+              <button class="add-btn" onclick="addToCart('Burrito', 250)">+</button>
+            </div>
+          </li>
         </ul>
       </article>
     </div>
   </main>
 
-  <div class="floating-order">
-    <a href="https://wa.me/18299069055?text=Hola%2C%20quiero%20hacer%20un%20pedido%20de%20la%20Cafeter%C3%ADa%20La%20Distingancia." target="_blank" rel="noopener">
-      💬 Hacer Pedido por WhatsApp
-    </a>
+  <!-- Carrito lateral -->
+  <div class="overlay" id="overlay" onclick="closeCart()"></div>
+  
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header">
+      <h3>Tu Pedido</h3>
+      <button class="close-btn" onclick="closeCart()">✕</button>
+    </div>
+
+    <div class="cart-items" id="cart-items">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <p>Tu carrito está vacío</p>
+        <small>Agrega productos para hacer tu pedido</small>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span id="cart-total">RD$ 0</span>
+      </div>
+      <button class="checkout-btn" id="checkout-btn" onclick="checkout()" disabled>
+        Confirmar Pedido por WhatsApp
+      </button>
+    </div>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll('.chip');
-    const cards = document.querySelectorAll('.category-card');
+    let cart = {};
 
-    buttons.forEach(button => {
+    function addToCart(productName, price) {
+      if (!cart[productName]) {
+        cart[productName] = { price, quantity: 0 };
+      }
+      cart[productName].quantity++;
+      updateCart();
+    }
+
+    function removeFromCart(productName) {
+      if (cart[productName]) {
+        cart[productName].quantity--;
+        if (cart[productName].quantity === 0) {
+          delete cart[productName];
+        }
+      }
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItemsDiv = document.getElementById('cart-items');
+      const cartCountSpan = document.getElementById('cart-count');
+      const cartTotalSpan = document.getElementById('cart-total');
+      const checkoutBtn = document.getElementById('checkout-btn');
+
+      const items = Object.keys(cart);
+      const totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+      let total = 0;
+
+      if (items.length === 0) {
+        cartItemsDiv.innerHTML = `
+          <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <p>Tu carrito está vacío</p>
+            <small>Agrega productos para hacer tu pedido</small>
+          </div>
+        `;
+        cartCountSpan.style.display = 'none';
+        checkoutBtn.disabled = true;
+      } else {
+        let html = '';
+        items.forEach(productName => {
+          const item = cart[productName];
+          const subtotal = item.price * item.quantity;
+          total += subtotal;
+          html += `
+            <div class="cart-item">
+              <div class="cart-item-info">
+                <div class="cart-item-name">${productName}</div>
+                <div class="cart-item-price">RD$ ${item.price} x ${item.quantity}</div>
+              </div>
+              <div class="cart-item-qty">
+                <button class="qty-btn" onclick="removeFromCart('${productName}')">−</button>
+                <div class="qty-display">${item.quantity}</div>
+                <button class="qty-btn" onclick="addToCart('${productName}', ${item.price})">+</button>
+              </div>
+            </div>
+          `;
+        });
+        cartItemsDiv.innerHTML = html;
+        cartCountSpan.textContent = totalCount;
+        cartCountSpan.style.display = 'flex';
+        checkoutBtn.disabled = false;
+      }
+
+      cartTotalSpan.textContent = `RD$ ${total.toLocaleString('es-DO')}`;
+    }
+
+    function toggleCart() {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('overlay');
+      panel.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    function closeCart() {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('overlay');
+      panel.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+
+    function checkout() {
+      const items = Object.keys(cart);
+      if (items.length === 0) {
+        alert('Tu carrito está vacío');
+        return;
+      }
+
+      let message = '*Pedido de Cafetería La Distingancia:* \n\n';
+      let total = 0;
+
+      items.forEach(productName => {
+        const item = cart[productName];
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        message += `• ${productName}\n   Cantidad: ${item.quantity} x RD$ ${item.price.toLocaleString('es-DO')}\n\n`;
+      });
+
+      message += `*Total: RD$ ${total.toLocaleString('es-DO')}*\n\n`;
+      message += 'Por favor confirmar disponibilidad y horario de entrega.';
+
+      const encodedMessage = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/18299069055?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+
+      cart = {};
+      updateCart();
+      closeCart();
+    }
+
+    // Filtros
+    const filterButtons = document.querySelectorAll('.chip');
+    const categoryCards = document.querySelectorAll('.category-card');
+
+    filterButtons.forEach(button => {
       button.addEventListener('click', () => {
         const filter = button.dataset.filter;
-
-        buttons.forEach(btn => btn.classList.remove('active'));
+        filterButtons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
 
-        cards.forEach(card => {
-          const show = filter === 'all' || card.dataset.category === filter;
-          card.style.display = show ? 'block' : 'none';
+        categoryCards.forEach(card => {
+          const showAll = filter === 'all';
+          const sameCategory = card.dataset.category === filter;
+          card.style.display = showAll || sameCategory ? 'block' : 'none';
         });
       });
     });
@@ -600,3 +1232,6 @@
 
 </body>
 </html>
+   
+
+     

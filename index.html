@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cafetería La Distingancia | Menú</title>
+  <style>
+    :root {
+      --primary: #d9381e;
+      --primary-dark: #8f1607;
+      --secondary: #f7c948;
+      --dark: #1f2430;
+      --muted: #6b7280;
+      --bg: #f8f4f2;
+      --card: rgba(255,255,255,0.9);
+      --soft: #fff7f2;
+      --green: #25d366;
+      --shadow: 0 18px 40px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
+        url("https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=80") center/cover fixed;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 17, 17, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .topbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      color: white;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--secondary), #ffb703);
+      color: var(--dark);
+      box-shadow: 0 8px 20px rgba(255,183,3,0.4);
+    }
+
+    .phone-pill {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 62px 20px 28px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .hero-copy {
+      color: white;
+      padding: 24px 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-copy h1 {
+      font-size: clamp(2.3rem, 5vw, 4.2rem);
+      line-height: 1.08;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      text-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    }
+
+    .hero-copy p {
+      max-width: 620px;
+      font-size: 1.08rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 24px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 26px;
+      border-radius: 999px;
+      font-weight: 800;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .cta-btn.primary {
+      background: linear-gradient(135deg, var(--secondary), #ffb703);
+      color: var(--dark);
+    }
+
+    .cta-btn.secondary {
+      background: rgba(255,255,255,0.08);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 26px;
+      padding: 18px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.2);
+      color: white;
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 14px;
+    }
+
+    .mini-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 0.9rem;
+      opacity: 0.75;
+      margin-bottom: 6px;
+    }
+
+    .mini-card span {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+
+    .menu-section {
+      max-width: 1200px;
+      margin: 10px auto 0;
+      padding: 20px 20px 120px;
+    }
+
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(8px);
+      color: var(--dark);
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.04);
+    }
+
+    .chip.active, .chip:hover {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border-color: transparent;
+      transform: translateY(-1px);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+    }
+
+    .category-card {
+      background: var(--card);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.75);
+      transition: transform 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-cover {
+      height: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.1);
+    }
+
+    .cover-sandwich { background-image: url("https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=900&q=80"); }
+    .cover-yaroa { background-image: url("https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80"); }
+    .cover-picaderas { background-image: url("https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80"); }
+    .cover-empanadas { background-image: url("https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80"); }
+    .cover-batidas { background-image: url("https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=900&q=80"); }
+    .cover-jugos { background-image: url("https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=900&q=80"); }
+    .cover-otros { background-image: url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80"); }
+
+    .card-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0.1));
+    }
+
+    .category-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 18px 12px;
+      margin-top: -40px;
+    }
+
+    .category-head h2 {
+      background: rgba(255,255,255,0.9);
+      color: var(--dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 1.08rem;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    }
+
+    .category-head .badge {
+      background: var(--primary);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 7px 10px;
+      border-radius: 999px;
+      box-shadow: 0 10px 20px rgba(217,56,30,0.2);
+    }
+
+    .items {
+      list-style: none;
+      padding: 0 18px 18px;
+    }
+
+    .items li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 6px;
+      border-bottom: 1px dashed rgba(0,0,0,0.08);
+      font-weight: 600;
+    }
+
+    .items li:last-child {
+      border-bottom: none;
+    }
+
+    .item-name {
+      flex: 1;
+      color: var(--dark);
+    }
+
+    .price {
+      background: #fff3ef;
+      color: var(--primary);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .floating-order {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: min(94%, 430px);
+    }
+
+    .floating-order a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(135deg, #1ed760, var(--green));
+      box-shadow: 0 16px 35px rgba(37,211,102,0.3);
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-copy p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-actions {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .topbar {
+        padding: 14px 16px;
+      }
+
+      .phone-pill {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+
+      .menu-section {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">☕</div>
+        <span>Cafetería La Distingancia</span>
+      </div>
+      <div class="phone-pill">📞 829-906-9055</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="tag">🥘 Menú del día</div>
+      <h1>Delicias que enamoran</h1>
+      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Haz tu pedido fácilmente por WhatsApp.</p>
+      <div class="hero-actions">
+        <a class="cta-btn primary" href="https://wa.me/18299069055?text=Hola%2C%20quiero%20hacer%20un%20pedido%20de%20la%20Cafeter%C3%ADa%20La%20Distingancia." target="_blank" rel="noopener">
+          💬 Pedir por WhatsApp
+        </a>
+        <a class="cta-btn secondary" href="#menu">📋 Ver menú</a>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="mini-card">
+        <strong>Especialidades</strong>
+        <span>🥪 Sandwiches, Yaroa & Picaderas</span>
+      </div>
+      <div class="mini-card">
+        <strong>Entrega</strong>
+        <span>🚚 Rápida y segura</span>
+      </div>
+      <div class="mini-card">
+        <strong>Horario</strong>
+        <span>⏰ Abierto todos los días</span>
+      </div>
+    </div>
+  </section>
+
+  <main id="menu" class="menu-section">
+    <div class="filter-bar">
+      <button class="chip active" data-filter="all">Todos</button>
+      <button class="chip" data-filter="sandwich">Sandwiches</button>
+      <button class="chip" data-filter="yaroa">Yaroa</button>
+      <button class="chip" data-filter="picaderas">Picaderas</button>
+      <button class="chip" data-filter="empanadas">Empanadas</button>
+      <button class="chip" data-filter="batidas">Batidas</button>
+      <button class="chip" data-filter="jugos">Jugos</button>
+    </div>
+
+    <div class="menu-grid">
+      <article class="category-card" data-category="sandwich">
+        <div class="card-cover cover-sandwich"></div>
+        <div class="category-head">
+          <h2>🥪 Sandwichs</h2>
+          <span class="badge">12</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Jamón y Queso</span><span class="price">RD$ 250</span></li>
+          <li><span class="item-name">Salami y Queso</span><span class="price">RD$ 280</span></li>
+          <li><span class="item-name">Queso solo</span><span class="price">RD$ 220</span></li>
+          <li><span class="item-name">Pollo</span><span class="price">RD$ 260</span></li>
+          <li><span class="item-name">Pollo y Queso</span><span class="price">RD$ 300</span></li>
+          <li><span class="item-name">Tuna y Queso</span><span class="price">RD$ 310</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="yaroa">
+        <div class="card-cover cover-yaroa"></div>
+        <div class="category-head">
+          <h2>🍟 Yaroa</h2>
+          <span class="badge">3</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Pequeñas</span><span class="price">RD$ 350</span></li>
+          <li><span class="item-name">Grandes</span><span class="price">RD$ 450</span></li>
+          <li><span class="item-name">Mixta</span><span class="price">RD$ 500</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="picaderas">
+        <div class="card-cover cover-picaderas"></div>
+        <div class="category-head">
+          <h2>🍗 Picaderas</h2>
+          <span class="badge">7</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Salami</span><span class="price">RD$ 280</span></li>
+          <li><span class="item-name">Longaniza</span><span class="price">RD$ 290</span></li>
+          <li><span class="item-name">Chuleta</span><span class="price">RD$ 320</span></li>
+          <li><span class="item-name">Costillas</span><span class="price">RD$ 380</span></li>
+          <li><span class="item-name">Queso Frito</span><span class="price">RD$ 240</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="empanadas">
+        <div class="card-cover cover-empanadas"></div>
+        <div class="category-head">
+          <h2>🥟 Empanadas</h2>
+          <span class="badge">3</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Pollo y Queso</span><span class="price">RD$ 120</span></li>
+          <li><span class="item-name">Jamón y Queso</span><span class="price">RD$ 120</span></li>
+          <li><span class="item-name">Queso</span><span class="price">RD$ 110</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="sandwich">
+        <div class="card-cover cover-otros"></div>
+        <div class="category-head">
+          <h2>🍔 Hamburguesas</h2>
+          <span class="badge">1</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Carne de Res</span><span class="price">RD$ 380</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="batidas">
+        <div class="card-cover cover-batidas"></div>
+        <div class="category-head">
+          <h2>🥤 Batidas</h2>
+          <span class="badge">3</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Lechoza</span><span class="price">RD$ 180</span></li>
+          <li><span class="item-name">Guineo</span><span class="price">RD$ 180</span></li>
+          <li><span class="item-name">Chinola y Leche</span><span class="price">RD$ 200</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="jugos">
+        <div class="card-cover cover-jugos"></div>
+        <div class="category-head">
+          <h2>🍹 Jugos Naturales</h2>
+          <span class="badge">5</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Chinola</span><span class="price">RD$ 150</span></li>
+          <li><span class="item-name">Cereza</span><span class="price">RD$ 150</span></li>
+          <li><span class="item-name">Chinola Avena</span><span class="price">RD$ 180</span></li>
+          <li><span class="item-name">Limón Avena</span><span class="price">RD$ 180</span></li>
+          <li><span class="item-name">Limón</span><span class="price">RD$ 130</span></li>
+        </ul>
+      </article>
+
+      <article class="category-card" data-category="sandwich">
+        <div class="card-cover cover-otros"></div>
+        <div class="category-head">
+          <h2>🌮 Otros</h2>
+          <span class="badge">1</span>
+        </div>
+        <ul class="items">
+          <li><span class="item-name">Burritos</span><span class="price">RD$ 250</span></li>
+        </ul>
+      </article>
+    </div>
+  </main>
+
+  <div class="floating-order">
+    <a href="https://wa.me/18299069055?text=Hola%2C%20quiero%20hacer%20un%20pedido%20de%20la%20Cafeter%C3%ADa%20La%20Distingancia." target="_blank" rel="noopener">
+      💬 Hacer Pedido por WhatsApp
+    </a>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.chip');
+    const cards = document.querySelectorAll('.category-card');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        cards.forEach(card => {
+          const show = filter === 'all' || card.dataset.category === filter;
+          card.style.display = show ? 'block' : 'none';
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

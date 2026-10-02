@@ -358,6 +358,46 @@
       transform: scale(0.98);
     }
 
+    .toast-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #34c759, #00a854);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(52, 199, 89, 0.3);
+      font-weight: 700;
+      animation: slideIn 0.3s ease;
+      z-index: 1000;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    .toast-notification.hide {
+      animation: slideOut 0.3s ease;
+    }
+
     .cart-panel {
       position: fixed;
       right: -400px;
@@ -571,6 +611,12 @@
       .menu-section {
         padding-bottom: 20px;
       }
+
+      .toast-notification {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+      }
     }
   </style>
 </head>
@@ -741,13 +787,25 @@
       });
     }
 
+    function showToast(productName) {
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerHTML = `✅ ${productName} agregado al carrito`;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
     function addToCart(productName, price) {
       if (!cart[productName]) {
         cart[productName] = { price, quantity: 0 };
       }
       cart[productName].quantity++;
       updateCart();
-      toggleCart();
+      showToast(productName);
     }
 
     function removeFromCart(productName) {

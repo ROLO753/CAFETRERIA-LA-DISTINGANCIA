@@ -687,6 +687,7 @@
       { name: 'Costillas', price: 380, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas' },
       { name: 'Jamón Picadera', price: 260, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón' },
       { name: 'Queso Frito', price: 240, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito' },
+      { name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito+Longaniza+Papa' },
       { name: 'Pechuga Frita', price: 350, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita' },
 
       // Empanadas
@@ -829,14 +830,14 @@
       }
 
       let message = `
-✨✨✨✨✨✨✨✨✨✨✨✨✨✨
-☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕
-✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+ ✨✨✨✨✨✨✨✨✨✨✨✨✨✨
+ ☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕
+ ✨✨✨✨✨✨✨✨✨✨✨✨✨✨
 
-🍽️ *MIS PRODUCTOS:*
-━━━━━━━━━━━━━━━━━━━━━
+ 🍽️ *MIS PRODUCTOS:*
+ ━━━━━━━━━━━━━━━━━━━━━
 
-`;
+ `;
       let total = 0;
 
       items.forEach((productName, index) => {
@@ -851,22 +852,22 @@
       });
 
       message += `━━━━━━━━━━━━━━━━━━━━━
-💳 *TOTAL A PAGAR:*
-🎯 RD$ ${total.toLocaleString('es-DO')}
-━━━━━━━━━━━━━━━━━━━━━
+ 💳 *TOTAL A PAGAR:*
+ 🎯 RD$ ${total.toLocaleString('es-DO')}
+ ━━━━━━━━━━━━━━━━━━━━━
 
-📍 *Detalles del pedido:*
-• Por favor confirmar disponibilidad
-• Indicar horario de entrega preferido
-• Cualquier comentario adicional
+ 📍 *Detalles del pedido:*
+ • Por favor confirmar disponibilidad
+ • Indicar horario de entrega preferido
+ • Cualquier comentario adicional
 
-⏰ *Horario de atención:*
-Abierto todos los días
+ ⏰ *Horario de atención:*
+ Abierto todos los días
 
-📞 *Gracias por tu compra!* 🙏
-Nos vemos pronto en Cafetería La Distingancia
+ 📞 *Gracias por tu compra!* 🙏
+ Nos vemos pronto en Cafetería La Distingancia
 
-✨✨✨✨✨✨✨✨✨✨✨✨✨✨`;
+ ✨✨✨✨✨✨✨✨✨✨✨✨✨✨`;
 
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/18299069055?text=${encodedMessage}`;

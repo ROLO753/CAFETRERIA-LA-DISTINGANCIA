@@ -336,46 +336,6 @@
       margin-bottom: 12px;
     }
 
-    .garnish-options {
-      background: rgba(102, 126, 234, 0.1);
-      border: 1px solid rgba(102, 126, 234, 0.2);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 12px;
-      display: none;
-    }
-
-    .garnish-options.show {
-      display: block;
-    }
-
-    .garnish-label {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--dark);
-      margin-bottom: 8px;
-    }
-
-    .garnish-radio {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .garnish-radio label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      color: var(--dark);
-    }
-
-    .garnish-radio input[type="radio"] {
-      cursor: pointer;
-      accent-color: #ff3b30;
-    }
-
     .add-to-cart-btn {
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
@@ -396,6 +356,135 @@
 
     .add-to-cart-btn:active {
       transform: scale(0.98);
+    }
+
+    /* Modal de Guarnición */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .modal-subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .garnish-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .garnish-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .garnish-option:hover {
+      border-color: #ff3b30;
+      background: rgba(255, 59, 48, 0.05);
+    }
+
+    .garnish-option input[type="radio"] {
+      cursor: pointer;
+      accent-color: #ff3b30;
+      width: 20px;
+      height: 20px;
+    }
+
+    .garnish-option label {
+      flex: 1;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .garnish-option input[type="radio"]:checked + label {
+      color: #ff3b30;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .modal-btn.cancel {
+      background: #e9ecef;
+      color: var(--dark);
+    }
+
+    .modal-btn.cancel:hover {
+      background: #dee2e6;
+    }
+
+    .modal-btn.confirm {
+      background: linear-gradient(135deg, #ff3b30, #d92817);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
+    }
+
+    .modal-btn.confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
     .toast-notification {
@@ -664,6 +753,10 @@
         right: 10px;
         left: 10px;
       }
+
+      .modal-content {
+        padding: 24px;
+      }
     }
   </style>
 </head>
@@ -724,6 +817,30 @@
     </div>
   </main>
 
+  <!-- Modal de Guarnición -->
+  <div class="modal-overlay" id="garnish-modal">
+    <div class="modal-content">
+      <div class="modal-title" id="modal-product-name">Elige tu guarnición</div>
+      <div class="modal-subtitle">🍟 Selecciona la guarnición que deseas:</div>
+      
+      <div class="garnish-options">
+        <div class="garnish-option">
+          <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa" checked>
+          <label for="garnish-papa">Papa Frita</label>
+        </div>
+        <div class="garnish-option">
+          <input type="radio" id="garnish-tostones" name="garnish-choice" value="Tostones">
+          <label for="garnish-tostones">Tostones</label>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" onclick="closeGarnishModal()">Cancelar</button>
+        <button class="modal-btn confirm" onclick="confirmGarnishSelection()">✅ Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Carrito lateral -->
   <div class="overlay" id="overlay" onclick="closeCart()"></div>
   
@@ -755,28 +872,28 @@
   <script>
     const products = [
       // Sandwiches
-      { name: 'Jamón y Queso', price: 250, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: true },
-      { name: 'Salami y Queso', price: 280, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso', hasGarnish: true },
-      { name: 'Queso solo', price: 220, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo', hasGarnish: true },
-      { name: 'Pollo', price: 260, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo', hasGarnish: true },
-      { name: 'Pollo y Queso', price: 300, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso', hasGarnish: true },
-      { name: 'Tuna solo', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+solo', hasGarnish: true },
-      { name: 'Tuna y Queso', price: 310, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+y+Queso', hasGarnish: true },
-      { name: 'Completo', price: 320, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Completo', hasGarnish: true },
+      { name: 'Jamón y Queso', price: 250, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false },
+      { name: 'Salami y Queso', price: 280, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso', hasGarnish: false },
+      { name: 'Queso solo', price: 220, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo', hasGarnish: false },
+      { name: 'Pollo', price: 260, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo', hasGarnish: false },
+      { name: 'Pollo y Queso', price: 300, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso', hasGarnish: false },
+      { name: 'Tuna solo', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+solo', hasGarnish: false },
+      { name: 'Tuna y Queso', price: 310, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+y+Queso', hasGarnish: false },
+      { name: 'Completo', price: 320, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Completo', hasGarnish: false },
       { name: 'Club Sandwich con Papas', price: 420, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Club+Sandwich', hasGarnish: false },
-      { name: 'Huevo y Queso', price: 240, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso', hasGarnish: true },
-      { name: 'Huevo y Salami', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: true },
-      { name: 'Huevo', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: true },
+      { name: 'Huevo y Queso', price: 240, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso', hasGarnish: false },
+      { name: 'Huevo y Salami', price: 270, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: false },
+      { name: 'Huevo', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
 
       // Yaroa
       { name: 'Yaroa Pequeñas', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña', hasGarnish: false },
       { name: 'Yaroa Grandes', price: 450, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande', hasGarnish: false },
       { name: 'Yaroa Mixta', price: 500, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta', hasGarnish: false },
 
-      // Picaderas
+      // Picaderas - CON GUARNICIÓN
       { name: 'Salami Picadera', price: 280, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true },
       { name: 'Longaniza', price: 290, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true },
-      { name: 'Chuleta ', price: 320, category: 'picaderas', image: 'https://i.imgur.com/lG2kCaw.jpeg', hasGarnish: true },
+      { name: 'Chuleta', price: 320, category: 'picaderas', image: 'https://i.imgur.com/lG2kCaw.jpeg', hasGarnish: true },
       { name: 'Costillas', price: 380, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true },
       { name: 'Jamón Picadera', price: 260, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón', hasGarnish: true },
       { name: 'Queso Frito', price: 240, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true },
@@ -790,7 +907,7 @@
       { name: 'Empanada Queso', price: 110, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Queso', hasGarnish: false },
 
       // Hamburguesas
-      { name: 'Hamburguesa Carne de Res', price: 380, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Hamburguesa', hasGarnish: true },
+      { name: 'Hamburguesa Carne de Res', price: 380, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Hamburguesa', hasGarnish: false },
       { name: 'Hamburguesa con queso frito', price: 420, category: 'sandwich', image: 'https://i.imgur.com/UxZYyxL.jpeg', hasGarnish: false },
 
       // Batidas
@@ -811,6 +928,7 @@
 
     let cart = {};
     let currentFilter = 'all';
+    let pendingProduct = null; // Almacena el producto en espera de confirmación de guarnición
 
     function renderProducts() {
       const grid = document.getElementById('products-grid');
@@ -821,34 +939,60 @@
 
         const card = document.createElement('div');
         card.className = 'product-card';
-        const garnishId = `garnish-${index}`;
         
-        let garnishHTML = '';
-        if (product.hasGarnish) {
-          garnishHTML = `
-            <div class="garnish-options" id="${garnishId}">
-              <div class="garnish-label">🍟 Elige guarnición:</div>
-              <div class="garnish-radio">
-                <label><input type="radio" name="garnish-${index}" value="Papa" checked> Papa</label>
-                <label><input type="radio" name="garnish-${index}" value="Tostones"> Tostones</label>
-              </div>
-            </div>
-          `;
-        }
-
         card.innerHTML = `
           <img src="${product.image}" alt="${product.name}" class="product-image">
           <div class="product-info">
             <div class="product-name">${product.name}</div>
             <div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>
-            ${garnishHTML}
-            <button class="add-to-cart-btn" onclick="addToCart('${product.name}', ${product.price}, ${product.hasGarnish}, ${index})">
+            <button class="add-to-cart-btn" onclick="handleAddToCart('${product.name}', ${product.price}, ${product.hasGarnish})">
               ➕ Agregar
             </button>
           </div>
         `;
         grid.appendChild(card);
       });
+    }
+
+    function handleAddToCart(productName, price, hasGarnish) {
+      if (hasGarnish) {
+        // Mostrar modal para seleccionar guarnición
+        pendingProduct = { name: productName, price: price };
+        showGarnishModal(productName);
+      } else {
+        // Agregar directamente sin guarnición
+        addToCart(productName, price, 'Sin guarnición');
+        showToast(productName);
+      }
+    }
+
+    function showGarnishModal(productName) {
+      document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
+      document.getElementById('garnish-modal').classList.add('active');
+    }
+
+    function closeGarnishModal() {
+      document.getElementById('garnish-modal').classList.remove('active');
+      pendingProduct = null;
+    }
+
+    function confirmGarnishSelection() {
+      if (!pendingProduct) return;
+      
+      const selectedGarnish = document.querySelector('input[name="garnish-choice"]:checked').value;
+      addToCart(pendingProduct.name, pendingProduct.price, selectedGarnish);
+      showToast(pendingProduct.name);
+      closeGarnishModal();
+    }
+
+    function addToCart(productName, price, garnish) {
+      const cartKey = garnish !== 'Sin guarnición' ? `${productName} - ${garnish}` : productName;
+      
+      if (!cart[cartKey]) {
+        cart[cartKey] = { price, quantity: 0, productName, garnish };
+      }
+      cart[cartKey].quantity++;
+      updateCart();
     }
 
     function showToast(productName) {
@@ -861,23 +1005,6 @@
         toast.classList.add('hide');
         setTimeout(() => toast.remove(), 300);
       }, 2500);
-    }
-
-    function addToCart(productName, price, hasGarnish, index) {
-      let garnish = 'Sin guarnición';
-      if (hasGarnish) {
-        const selectedGarnish = document.querySelector(`input[name="garnish-${index}"]:checked`);
-        garnish = selectedGarnish ? selectedGarnish.value : 'Papa';
-      }
-
-      const cartKey = `${productName} - ${garnish}`;
-      
-      if (!cart[cartKey]) {
-        cart[cartKey] = { price, quantity: 0, productName, garnish };
-      }
-      cart[cartKey].quantity++;
-      updateCart();
-      showToast(productName);
     }
 
     function removeFromCart(cartKey) {
@@ -1031,6 +1158,13 @@
         button.classList.add('active');
         renderProducts();
       });
+    });
+
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeGarnishModal();
+      }
     });
 
     // Inicializar

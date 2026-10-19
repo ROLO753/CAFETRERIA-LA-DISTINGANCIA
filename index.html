@@ -489,6 +489,17 @@
       margin-bottom: 6px;
     }
 
+    .bank-notice {
+      background: #fff3cd;
+      border: 1px solid #ffe69c;
+      color: #856404;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
     .garnish-options {
       display: flex;
       flex-direction: column;
@@ -944,11 +955,9 @@
           Número de Cuenta: <b>123-456789-0</b><br>
           Tipo: Corriente / Ahorros<br>
           Titular: Cafetería La Distingancia
-        </div>
-        <div class="form-group">
-          <label>📸 Sube tu comprobante de pago (Captura/Foto):</label>
-          <input type="file" id="transfer-receipt" accept="image/*" onchange="checkReceiptUploaded()">
-          <small style="color: var(--muted); display: block; margin-top: 4px;" id="receipt-status">⚠️ Debes subir el comprobante para continuar</small>
+          <div class="bank-notice">
+            📌 <b>REQUISITO IMPORTANTE:</b> Al realizar la transferencia, debes colocar <b>TU NOMBRE COMPLETO</b> en el concepto / motivo del pago para validar tu pedido al instante.
+          </div>
         </div>
       </div>
 
@@ -1056,7 +1065,6 @@
     let cart = {};
     let currentFilter = 'all';
     let pendingProduct = null;
-    let receiptUploaded = false;
     const DELIVERY_FEE = 50;
 
     function renderProducts() {
@@ -1261,72 +1269,21 @@
       const method = document.getElementById('payment-method').value;
       const cashFields = document.getElementById('cash-fields');
       const transferFields = document.getElementById('transfer-fields');
-      const sendBtn = document.getElementById('whatsapp-send-btn');
 
       if (method === 'efectivo') {
         cashFields.style.display = 'block';
         transferFields.style.display = 'none';
-        sendBtn.disabled = false;
       } else {
         cashFields.style.display = 'none';
         transferFields.style.display = 'block';
-        checkReceiptUploaded();
       }
     }
 
-    function checkReceiptUploaded() {
-      const fileInput = document.getElementById('transfer-receipt');
-      const statusText = document.getElementById('receipt-status');
-      const sendBtn = document.getElementById('whatsapp-send-btn');
-      const method = document.getElementById('payment-method').value;
-
-      if (method === 'transferencia') {
-        if (fileInput.files && fileInput.files.length > 0) {
-          receiptUploaded = true;
-          statusText.innerHTML = '✅ Comprobante listo para subir';
-          statusText.style.color = 'var(--green)';
-          sendBtn.disabled = false;
-        } else {
-          receiptUploaded = false;
-          statusText.innerHTML = '⚠️ Debes subir el comprobante para poder continuar';
-          statusText.style.color = '#ff3b30';
-          sendBtn.disabled = true;
-        }
-      }
-    }
-
-    // Subir imagen a Imgur y retornar la URL directa
-    async function uploadReceiptToImgur(file) {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        const response = await fetch('https://api.imgur.com/3/image', {
-          method: 'POST',
-          headers: {
-            Authorization: 'Client-ID cda333b2a26c483' // Client ID público para la API de Imgur
-          },
-          body: formData
-        });
-
-        const data = await response.json();
-        if (data.success) {
-          return data.data.link;
-        } else {
-          throw new Error('Error al subir la imagen');
-        }
-      } catch (err) {
-        console.error('Error subiendo imagen:', err);
-        return null;
-      }
-    }
-
-    async function sendWhatsAppOrder() {
+    function sendWhatsAppOrder() {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
       const method = document.getElementById('payment-method').value;
       const cashAmount = document.getElementById('cash-amount').value.trim();
-      const sendBtn = document.getElementById('whatsapp-send-btn');
 
       if (!name || !address) {
         alert('Por favor ingresa tu nombre y tu dirección de entrega.');
@@ -1344,29 +1301,6 @@
         return;
       }
 
-      let receiptUrl = '';
-
-      if (method === 'transferencia') {
-        const fileInput = document.getElementById('transfer-receipt');
-        if (!fileInput.files || fileInput.files.length === 0) {
-          alert('Por favor selecciona tu comprobante de pago.');
-          return;
-        }
-
-        // Bloquear botón mientras sube
-        sendBtn.disabled = true;
-        sendBtn.textContent = '⏳ Subiendo comprobante...';
-
-        receiptUrl = await uploadReceiptToImgur(fileInput.files[0]);
-
-        if (!receiptUrl) {
-          alert('Hubo un error subiendo el comprobante. Por favor intenta de nuevo.');
-          sendBtn.disabled = false;
-          sendBtn.textContent = '✅ Enviar Pedido a WhatsApp';
-          return;
-        }
-      }
-
       let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
       message += `👤 *Cliente:* ${name}\n`;
       message += `📍 *Dirección:* ${address}\n\n`;
@@ -1376,7 +1310,7 @@
         message += `💵 *Paga con billete de:* RD$ ${cashAmount}\n\n`;
       } else {
         message += `💳 *Método de Pago:* TRANSFERENCIA BANCARIA\n`;
-        message += `📸 *Comprobante de Pago:* ${receiptUrl}\n\n`;
+        message += `🏷️ *Concepto en banco:* ${name}\n\n`;
       }
 
       message += `🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
@@ -1402,9 +1336,6 @@
 
       const phone = "18090000000"; // Reemplaza con tu número real de WhatsApp
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-      
-      sendBtn.disabled = false;
-      sendBtn.textContent = '✅ Enviar Pedido a WhatsApp';
 
       window.open(url, '_blank');
       closeCheckoutModal();

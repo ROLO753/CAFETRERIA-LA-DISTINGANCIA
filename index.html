@@ -301,8 +301,9 @@
     .product-image {
       width: 100%;
       height: 180px;
-      object-fit: cover;
-      background: linear-gradient(135deg, #f5f1ff, #ede9ff);
+      object-fit: contain;
+      background: #ffffff;
+      padding: 10px;
     }
 
     .product-info {
@@ -1060,83 +1061,106 @@
       { name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n', hasGarnish: false },
 
       // Bebidas (Refrescos, Cervezas, Agua, Energizantes y Jugos embotellados)
-      { name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml', hasGarnish: false },
+      { name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://1.bp.blogspot.com/-jdjNZrgEtKM/X5HPSMFv3KI/AAAAAAAAxXo/a5vD565k_boMzlgi9IjdXDPavpHhU6WcACLcBGAsYHQ/s2048/KOLA%2BREAL_%2B%25281%2529.jpg', hasGarnish: false },
       { name: 'Coca Cola 400ml', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Coca+Cola+400ml', hasGarnish: false },
       { name: '7Up 400ml', price: 60, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=7Up+400ml', hasGarnish: false },
       { name: 'Cola Real 1 Litro', price: 80, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+1L', hasGarnish: false },
       { name: 'Cola Real 2 Litros', price: 120, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+2L', hasGarnish: false },
       { name: 'Cerveza Presidente', price: 150, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cerveza+Presidente', hasGarnish: false },
-      { name: 'Agua Purificada / Planeta Azul', price: 35, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Agua+Planeta', hasGarnish: false },
-      { name: 'Gatorade G', price: 100, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Gatorade+G', hasGarnish: false },
-      { name: 'Jugo Rica Tapita Mediano', price: 65, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Rica+Tapita', hasGarnish: false },
-      { name: 'Juguito Rica (Pequeño/Sorbete)', price: 30, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Rica', hasGarnish: false },
-      { name: 'Jugo Frutto 400ml', price: 60, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Frutto+400ml', hasGarnish: false },
-      { name: 'Jugo Frutto 1 Litro', price: 110, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Frutto+1L', hasGarnish: false },
-      { name: 'Vive 100', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Vive+100', hasGarnish: false },
-      { name: 'Malta Morena Mediana', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Malta+Mediana', hasGarnish: false },
-      { name: 'Malta Morena Pequeña', price: 45, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Malta+Peque%C3%B1a', hasGarnish: false },
-      { name: 'Juguito Yei (con sorbete)', price: 25, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Yei', hasGarnish: false },
-      { name: 'Juguito Santal', price: 45, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Santal', hasGarnish: false },
-
-      // Otros
-      { name: 'Burrito de pollo con papa y queso fundido', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Burrito+Pollo', hasGarnish: false }
+      { name: 'Agua Purificada 500ml', price: 30, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Agua', hasGarnish: false },
+      { name: 'Red Bull', price: 175, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Red+Bull', hasGarnish: false },
+      { name: 'Jugo País 500ml', price: 65, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+País', hasGarnish: false }
     ];
 
-    let cart = {};
+    let cart = [];
     let currentFilter = 'all';
-    let pendingProduct = null;
-    const DELIVERY_FEE = 50;
+    let tempPicaderaProduct = null;
+    let selectedGarnish = 'Papa';
 
-    function renderProducts() {
+    // Renderizar productos al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProducts('all');
+      setupFilters();
+    });
+
+    function setupFilters() {
+      const chips = document.querySelectorAll('.chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const filter = chip.getAttribute('data-filter');
+          currentFilter = filter;
+          renderProducts(filter);
+        });
+      });
+    }
+
+    function renderProducts(filter) {
       const grid = document.getElementById('products-grid');
       grid.innerHTML = '';
 
-      products.forEach((product) => {
-        if (currentFilter !== 'all' && product.category !== currentFilter) return;
+      const filtered = filter === 'all' 
+        ? products 
+        : products.filter(p => p.category === filter);
 
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white; font-weight: 700;">No hay productos disponibles en esta categoría.</div>';
+        return;
+      }
+
+      filtered.forEach(product => {
         const card = document.createElement('div');
         card.className = 'product-card';
-        
-        let priceDisplay = '';
+
+        let priceHtml = '';
         if (product.isVariablePicadera) {
-          priceDisplay = `<div class="product-price">Desde RD$ ${product.minPrice.toLocaleString('es-DO')}</div>`;
+          priceHtml = `<div class="product-price">Desde RD$ ${product.minPrice}</div>`;
         } else {
-          priceDisplay = `<div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>`;
+          priceHtml = `<div class="product-price">RD$ ${product.price}</div>`;
         }
 
-        const baseVal = product.price || product.minPrice;
         card.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" class="product-image">
+          <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/200x180?text=La+Distingancia'">
           <div class="product-info">
             <div class="product-name">${product.name}</div>
-            ${priceDisplay}
-            <button class="add-to-cart-btn" onclick="handleAddToCartClick('${product.name}', ${baseVal}, ${product.hasGarnish || false}, ${product.isVariablePicadera || false})">
-              ➕ Agregar
-            </button>
+            ${priceHtml}
+            <button class="add-to-cart-btn" onclick="handleProductClick('${product.name}')">Agregar al Pedido</button>
           </div>
         `;
         grid.appendChild(card);
       });
     }
 
-    function handleAddToCartClick(productName, basePrice, hasGarnish, isVariablePicadera) {
-      pendingProduct = { name: productName, basePrice: basePrice, isVariablePicadera: isVariablePicadera };
+    function handleProductClick(productName) {
+      const product = products.find(p => p.name === productName);
+      if (!product) return;
 
-      if (hasGarnish) {
-        document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
+      if (product.isVariablePicadera) {
+        tempPicaderaProduct = product;
+        document.getElementById('modal-product-name').innerText = `Personaliza: ${product.name}`;
+        document.getElementById('modal-price-input').value = product.minPrice;
         document.getElementById('modal-step-1').style.display = 'block';
         document.getElementById('modal-step-2').style.display = 'none';
         document.getElementById('garnish-modal').classList.add('active');
       } else {
-        addToCart(productName, basePrice, 'Sin guarnición');
-        showToast(productName);
+        addToCart({
+          name: product.name,
+          price: product.price,
+          garnish: null,
+          customPrice: false
+        });
       }
     }
 
+    // Funciones del Modal de Picaderas
     function goToModalStep2() {
+      const selectedRadio = document.querySelector('input[name="garnish-choice"]:checked');
+      if (selectedRadio) {
+        selectedGarnish = selectedRadio.value;
+      }
       document.getElementById('modal-step-1').style.display = 'none';
       document.getElementById('modal-step-2').style.display = 'block';
-      document.getElementById('modal-price-input').value = 150;
     }
 
     function backToModalStep1() {
@@ -1145,120 +1169,126 @@
     }
 
     function adjustModalPrice(amount) {
-      const inputEl = document.getElementById('modal-price-input');
-      let currentVal = parseInt(inputEl.value) || 150;
-      let newVal = currentVal + amount;
-      if (newVal < 150) newVal = 150;
-      inputEl.value = newVal;
+      const input = document.getElementById('modal-price-input');
+      let val = parseInt(input.value) || 150;
+      val += amount;
+      if (val < 150) val = 150;
+      input.value = val;
     }
 
     function confirmFinalPicadera() {
-      if (!pendingProduct) return;
+      const input = document.getElementById('modal-price-input');
+      const finalPrice = parseInt(input.value) || 150;
 
-      const selectedGarnish = document.querySelector('input[name="garnish-choice"]:checked').value;
-      const finalPrice = parseInt(document.getElementById('modal-price-input').value) || 150;
+      if (finalPrice < 150) {
+        showToast('El monto mínimo para la picadera es RD$ 150');
+        return;
+      }
 
-      addToCart(pendingProduct.name, finalPrice, selectedGarnish);
-      showToast(pendingProduct.name);
+      addToCart({
+        name: tempPicaderaProduct.name,
+        price: finalPrice,
+        garnish: selectedGarnish,
+        customPrice: true
+      });
+
       closeGarnishModal();
     }
 
     function closeGarnishModal() {
       document.getElementById('garnish-modal').classList.remove('active');
-      pendingProduct = null;
+      tempPicaderaProduct = null;
     }
 
-    function addToCart(productName, price, garnish) {
-      const cartKey = garnish !== 'Sin guarnición' ? `${productName} - Guarnición: ${garnish} (RD$ ${price})` : productName;
-      
-      if (!cart[cartKey]) {
-        cart[cartKey] = { price, quantity: 0, productName, garnish };
+    // Gestión del Carrito
+    function addToCart(itemData) {
+      const existingIndex = cart.findIndex(i => 
+        i.name === itemData.name && 
+        i.garnish === itemData.garnish && 
+        i.price === itemData.price
+      );
+
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += 1;
+      } else {
+        cart.push({
+          name: itemData.name,
+          price: itemData.price,
+          garnish: itemData.garnish,
+          qty: 1
+        });
       }
-      cart[cartKey].quantity++;
-      updateCart();
+
+      updateCartUI();
+      showToast(`¡${itemData.name} agregado al pedido!`);
     }
 
-    function showToast(productName) {
-      const toast = document.createElement('div');
-      toast.className = 'toast-notification';
-      toast.innerHTML = `✅ ${productName} agregado al carrito`;
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.add('hide');
-        setTimeout(() => toast.remove(), 300);
-      }, 2500);
-    }
-
-    function removeFromCart(cartKey) {
-      if (cart[cartKey]) {
-        cart[cartKey].quantity--;
-        if (cart[cartKey].quantity === 0) {
-          delete cart[cartKey];
-        }
-      }
-      updateCart();
-    }
-
-    function updateCart() {
-      const cartItemsDiv = document.getElementById('cart-items');
-      const cartCountSpan = document.getElementById('cart-count');
-      const cartSubtotalSpan = document.getElementById('cart-subtotal');
-      const cartTotalSpan = document.getElementById('cart-total');
+    function updateCartUI() {
+      const countEl = document.getElementById('cart-count');
+      const itemsContainer = document.getElementById('cart-items');
+      const subtotalEl = document.getElementById('cart-subtotal');
+      const totalEl = document.getElementById('cart-total');
       const checkoutBtn = document.getElementById('checkout-btn');
 
-      const items = Object.keys(cart);
-      const totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-      let subtotalSum = 0;
+      const totalItems = cart.reduce((sum, i) => sum + i.qty, 0);
 
-      if (items.length === 0) {
-        cartItemsDiv.innerHTML = `
+      if (totalItems > 0) {
+        countEl.style.display = 'flex';
+        countEl.innerText = totalItems;
+        checkoutBtn.removeAttribute('disabled');
+      } else {
+        countEl.style.display = 'none';
+        checkoutBtn.setAttribute('disabled', 'true');
+      }
+
+      if (cart.length === 0) {
+        itemsContainer.innerHTML = `
           <div class="empty-cart">
             <div class="empty-cart-icon">🛒</div>
             <p>Tu carrito está vacío</p>
             <small>Agrega productos para hacer tu pedido</small>
           </div>
         `;
-        cartCountSpan.style.display = 'none';
-        checkoutBtn.disabled = true;
-      } else {
-        let html = '';
-        items.forEach(cartKey => {
-          const item = cart[cartKey];
-          const itemSubtotal = item.price * item.quantity;
-          subtotalSum += itemSubtotal;
-          const garnishInfo = item.garnish !== 'Sin guarnición' ? `<div class="cart-item-garnish">🍟 ${item.garnish}</div>` : '';
-          
-          html += `
-            <div class="cart-item">
-              <div class="cart-item-info">
-                <div class="cart-item-name">🍽️ ${item.productName}</div>
-                ${garnishInfo}
-                <div class="cart-item-price">RD$ ${item.price.toLocaleString('es-DO')} x ${item.quantity}</div>
-              </div>
-              <div class="cart-item-qty">
-                <button class="qty-btn" onclick="removeFromCart('${cartKey}')">−</button>
-                <div class="qty-display">${item.quantity}</div>
-                <button class="qty-btn" onclick="addToCartFromCart('${cartKey}')">+</button>
-              </div>
-            </div>
-          `;
-        });
-        cartItemsDiv.innerHTML = html;
-        cartCountSpan.textContent = totalCount;
-        cartCountSpan.style.display = 'flex';
-        checkoutBtn.disabled = false;
+        subtotalEl.innerText = 'RD$ 0';
+        totalEl.innerText = 'RD$ 0';
+        return;
       }
 
-      const grandTotal = items.length > 0 ? subtotalSum + DELIVERY_FEE : 0;
-      cartSubtotalSpan.textContent = `RD$ ${subtotalSum.toLocaleString('es-DO')}`;
-      cartTotalSpan.textContent = `RD$ ${grandTotal.toLocaleString('es-DO')}`;
+      let html = '';
+      let subtotal = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+
+        html += `
+          <div class="cart-item">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.name}</div>
+              ${item.garnish ? `<div class="cart-item-garnish">Guarnición: ${item.garnish}</div>` : ''}
+              <div class="cart-item-price">RD$ ${item.price} c/u</div>
+            </div>
+            <div class="cart-item-qty">
+              <button class="qty-btn" onclick="changeQty(${index}, -1)">−</button>
+              <span class="qty-display">${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      itemsContainer.innerHTML = html;
+      subtotalEl.innerText = `RD$ ${subtotal}`;
+      const delivery = 50;
+      totalEl.innerText = `RD$ ${subtotal + delivery}`;
     }
 
-    function addToCartFromCart(cartKey) {
-      const item = cart[cartKey];
-      item.quantity++;
-      updateCart();
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartUI();
     }
 
     function toggleCart() {
@@ -1275,10 +1305,10 @@
       overlay.classList.remove('active');
     }
 
+    // Checkout y WhatsApp
     function openCheckoutModal() {
       closeCart();
       document.getElementById('checkout-modal').classList.add('active');
-      togglePaymentFields();
     }
 
     function closeCheckoutModal() {
@@ -1302,77 +1332,68 @@
     function sendWhatsAppOrder() {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
-      const method = document.getElementById('payment-method').value;
+      const paymentMethod = document.getElementById('payment-method').value;
       const cashAmount = document.getElementById('cash-amount').value.trim();
 
-      if (!name || !address) {
-        alert('Por favor ingresa tu nombre y tu dirección de entrega.');
+      if (!name) {
+        showToast('Por favor ingresa tu nombre completo');
+        return;
+      }
+      if (!address) {
+        showToast('Por favor ingresa tu dirección de entrega');
         return;
       }
 
-      if (method === 'efectivo' && !cashAmount) {
-        alert('Por favor indica de cuánto es el billete con el que vas a pagar para calcular tu cambio.');
-        return;
-      }
-
-      const items = Object.keys(cart);
-      if (items.length === 0) {
-        alert('Tu carrito está vacío');
-        return;
-      }
-
-      let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
-      message += `👤 *Cliente:* ${name}\n`;
-      message += `📍 *Dirección:* ${address}\n\n`;
+      let subtotal = 0;
+      let orderText = `* NUEVO PEDIDO - CAFETERÍA LA DISTINGANCIA *\n\n`;
+      orderText += `👤 *Cliente:* ${name}\n`;
+      orderText += `📍 *Dirección:* ${address}\n`;
+      orderText += `💳 *Método de pago:* ${paymentMethod.toUpperCase()}\n`;
       
-      if (method === 'efectivo') {
-        message += `💳 *Método de Pago:* EFECTIVO\n`;
-        message += `💵 *Paga con billete de:* RD$ ${cashAmount}\n\n`;
-      } else {
-        message += `💳 *Método de Pago:* TRANSFERENCIA BANCARIA\n`;
-        message += `🏷️ *Concepto en banco:* ${name}\n\n`;
+      if (paymentMethod === 'efectivo' && cashAmount) {
+        orderText += `💵 *Paga con:* RD$ ${cashAmount}\n`;
+      } else if (paymentMethod === 'transferencia') {
+        orderText += `🏦 *Nota:* Pago por transferencia (Titular validado)\n`;
       }
 
-      message += `🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      orderText += `\n*DETALLE DEL PEDIDO:*\n`;
 
-      let subtotalSum = 0;
-
-      items.forEach((cartKey, index) => {
-        const item = cart[cartKey];
-        const itemSubtotal = item.price * item.quantity;
-        const garnishText = item.garnish !== 'Sin guarnición' ? ` (Guarnición: ${item.garnish})` : '';
-        message += `${index + 1}. *${item.productName}*${garnishText}\n   Precio: RD$ ${item.price} | Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
-        subtotalSum += itemSubtotal;
+      cart.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        orderText += `• ${item.qty}x ${item.name}`;
+        if (item.garnish) orderText += ` (${item.garnish})`;
+        orderText += ` - RD$ ${itemTotal}\n`;
       });
 
-      const grandTotal = subtotalSum + DELIVERY_FEE;
+      const delivery = 50;
+      const totalGeneral = subtotal + delivery;
 
-      message += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      message += `📦 Subtotal: RD$ ${subtotalSum.toLocaleString('es-DO')}\n`;
-      message += `🚚 Delivery: RD$ ${DELIVERY_FEE.toLocaleString('es-DO')}\n`;
-      message += `💰 *TOTAL GENERAL: RD$ ${grandTotal.toLocaleString('es-DO')}*\n`;
-      message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
-      message += `¡Hola! Acabo de realizar este pedido. Por favor confirmarme recepción y tiempo estimado de entrega.`;
+      orderText += `\n📦 Subtotal: RD$ ${subtotal}`;
+      orderText += `\n🚚 Delivery: RD$ ${delivery}`;
+      orderText += `\n💰 *TOTAL A PAGAR: RD$ ${totalGeneral}*`;
 
-      const phone = "18293734628";
-      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-      window.open(url, '_blank');
-      closeCheckoutModal();
+      const whatsappNumber = "18090000000"; 
+      const encodedMessage = encodeURIComponent(orderText);
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      renderProducts();
+    function showToast(message) {
+      const existing = document.querySelector('.toast-notification');
+      if (existing) existing.remove();
 
-      document.querySelectorAll('.filter-bar .chip').forEach(chip => {
-        chip.addEventListener('click', function() {
-          document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
-          this.classList.add('active');
-          currentFilter = this.getAttribute('data-filter');
-          renderProducts();
-        });
-      });
-    });
+      const toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      toast.innerText = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
   </script>
 </body>
 </html>

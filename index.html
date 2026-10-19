@@ -1025,7 +1025,7 @@
       { name: 'Queso Frito', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: false },
       { name: 'Pechuga Frita', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true, isVariablePicadera: true },
-      { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://i.imgur.com/Eln0fEm.jpeg', hasGarnish: false },
+      { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Eln0fEm.jpeg', hasGarnish: false },
       { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false },
 
       // Empanadas
@@ -1050,7 +1050,7 @@
       { name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Limón', hasGarnish: false },
 
       // Otros
-      { name: 'Burrito de pollo con papa y queso fundido', price: 250, category: 'sandwich', image: 'https://i.imgur.com/rJmWvAL.jpeg', hasGarnish: false }
+      { name: 'Burrito de pollo con papa y queso fundido', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=rJmWvAL.jpeg', hasGarnish: false }
     ];
 
     let cart = {};
@@ -1247,7 +1247,6 @@
       overlay.classList.remove('active');
     }
 
-    // Modal de Checkout / Datos del cliente
     function openCheckoutModal() {
       closeCart();
       document.getElementById('checkout-modal').classList.add('active');
@@ -1284,23 +1283,50 @@
       if (method === 'transferencia') {
         if (fileInput.files && fileInput.files.length > 0) {
           receiptUploaded = true;
-          statusText.innerHTML = '✅ Comprobante adjuntado correctamente';
+          statusText.innerHTML = '✅ Comprobante listo para subir';
           statusText.style.color = 'var(--green)';
           sendBtn.disabled = false;
         } else {
           receiptUploaded = false;
-          statusText.innerHTML = '⚠️ Debes subir el comprobante para poder confirmar';
+          statusText.innerHTML = '⚠️ Debes subir el comprobante para poder continuar';
           statusText.style.color = '#ff3b30';
           sendBtn.disabled = true;
         }
       }
     }
 
-    function sendWhatsAppOrder() {
+    // Subir imagen a Imgur y retornar la URL directa
+    async function uploadReceiptToImgur(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await fetch('https://api.imgur.com/3/image', {
+          method: 'POST',
+          headers: {
+            Authorization: 'Client-ID cda333b2a26c483' // Client ID público para la API de Imgur
+          },
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          return data.data.link;
+        } else {
+          throw new Error('Error al subir la imagen');
+        }
+      } catch (err) {
+        console.error('Error subiendo imagen:', err);
+        return null;
+      }
+    }
+
+    async function sendWhatsAppOrder() {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
       const method = document.getElementById('payment-method').value;
       const cashAmount = document.getElementById('cash-amount').value.trim();
+      const sendBtn = document.getElementById('whatsapp-send-btn');
 
       if (!name || !address) {
         alert('Por favor ingresa tu nombre y tu dirección de entrega.');
@@ -1318,10 +1344,41 @@
         return;
       }
 
+      let receiptUrl = '';
+
+      if (method === 'transferencia') {
+        const fileInput = document.getElementById('transfer-receipt');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          alert('Por favor selecciona tu comprobante de pago.');
+          return;
+        }
+
+        // Bloquear botón mientras sube
+        sendBtn.disabled = true;
+        sendBtn.textContent = '⏳ Subiendo comprobante...';
+
+        receiptUrl = await uploadReceiptToImgur(fileInput.files[0]);
+
+        if (!receiptUrl) {
+          alert('Hubo un error subiendo el comprobante. Por favor intenta de nuevo.');
+          sendBtn.disabled = false;
+          sendBtn.textContent = '✅ Enviar Pedido a WhatsApp';
+          return;
+        }
+      }
+
       let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
       message += `👤 *Cliente:* ${name}\n`;
       message += `📍 *Dirección:* ${address}\n\n`;
-      message += `💳 *Método de Pago:* ${method.toUpperCase()}${method === 'efectivo' ? ` (Paga con: RD$ ${cashAmount})` : ' (Pago por Banreservas con comprobante adjuntado)'}\n\n`;
+      
+      if (method === 'efectivo') {
+        message += `💳 *Método de Pago:* EFECTIVO\n`;
+        message += `💵 *Paga con billete de:* RD$ ${cashAmount}\n\n`;
+      } else {
+        message += `💳 *Método de Pago:* TRANSFERENCIA BANCARIA\n`;
+        message += `📸 *Comprobante de Pago:* ${receiptUrl}\n\n`;
+      }
+
       message += `🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
       let subtotalSum = 0;
@@ -1341,11 +1398,14 @@
       message += `🚚 Delivery: RD$ ${DELIVERY_FEE.toLocaleString('es-DO')}\n`;
       message += `💰 *TOTAL GENERAL: RD$ ${grandTotal.toLocaleString('es-DO')}*\n`;
       message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
-      message += `¡Hola! Acabo de hacer este pedido por la web. Por favor confirmar recepción y tiempo estimado de entrega.`;
+      message += `¡Hola! Acabo de realizar este pedido. Por favor confirmarme recepción y tiempo estimado de entrega.`;
 
-      const phone = "18293734628"; // Reemplaza con tu número real de WhatsApp
+      const phone = "18090000000"; // Reemplaza con tu número real de WhatsApp
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
       
+      sendBtn.disabled = false;
+      sendBtn.textContent = '✅ Enviar Pedido a WhatsApp';
+
       window.open(url, '_blank');
       closeCheckoutModal();
     }

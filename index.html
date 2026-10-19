@@ -332,13 +332,13 @@
       text-align: center;
     }
 
-    /* Estilos para precio flexible */
+    /* Estilos para precio flexible dentro del modal / tarjeta */
     .flexible-price-box {
       background: #f8f9fa;
       border: 2px dashed rgba(255, 59, 48, 0.4);
       border-radius: 12px;
       padding: 10px;
-      margin-bottom: 12px;
+      margin-top: 12px;
       text-align: center;
     }
     .flexible-price-box label {
@@ -355,11 +355,11 @@
       gap: 6px;
     }
     .price-input-group input {
-      width: 85px;
+      width: 90px;
       padding: 6px;
       text-align: center;
       font-weight: 800;
-      font-size: 0.95rem;
+      font-size: 1rem;
       border: 2px solid var(--muted);
       border-radius: 8px;
       outline: none;
@@ -372,8 +372,8 @@
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       border: none;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
       font-weight: 800;
       cursor: pointer;
@@ -401,7 +401,7 @@
       box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
-    /* Modal de Guarnición */
+    /* Modal Combinado de Guarnición + Precio */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -433,32 +433,32 @@
     }
 
     .modal-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: var(--dark);
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       text-align: center;
     }
 
     .modal-subtitle {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--muted);
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
     .garnish-options {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .garnish-option {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px;
+      padding: 12px;
       border: 2px solid rgba(102, 126, 234, 0.2);
       border-radius: 12px;
       cursor: pointer;
@@ -473,8 +473,8 @@
     .garnish-option input[type="radio"] {
       cursor: pointer;
       accent-color: #ff3b30;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
 
     .garnish-option label {
@@ -482,11 +482,13 @@
       cursor: pointer;
       font-weight: 600;
       color: var(--dark);
+      font-size: 0.95rem;
     }
 
     .modal-buttons {
       display: flex;
       gap: 12px;
+      margin-top: 18px;
     }
 
     .modal-btn {
@@ -505,10 +507,19 @@
       color: var(--dark);
     }
 
+    .modal-btn.cancel:hover {
+      background: #dee2e6;
+    }
+
     .modal-btn.confirm {
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
+    }
+
+    .modal-btn.confirm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
     .toast-notification {
@@ -811,27 +822,46 @@
     </div>
   </main>
 
-  <!-- Modal de Guarnición -->
+  <!-- Modal Combinado (Guarnición + Monto de Picadera) -->
   <div class="modal-overlay" id="garnish-modal">
     <div class="modal-content">
-      <div class="modal-title" id="modal-product-name">Elige tu guarnición</div>
-      <div class="modal-subtitle">🍟 Selecciona la guarnición que deseas:</div>
+      <div class="modal-title" id="modal-product-name">Personaliza tu Picadera</div>
       
-      <div class="garnish-options">
-        <div class="garnish-option">
-          <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa" checked>
-          <label for="garnish-papa">Papa Frita</label>
+      <!-- Paso 1: Guarnición -->
+      <div id="modal-step-1">
+        <div class="modal-subtitle">🍟 Selecciona la guarnición que deseas:</div>
+        <div class="garnish-options">
+          <div class="garnish-option">
+            <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa" checked>
+            <label for="garnish-papa">Papa Frita</label>
+          </div>
+          <div class="garnish-option">
+            <input type="radio" id="garnish-tostones" name="garnish-choice" value="Tostones">
+            <label for="garnish-tostones">Tostones</label>
+          </div>
         </div>
-        <div class="garnish-option">
-          <input type="radio" id="garnish-tostones" name="garnish-choice" value="Tostones">
-          <label for="garnish-tostones">Tostones</label>
+        <div class="modal-buttons">
+          <button class="modal-btn cancel" onclick="closeGarnishModal()">Cancelar</button>
+          <button class="modal-btn confirm" onclick="goToModalStep2()">Siguiente ➔</button>
         </div>
       </div>
 
-      <div class="modal-buttons">
-        <button class="modal-btn cancel" onclick="closeGarnishModal()">Cancelar</button>
-        <button class="modal-btn confirm" onclick="confirmGarnishSelection()">✅ Confirmar</button>
+      <!-- Paso 2: Monto de la Picadera (Desde 150 en adelante, de 50 en 50) -->
+      <div id="modal-step-2" style="display: none;">
+        <div class="modal-subtitle">💵 ¿De cuánto deseas tu picadera? (Mín. 150, escala de 50):</div>
+        <div class="flexible-price-box">
+          <div class="price-input-group">
+            <button class="price-step-btn" onclick="adjustModalPrice(-50)">−</button>
+            <input type="number" id="modal-price-input" value="150" min="150" step="50">
+            <button class="price-step-btn" onclick="adjustModalPrice(50)">+</button>
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn cancel" onclick="backToModalStep1()">⬅️ Atrás</button>
+          <button class="modal-btn confirm" onclick="confirmFinalPicadera()">✅ Agregar</button>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -872,8 +902,6 @@
   </div>
 
   <script>
-    // Lista de productos. 
-    // Para servicios con precio flexible (desde RD$ 150 en adelante, aumentos de 50 en 50), usa: isFlexible: true, minPrice: 150
     const products = [
       // Sandwiches
       { name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false },
@@ -889,25 +917,22 @@
       { name: 'Huevo y Salami', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: false },
       { name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
 
-      // Ejemplo de servicio con precio flexible (Descomenta o agrega los tuyos aquí)
-      // { name: 'Servicio Personalizado', minPrice: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Servicio', isFlexible: true },
-
       // Yaroa
       { name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña', hasGarnish: false },
       { name: 'Yaroa Grandes', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande', hasGarnish: false },
       { name: 'Yaroa mediana', price: 275, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta', hasGarnish: false },
 
-      // Picaderas - CON GUARNICIÓN
-      { name: 'Salami Picadera', price: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true },
-      { name: 'Longaniza', price: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true },
-      { name: 'Chuleta', price: 320, category: 'picaderas', image: 'https://i.imgur.com/lG2kCaw.jpeg', hasGarnish: true },
-      { name: 'Costillas', price: 380, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true },
-      { name: 'Jamón Picadera', price: 260, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón', hasGarnish: true },
-      { name: 'Queso Frito', price: 240, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true },
+      // Picaderas - CON GUARNICIÓN Y PRECIO VARIABLE
+      { name: 'Salami Picadera', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Longaniza', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Chuleta', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/lG2kCaw.jpeg', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Costillas', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Jamón Picadera', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Queso Frito', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: false },
-      { name: 'Pechuga Frita', price: 350, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true },
+      { name: 'Pechuga Frita', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true, isVariablePicadera: true },
       { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://i.imgur.com/Eln0fEm.jpeg', hasGarnish: false },
-      { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://i.imgur.com/EzJOpSP.jpeg', hasGarnish: false },
+      { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=EzJOpSP', hasGarnish: false },
 
       // Empanadas
       { name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false },
@@ -937,7 +962,7 @@
     let cart = {};
     let currentFilter = 'all';
     let pendingProduct = null;
-    const DELIVERY_FEE = 50; // Costo fijo de delivery
+    const DELIVERY_FEE = 50;
 
     function renderProducts() {
       const grid = document.getElementById('products-grid');
@@ -949,27 +974,11 @@
         const card = document.createElement('div');
         card.className = 'product-card';
         
-        let priceSection = '';
-        const safeNameId = product.name.replace(/[^a-zA-Z0-9]/g, '');
-
-        if (product.isFlexible) {
-          priceSection = `
-            <div class="product-price" style="background: var(--dark); margin-bottom: 8px; font-size: 0.85rem;">
-              De RD$ ${product.minPrice.toLocaleString('es-DO')} en adelante
-            </div>
-            <div class="flexible-price-box">
-              <label>Elige tu monto (Mín. 150, escala de 50):</label>
-              <div class="price-input-group">
-                <button class="price-step-btn" onclick="adjustPrice('${safeNameId}', -50, ${product.minPrice})">−</button>
-                <input type="number" id="price-input-${safeNameId}" value="${product.minPrice}" min="${product.minPrice}" step="50">
-                <button class="price-step-btn" onclick="adjustPrice('${safeNameId}', 50, ${product.minPrice})">+</button>
-              </div>
-            </div>
-          `;
+        let priceDisplay = '';
+        if (product.isVariablePicadera) {
+          priceDisplay = `<div class="product-price">Desde RD$ ${product.minPrice.toLocaleString('es-DO')}</div>`;
         } else {
-          priceSection = `
-            <div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>
-          `;
+          priceDisplay = `<div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>`;
         }
 
         const baseVal = product.price || product.minPrice;
@@ -977,8 +986,8 @@
           <img src="${product.image}" alt="${product.name}" class="product-image">
           <div class="product-info">
             <div class="product-name">${product.name}</div>
-            ${priceSection}
-            <button class="add-to-cart-btn" onclick="handleAddToCartClick('${product.name}', ${baseVal}, ${product.hasGarnish || false}, ${product.isFlexible || false}, '${safeNameId}')">
+            ${priceDisplay}
+            <button class="add-to-cart-btn" onclick="handleAddToCartClick('${product.name}', ${baseVal}, ${product.hasGarnish || false}, ${product.isVariablePicadera || false})">
               ➕ Agregar
             </button>
           </div>
@@ -987,47 +996,57 @@
       });
     }
 
-    function adjustPrice(safeNameId, amount, minLimit) {
-      const inputElement = document.getElementById(`price-input-${safeNameId}`);
-      if (!inputElement) return;
-
-      let currentVal = parseInt(inputElement.value) || minLimit;
-      let newVal = currentVal + amount;
-
-      if (newVal < minLimit) {
-        newVal = minLimit;
-      }
-
-      inputElement.value = newVal;
-    }
-
-    function handleAddToCartClick(productName, basePrice, hasGarnish, isFlexible, safeNameId) {
-      let finalPrice = basePrice;
-
-      if (isFlexible) {
-        const inputElement = document.getElementById(`price-input-${safeNameId}`);
-        if (inputElement) {
-          let parsedVal = parseInt(inputElement.value);
-          if (isNaN(parsedVal) || parsedVal < 150) {
-            parsedVal = 150;
-            inputElement.value = 150;
-          }
-          finalPrice = parsedVal;
-        }
-      }
+    function handleAddToCartClick(productName, basePrice, hasGarnish, isVariablePicadera) {
+      pendingProduct = { name: productName, basePrice: basePrice, isVariablePicadera: isVariablePicadera };
 
       if (hasGarnish) {
-        pendingProduct = { name: productName, price: finalPrice };
-        showGarnishModal(productName);
+        // Mostrar modal paso 1 (Guarnición)
+        document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
+        document.getElementById('modal-step-1').style.display = 'block';
+        document.getElementById('modal-step-2').style.display = 'none';
+        document.getElementById('garnish-modal').classList.add('active');
+      } else if (isVariablePicadera) {
+        // Ir directo a paso 2 si no tuviera guarnición (por si acaso)
+        document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
+        document.getElementById('modal-step-1').style.display = 'none';
+        document.getElementById('modal-step-2').style.display = 'block';
+        document.getElementById('modal-price-input').value = basePrice;
+        document.getElementById('garnish-modal').classList.add('active');
       } else {
-        addToCart(productName, finalPrice, 'Sin guarnición');
+        addToCart(productName, basePrice, 'Sin guarnición');
         showToast(productName);
       }
     }
 
-    function showGarnishModal(productName) {
-      document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
-      document.getElementById('garnish-modal').classList.add('active');
+    function goToModalStep2() {
+      // Avanzar al paso del precio después de elegir la guarnición
+      document.getElementById('modal-step-1').style.display = 'none';
+      document.getElementById('modal-step-2').style.display = 'block';
+      document.getElementById('modal-price-input').value = 150; // Inicia en 150 por defecto
+    }
+
+    function backToModalStep1() {
+      document.getElementById('modal-step-2').style.display = 'none';
+      document.getElementById('modal-step-1').style.display = 'block';
+    }
+
+    function adjustModalPrice(amount) {
+      const inputEl = document.getElementById('modal-price-input');
+      let currentVal = parseInt(inputEl.value) || 150;
+      let newVal = currentVal + amount;
+      if (newVal < 150) newVal = 150;
+      inputEl.value = newVal;
+    }
+
+    function confirmFinalPicadera() {
+      if (!pendingProduct) return;
+
+      const selectedGarnish = document.querySelector('input[name="garnish-choice"]:checked').value;
+      const finalPrice = parseInt(document.getElementById('modal-price-input').value) || 150;
+
+      addToCart(pendingProduct.name, finalPrice, selectedGarnish);
+      showToast(pendingProduct.name);
+      closeGarnishModal();
     }
 
     function closeGarnishModal() {
@@ -1035,16 +1054,8 @@
       pendingProduct = null;
     }
 
-    function confirmGarnishSelection() {
-      if (!pendingProduct) return;
-      const selectedGarnish = document.querySelector('input[name="garnish-choice"]:checked').value;
-      addToCart(pendingProduct.name, pendingProduct.price, selectedGarnish);
-      showToast(pendingProduct.name);
-      closeGarnishModal();
-    }
-
     function addToCart(productName, price, garnish) {
-      const cartKey = garnish !== 'Sin guarnición' ? `${productName} - ${garnish}` : productName;
+      const cartKey = garnish !== 'Sin guarnición' ? `${productName} - Guarnición: ${garnish} (RD$ ${price})` : productName;
       
       if (!cart[cartKey]) {
         cart[cartKey] = { price, quantity: 0, productName, garnish };
@@ -1164,7 +1175,7 @@
         const item = cart[cartKey];
         const itemSubtotal = item.price * item.quantity;
         const garnishText = item.garnish !== 'Sin guarnición' ? ` (Guarnición: ${item.garnish})` : '';
-        message += `${index + 1}. *${item.productName}*${garnishText}\n   Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
+        message += `${index + 1}. *${item.productName}*${garnishText}\n   Monto/Precio: RD$ ${item.price} | Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
         subtotalSum += itemSubtotal;
       });
 
@@ -1172,7 +1183,7 @@
 
       message += `━━━━━━━━━━━━━━━━━━━━━\n`;
       message += `📦 Subtotal: RD$ ${subtotalSum.toLocaleString('es-DO')}\n`;
-      message += `🚚 Delivery: RD$ ${DELIVERY_FEE.toLocaleString('es-DO')}\n`;
+      message += `🚚 Delivery: RD$ ${DELIVERY_FIE || 50}\n`;
       message += `💰 *TOTAL GENERAL: RD$ ${grandTotal.toLocaleString('es-DO')}*\n`;
       message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
       message += `¡Hola! Me gustaría confirmar mi pedido. ¿Me pueden confirmar la disponibilidad y el tiempo de entrega, por favor?`;

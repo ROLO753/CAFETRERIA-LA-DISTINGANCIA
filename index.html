@@ -200,11 +200,6 @@
       transform: translateY(-2px);
     }
 
-    .cta-btn.primary {
-      background: linear-gradient(135deg, #ffd60a, #ffb700);
-      color: #000;
-    }
-
     .cta-btn.secondary {
       background: rgba(255,255,255,0.15);
       color: white;
@@ -283,7 +278,7 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 16px;
     }
 
@@ -334,6 +329,58 @@
       font-weight: 800;
       font-size: 0.95rem;
       margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* Estilos para precio flexible */
+    .flexible-price-box {
+      background: #f8f9fa;
+      border: 2px dashed rgba(255, 59, 48, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .flexible-price-box label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .price-input-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .price-input-group input {
+      width: 85px;
+      padding: 6px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: 2px solid var(--muted);
+      border-radius: 8px;
+      outline: none;
+      color: var(--dark);
+    }
+    .price-input-group input:focus {
+      border-color: #ff3b30;
+    }
+    .price-step-btn {
+      background: linear-gradient(135deg, #ff3b30, #d92817);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .price-step-btn:hover {
+      transform: scale(1.05);
     }
 
     .add-to-cart-btn {
@@ -352,10 +399,6 @@
     .add-to-cart-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
-    }
-
-    .add-to-cart-btn:active {
-      transform: scale(0.98);
     }
 
     /* Modal de Guarnición */
@@ -385,14 +428,8 @@
     }
 
     @keyframes slideUp {
-      from {
-        transform: translateY(30px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-title {
@@ -447,10 +484,6 @@
       color: var(--dark);
     }
 
-    .garnish-option input[type="radio"]:checked + label {
-      color: #ff3b30;
-    }
-
     .modal-buttons {
       display: flex;
       gap: 12px;
@@ -472,19 +505,10 @@
       color: var(--dark);
     }
 
-    .modal-btn.cancel:hover {
-      background: #dee2e6;
-    }
-
     .modal-btn.confirm {
       background: linear-gradient(135deg, #ff3b30, #d92817);
       color: white;
       box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
-    }
-
-    .modal-btn.confirm:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
     .toast-notification {
@@ -502,25 +526,13 @@
     }
 
     @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     @keyframes slideOut {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-      to {
-        transform: translateX(400px);
-        opacity: 0;
-      }
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
     }
 
     .toast-notification.hide {
@@ -723,39 +735,12 @@
         grid-template-columns: 1fr;
         text-align: center;
       }
-
       .cart-panel {
         width: 100%;
         right: -100%;
       }
-
       .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-    }
-
-    @media (max-width: 520px) {
-      .products-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .cart-panel {
-        width: 100%;
-        right: -100%;
-      }
-
-      .menu-section {
-        padding-bottom: 20px;
-      }
-
-      .toast-notification {
-        bottom: 10px;
-        right: 10px;
-        left: 10px;
-      }
-
-      .modal-content {
-        padding: 24px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       }
     }
   </style>
@@ -870,6 +855,9 @@
   </div>
 
   <script>
+    // Lista de productos. 
+    // Para hacer un producto con precio flexible (desde 150 en adelante, incrementos de 50), 
+    // añade: isFlexible: true, minPrice: 150
     const products = [
       // Sandwiches
       { name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false },
@@ -884,6 +872,9 @@
       { name: 'Huevo y Queso', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso', hasGarnish: false },
       { name: 'Huevo y Salami', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: false },
       { name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
+
+      // Ejemplo de servicio con precio flexible (descomenta o ajusta según necesites)
+      // { name: 'Servicio Especial a la Medida', minPrice: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Especial', isFlexible: true },
 
       // Yaroa
       { name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña', hasGarnish: false },
@@ -901,7 +892,6 @@
       { name: 'Pechuga Frita', price: 350, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true },
       { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://i.imgur.com/Eln0fEm.jpeg', hasGarnish: false },
       { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://i.imgur.com/EzJOpSP.jpeg', hasGarnish: false },
-      
 
       // Empanadas
       { name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false },
@@ -930,24 +920,48 @@
 
     let cart = {};
     let currentFilter = 'all';
-    let pendingProduct = null; // Almacena el producto en espera de confirmación de guarnición
+    let pendingProduct = null;
 
     function renderProducts() {
       const grid = document.getElementById('products-grid');
       grid.innerHTML = '';
 
-      products.forEach((product, index) => {
+      products.forEach((product) => {
         if (currentFilter !== 'all' && product.category !== currentFilter) return;
 
         const card = document.createElement('div');
         card.className = 'product-card';
         
+        let priceSection = '';
+        const safeNameId = product.name.replace(/[^a-zA-Z0-9]/g, '');
+
+        if (product.isFlexible) {
+          priceSection = `
+            <div class="product-price" style="background: var(--dark); margin-bottom: 8px; font-size: 0.85rem;">
+              De RD$ ${product.minPrice.toLocaleString('es-DO')} en adelante
+            </div>
+            <div class="flexible-price-box">
+              <label>Elige tu monto (Mín. 150, escala de 50):</label>
+              <div class="price-input-group">
+                <button class="price-step-btn" onclick="adjustPrice('${safeNameId}', -50, ${product.minPrice})">−</button>
+                <input type="number" id="price-input-${safeNameId}" value="${product.minPrice}" min="${product.minPrice}" step="50">
+                <button class="price-step-btn" onclick="adjustPrice('${safeNameId}', 50, ${product.minPrice})">+</button>
+              </div>
+            </div>
+          `;
+        } else {
+          priceSection = `
+            <div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>
+          `;
+        }
+
+        const baseVal = product.price || product.minPrice;
         card.innerHTML = `
           <img src="${product.image}" alt="${product.name}" class="product-image">
           <div class="product-info">
             <div class="product-name">${product.name}</div>
-            <div class="product-price">RD$ ${product.price.toLocaleString('es-DO')}</div>
-            <button class="add-to-cart-btn" onclick="handleAddToCart('${product.name}', ${product.price}, ${product.hasGarnish})">
+            ${priceSection}
+            <button class="add-to-cart-btn" onclick="handleAddToCartClick('${product.name}', ${baseVal}, ${product.hasGarnish || false}, ${product.isFlexible || false}, '${safeNameId}')">
               ➕ Agregar
             </button>
           </div>
@@ -956,14 +970,40 @@
       });
     }
 
-    function handleAddToCart(productName, price, hasGarnish) {
+    function adjustPrice(safeNameId, amount, minLimit) {
+      const inputElement = document.getElementById(`price-input-${safeNameId}`);
+      if (!inputElement) return;
+
+      let currentVal = parseInt(inputElement.value) || minLimit;
+      let newVal = currentVal + amount;
+
+      if (newVal < minLimit) {
+        newVal = minLimit;
+      }
+
+      inputElement.value = newVal;
+    }
+
+    function handleAddToCartClick(productName, basePrice, hasGarnish, isFlexible, safeNameId) {
+      let finalPrice = basePrice;
+
+      if (isFlexible) {
+        const inputElement = document.getElementById(`price-input-${safeNameId}`);
+        if (inputElement) {
+          let parsedVal = parseInt(inputElement.value);
+          if (isNaN(parsedVal) || parsedVal < 150) {
+            parsedVal = 150;
+            inputElement.value = 150;
+          }
+          finalPrice = parsedVal;
+        }
+      }
+
       if (hasGarnish) {
-        // Mostrar modal para seleccionar guarnición
-        pendingProduct = { name: productName, price: price };
+        pendingProduct = { name: productName, price: finalPrice };
         showGarnishModal(productName);
       } else {
-        // Agregar directamente sin guarnición
-        addToCart(productName, price, 'Sin guarnición');
+        addToCart(productName, finalPrice, 'Sin guarnición');
         showToast(productName);
       }
     }
@@ -980,7 +1020,6 @@
 
     function confirmGarnishSelection() {
       if (!pendingProduct) return;
-      
       const selectedGarnish = document.querySelector('input[name="garnish-choice"]:checked').value;
       addToCart(pendingProduct.name, pendingProduct.price, selectedGarnish);
       showToast(pendingProduct.name);
@@ -1057,7 +1096,7 @@
               <div class="cart-item-qty">
                 <button class="qty-btn" onclick="removeFromCart('${cartKey}')">−</button>
                 <div class="qty-display">${item.quantity}</div>
-                <button class="qty-btn" onclick="addToCartFromCart('${cartKey}', ${item.price})">+</button>
+                <button class="qty-btn" onclick="addToCartFromCart('${cartKey}')">+</button>
               </div>
             </div>
           `;
@@ -1071,7 +1110,7 @@
       cartTotalSpan.textContent = `RD$ ${total.toLocaleString('es-DO')}`;
     }
 
-    function addToCartFromCart(cartKey, price) {
+    function addToCartFromCart(cartKey) {
       const item = cart[cartKey];
       item.quantity++;
       updateCart();
@@ -1098,80 +1137,40 @@
         return;
       }
 
-      let message = `
- ✨✨✨✨✨✨✨✨✨✨✨✨✨✨
- ☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕
- ✨✨✨✨✨✨✨✨✨✨✨✨✨✨
-
- 🍽️ *MIS PRODUCTOS:*
- ━━━━━━━━━━━━━━━━━━━━━
-
- `;
+      let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
       let total = 0;
 
       items.forEach((cartKey, index) => {
         const item = cart[cartKey];
         const subtotal = item.price * item.quantity;
+        const garnishText = item.garnish !== 'Sin guarnición' ? ` (Guarnición: ${item.garnish})` : '';
+        message += `${index + 1}. *${item.productName}*${garnishText}\n   Cantidad: ${item.quantity} | Subtotal: RD$ ${subtotal.toLocaleString('es-DO')}\n\n`;
         total += subtotal;
-        const emoji = ['🥪', '🍟', '🍗', '🥟', '🍔', '🥤', '🍹'][index % 7];
-        message += `${emoji} *${item.productName}*\n`;
-        if (item.garnish !== 'Sin guarnición') {
-          message += `   🍟 Guarnición: ${item.garnish}\n`;
-        }
-        message += `   📦 Cant: ${item.quantity}\n`;
-        message += `   💵 Precio: RD$ ${item.price.toLocaleString('es-DO')} c/u\n`;
-        message += `   💰 Subtotal: RD$ ${subtotal.toLocaleString('es-DO')}\n\n`;
       });
 
-      message += `━━━━━━━━━━━━━━━━━━━━━
- 💳 *TOTAL A PAGAR:*
- 🎯 RD$ ${total.toLocaleString('es-DO')}
- ━━━━━━━━━━━━━━━━━━━━━
+      message += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `💰 *TOTAL A PAGAR: RD$ ${total.toLocaleString('es-DO')}*\n`;
+      message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
+      message += `¡Hola! Me gustaría confirmar mi pedido. ¿Me pueden confirmar la disponibilidad y el tiempo de entrega, por favor?`;
 
- 📍 *Detalles del pedido:*
- • Por favor confirmar disponibilidad
- • Indicar horario de entrega preferido
- • Cualquier comentario adicional
-
- ⏰ *Horario de atención:*
- Abierto todos los días
-
- 📞 *Gracias por tu compra!* 🙏
- Nos vemos pronto en Cafetería La Distingancia
-
- ✨✨✨✨✨✨✨✨✨✨✨✨✨✨`;
-
-      const encodedMessage = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/18299069055?text=${encodedMessage}`;
-      window.open(whatsappUrl, '_blank');
-
-      cart = {};
-      updateCart();
-      closeCart();
+      const phone = "18090000000"; // Reemplaza con el número de WhatsApp real de la cafetería
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      
+      window.open(url, '_blank');
     }
 
-    // Filtros
-    const filterButtons = document.querySelectorAll('.chip');
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const filter = button.dataset.filter;
-        currentFilter = filter;
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        renderProducts();
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+
+      document.querySelectorAll('.filter-bar .chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+          document.querySelectorAll('.filter-bar .chip').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.getAttribute('data-filter');
+          renderProducts();
+        });
       });
     });
-
-    // Cerrar modal con ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeGarnishModal();
-      }
-    });
-
-    // Inicializar
-    renderProducts();
   </script>
-
 </body>
 </html>

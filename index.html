@@ -681,11 +681,20 @@
       background: linear-gradient(135deg, #f5f1ff, #ede9ff);
     }
 
+    .cart-summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
     .cart-total {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 800;
       color: var(--dark);
       margin-bottom: 12px;
@@ -844,8 +853,16 @@
     </div>
 
     <div class="cart-footer">
+      <div class="cart-summary-line">
+        <span>Subtotal productos:</span>
+        <span id="cart-subtotal">RD$ 0</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Delivery:</span>
+        <span>RD$ 50</span>
+      </div>
       <div class="cart-total">
-        <span>💰 Total:</span>
+        <span>💰 Total General:</span>
         <span id="cart-total">RD$ 0</span>
       </div>
       <button class="checkout-btn" id="checkout-btn" onclick="checkout()" disabled>
@@ -856,8 +873,7 @@
 
   <script>
     // Lista de productos. 
-    // Para hacer un producto con precio flexible (desde 150 en adelante, incrementos de 50), 
-    // añade: isFlexible: true, minPrice: 150
+    // Para servicios con precio flexible (desde RD$ 150 en adelante, aumentos de 50 en 50), usa: isFlexible: true, minPrice: 150
     const products = [
       // Sandwiches
       { name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false },
@@ -873,8 +889,8 @@
       { name: 'Huevo y Salami', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: false },
       { name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
 
-      // Ejemplo de servicio con precio flexible (descomenta o ajusta según necesites)
-      // { name: 'Servicio Especial a la Medida', minPrice: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Especial', isFlexible: true },
+      // Ejemplo de servicio con precio flexible (Descomenta o agrega los tuyos aquí)
+      // { name: 'Servicio Personalizado', minPrice: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Servicio', isFlexible: true },
 
       // Yaroa
       { name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña', hasGarnish: false },
@@ -921,6 +937,7 @@
     let cart = {};
     let currentFilter = 'all';
     let pendingProduct = null;
+    const DELIVERY_FEE = 50; // Costo fijo de delivery
 
     function renderProducts() {
       const grid = document.getElementById('products-grid');
@@ -1061,12 +1078,13 @@
     function updateCart() {
       const cartItemsDiv = document.getElementById('cart-items');
       const cartCountSpan = document.getElementById('cart-count');
+      const cartSubtotalSpan = document.getElementById('cart-subtotal');
       const cartTotalSpan = document.getElementById('cart-total');
       const checkoutBtn = document.getElementById('checkout-btn');
 
       const items = Object.keys(cart);
       const totalCount = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-      let total = 0;
+      let subtotalSum = 0;
 
       if (items.length === 0) {
         cartItemsDiv.innerHTML = `
@@ -1082,8 +1100,8 @@
         let html = '';
         items.forEach(cartKey => {
           const item = cart[cartKey];
-          const subtotal = item.price * item.quantity;
-          total += subtotal;
+          const itemSubtotal = item.price * item.quantity;
+          subtotalSum += itemSubtotal;
           const garnishInfo = item.garnish !== 'Sin guarnición' ? `<div class="cart-item-garnish">🍟 ${item.garnish}</div>` : '';
           
           html += `
@@ -1107,7 +1125,9 @@
         checkoutBtn.disabled = false;
       }
 
-      cartTotalSpan.textContent = `RD$ ${total.toLocaleString('es-DO')}`;
+      const grandTotal = items.length > 0 ? subtotalSum + DELIVERY_FEE : 0;
+      cartSubtotalSpan.textContent = `RD$ ${subtotalSum.toLocaleString('es-DO')}`;
+      cartTotalSpan.textContent = `RD$ ${grandTotal.toLocaleString('es-DO')}`;
     }
 
     function addToCartFromCart(cartKey) {
@@ -1138,22 +1158,26 @@
       }
 
       let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
-      let total = 0;
+      let subtotalSum = 0;
 
       items.forEach((cartKey, index) => {
         const item = cart[cartKey];
-        const subtotal = item.price * item.quantity;
+        const itemSubtotal = item.price * item.quantity;
         const garnishText = item.garnish !== 'Sin guarnición' ? ` (Guarnición: ${item.garnish})` : '';
-        message += `${index + 1}. *${item.productName}*${garnishText}\n   Cantidad: ${item.quantity} | Subtotal: RD$ ${subtotal.toLocaleString('es-DO')}\n\n`;
-        total += subtotal;
+        message += `${index + 1}. *${item.productName}*${garnishText}\n   Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
+        subtotalSum += itemSubtotal;
       });
 
+      const grandTotal = subtotalSum + DELIVERY_FEE;
+
       message += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      message += `💰 *TOTAL A PAGAR: RD$ ${total.toLocaleString('es-DO')}*\n`;
+      message += `📦 Subtotal: RD$ ${subtotalSum.toLocaleString('es-DO')}\n`;
+      message += `🚚 Delivery: RD$ ${DELIVERY_FEE.toLocaleString('es-DO')}\n`;
+      message += `💰 *TOTAL GENERAL: RD$ ${grandTotal.toLocaleString('es-DO')}*\n`;
       message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
       message += `¡Hola! Me gustaría confirmar mi pedido. ¿Me pueden confirmar la disponibilidad y el tiempo de entrega, por favor?`;
 
-      const phone = "18090000000"; // Reemplaza con el número de WhatsApp real de la cafetería
+      const phone = "18293734628"; // Reemplaza con tu número real de WhatsApp
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
       
       window.open(url, '_blank');

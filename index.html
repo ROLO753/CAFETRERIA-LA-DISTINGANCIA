@@ -837,7 +837,7 @@
     <div class="hero-copy">
       <div class="tag">🥘 Menú del día</div>
       <h1>Delicias que enamoran</h1>
-      <p>Sandwiches, yaroa, picaderas, empanadas y bebidas con sabor dominicano. Agrega lo que te guste y confirma tu pedido.</p>
+      <p>Sandwiches, yaroa, picaderas, empanadas, bebidas frías y más. Agrega lo que te guste y confirma tu pedido.</p>
       <div class="hero-actions">
         <a class="cta-btn secondary" href="#menu">📋 Ver menú</a>
       </div>
@@ -868,6 +868,7 @@
       <button class="chip" data-filter="empanadas">Empanadas</button>
       <button class="chip" data-filter="batidas">Batidas</button>
       <button class="chip" data-filter="jugos">Jugos</button>
+      <button class="chip" data-filter="bebidas">Bebidas</button>
     </div>
 
     <div class="products-grid" id="products-grid">
@@ -999,7 +1000,7 @@
         <span id="cart-total">RD$ 0</span>
       </div>
       <button class="checkout-btn" id="checkout-btn" onclick="openCheckoutModal()" disabled>
-        Proceed to Checkout ➔
+        Proceder al Pago ➔
       </button>
     </div>
   </div>
@@ -1021,7 +1022,7 @@
       { name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
 
       // Yaroa
-      { name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Pequeña', hasGarnish: false },
+      { name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Peque%C3%B1a', hasGarnish: false },
       { name: 'Yaroa Grandes', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande', hasGarnish: false },
       { name: 'Yaroa mediana', price: 275, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta', hasGarnish: false },
 
@@ -1030,16 +1031,16 @@
       { name: 'Longaniza', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true, isVariablePicadera: true },
       { name: 'Chuleta', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta', hasGarnish: true, isVariablePicadera: true },
       { name: 'Costillas', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true, isVariablePicadera: true },
-      { name: 'Jamón Picadera', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Jamón Picadera', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jam%C3%B3n', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: false },
       { name: 'Pechuga Frita', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true, isVariablePicadera: true },
-      { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Eln0fEm.jpeg', hasGarnish: false },
+      { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta+con+Papa', hasGarnish: false },
       { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false },
 
       // Empanadas
       { name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false },
-      { name: 'Empanada Jamón y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Jamón+Queso', hasGarnish: false },
+      { name: 'Empanada Jamón y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Jam%C3%B3n+Queso', hasGarnish: false },
       { name: 'Empanada Queso', price: 110, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Queso', hasGarnish: false },
 
       // Hamburguesas
@@ -1055,11 +1056,30 @@
       { name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola', hasGarnish: false },
       { name: 'Jugo Cereza', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Cereza', hasGarnish: false },
       { name: 'Jugo Chinola Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola+Avena', hasGarnish: false },
-      { name: 'Jugo Limón Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Limón+Avena', hasGarnish: false },
-      { name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Limón', hasGarnish: false },
+      { name: 'Jugo Limón Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n+Avena', hasGarnish: false },
+      { name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n', hasGarnish: false },
+
+      // Bebidas (Refrescos, Cervezas, Agua, Energizantes y Jugos embotellados)
+      { name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml', hasGarnish: false },
+      { name: 'Coca Cola 400ml', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Coca+Cola+400ml', hasGarnish: false },
+      { name: '7Up 400ml', price: 60, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=7Up+400ml', hasGarnish: false },
+      { name: 'Cola Real 1 Litro', price: 80, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+1L', hasGarnish: false },
+      { name: 'Cola Real 2 Litros', price: 120, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+2L', hasGarnish: false },
+      { name: 'Cerveza Presidente', price: 150, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cerveza+Presidente', hasGarnish: false },
+      { name: 'Agua Purificada / Planeta Azul', price: 35, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Agua+Planeta', hasGarnish: false },
+      { name: 'Gatorade G', price: 100, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Gatorade+G', hasGarnish: false },
+      { name: 'Jugo Rica Tapita Mediano', price: 65, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Rica+Tapita', hasGarnish: false },
+      { name: 'Juguito Rica (Pequeño/Sorbete)', price: 30, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Rica', hasGarnish: false },
+      { name: 'Jugo Frutto 400ml', price: 60, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Frutto+400ml', hasGarnish: false },
+      { name: 'Jugo Frutto 1 Litro', price: 110, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Jugo+Frutto+1L', hasGarnish: false },
+      { name: 'Vive 100', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Vive+100', hasGarnish: false },
+      { name: 'Malta Morena Mediana', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Malta+Mediana', hasGarnish: false },
+      { name: 'Malta Morena Pequeña', price: 45, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Malta+Peque%C3%B1a', hasGarnish: false },
+      { name: 'Juguito Yei (con sorbete)', price: 25, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Yei', hasGarnish: false },
+      { name: 'Juguito Santal', price: 45, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Juguito+Santal', hasGarnish: false },
 
       // Otros
-      { name: 'Burrito de pollo con papa y queso fundido', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=rJmWvAL.jpeg', hasGarnish: false }
+      { name: 'Burrito de pollo con papa y queso fundido', price: 250, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Burrito+Pollo', hasGarnish: false }
     ];
 
     let cart = {};
@@ -1334,7 +1354,7 @@
       message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
       message += `¡Hola! Acabo de realizar este pedido. Por favor confirmarme recepción y tiempo estimado de entrega.`;
 
-      const phone = "18090000000"; // Reemplaza con tu número real de WhatsApp
+      const phone = "18293734628";
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
       window.open(url, '_blank');

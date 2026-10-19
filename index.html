@@ -332,7 +332,6 @@
       text-align: center;
     }
 
-    /* Estilos para precio flexible dentro del modal / tarjeta */
     .flexible-price-box {
       background: #f8f9fa;
       border: 2px dashed rgba(255, 59, 48, 0.4);
@@ -401,7 +400,7 @@
       box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
     }
 
-    /* Modal Combinado de Guarnición + Precio */
+    /* Modales */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -421,10 +420,12 @@
       background: white;
       border-radius: 20px;
       padding: 32px;
-      max-width: 400px;
+      max-width: 450px;
       width: 90%;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       animation: slideUp 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     @keyframes slideUp {
@@ -445,6 +446,47 @@
       color: var(--muted);
       text-align: center;
       margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: var(--dark);
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: #ff3b30;
+    }
+
+    .bank-info-box {
+      background: #f5f1ff;
+      border: 2px dashed #667eea;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+
+    .bank-info-box strong {
+      color: #667eea;
+      display: block;
+      margin-bottom: 6px;
     }
 
     .garnish-options {
@@ -822,7 +864,7 @@
     </div>
   </main>
 
-  <!-- Modal Combinado (Guarnición + Monto de Picadera) -->
+  <!-- Modal de Guarnición + Precio Variable para Picaderas -->
   <div class="modal-overlay" id="garnish-modal">
     <div class="modal-content">
       <div class="modal-title" id="modal-product-name">Personaliza tu Picadera</div>
@@ -846,7 +888,7 @@
         </div>
       </div>
 
-      <!-- Paso 2: Monto de la Picadera (Desde 150 en adelante, de 50 en 50) -->
+      <!-- Paso 2: Monto de la Picadera -->
       <div id="modal-step-2" style="display: none;">
         <div class="modal-subtitle">💵 ¿De cuánto deseas tu picadera? (Mín. 150, escala de 50):</div>
         <div class="flexible-price-box">
@@ -862,6 +904,58 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Modal de Checkout (Datos del cliente y pago) -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-content">
+      <div class="modal-title">📋 Datos de Envío y Pago</div>
+      <div class="modal-subtitle">Completa tu información para finalizar el pedido</div>
+      
+      <div class="form-group">
+        <label>👤 Tu Nombre Completo:</label>
+        <input type="text" id="client-name" placeholder="Ej. Juan Pérez">
+      </div>
+
+      <div class="form-group">
+        <label>📍 Dirección de Entrega:</label>
+        <input type="text" id="client-address" placeholder="Calle, número, sector / referencia">
+      </div>
+
+      <div class="form-group">
+        <label>💳 Método de Pago:</label>
+        <select id="payment-method" onchange="togglePaymentFields()">
+          <option value="efectivo">Efectivo</option>
+          <option value="transferencia">Transferencia Bancaria</option>
+        </select>
+      </div>
+
+      <!-- Campos si es Efectivo -->
+      <div class="form-group" id="cash-fields">
+        <label>💵 ¿De cuánto billete pagará? (Para calcular cambio):</label>
+        <input type="text" id="cash-amount" placeholder="Ej. 1000 o Exacto">
+      </div>
+
+      <!-- Campos si es Transferencia -->
+      <div id="transfer-fields" style="display: none;">
+        <div class="bank-info-box">
+          <strong>🏦 Cuenta Banreservas (Cafetería La Distingancia):</strong>
+          Número de Cuenta: <b>123-456789-0</b><br>
+          Tipo: Corriente / Ahorros<br>
+          Titular: Cafetería La Distingancia
+        </div>
+        <div class="form-group">
+          <label>📸 Sube tu comprobante de pago (Captura/Foto):</label>
+          <input type="file" id="transfer-receipt" accept="image/*" onchange="checkReceiptUploaded()">
+          <small style="color: var(--muted); display: block; margin-top: 4px;" id="receipt-status">⚠️ Debes subir el comprobante para continuar</small>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" onclick="closeCheckoutModal()">Cancelar</button>
+        <button class="modal-btn confirm" id="whatsapp-send-btn" onclick="sendWhatsAppOrder()">✅ Enviar Pedido a WhatsApp</button>
+      </div>
     </div>
   </div>
 
@@ -895,8 +989,8 @@
         <span>💰 Total General:</span>
         <span id="cart-total">RD$ 0</span>
       </div>
-      <button class="checkout-btn" id="checkout-btn" onclick="checkout()" disabled>
-        ✅ Confirmar Pedido por WhatsApp
+      <button class="checkout-btn" id="checkout-btn" onclick="openCheckoutModal()" disabled>
+        Proceed to Checkout ➔
       </button>
     </div>
   </div>
@@ -925,14 +1019,14 @@
       // Picaderas - CON GUARNICIÓN Y PRECIO VARIABLE
       { name: 'Salami Picadera', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true, isVariablePicadera: true },
       { name: 'Longaniza', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true, isVariablePicadera: true },
-      { name: 'Chuleta', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/lG2kCaw.jpeg', hasGarnish: true, isVariablePicadera: true },
+      { name: 'Chuleta', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta', hasGarnish: true, isVariablePicadera: true },
       { name: 'Costillas', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true, isVariablePicadera: true },
       { name: 'Jamón Picadera', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jamón', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true, isVariablePicadera: true },
       { name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: false },
       { name: 'Pechuga Frita', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true, isVariablePicadera: true },
       { name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://i.imgur.com/Eln0fEm.jpeg', hasGarnish: false },
-      { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=EzJOpSP', hasGarnish: false },
+      { name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false },
 
       // Empanadas
       { name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false },
@@ -962,6 +1056,7 @@
     let cart = {};
     let currentFilter = 'all';
     let pendingProduct = null;
+    let receiptUploaded = false;
     const DELIVERY_FEE = 50;
 
     function renderProducts() {
@@ -1000,17 +1095,9 @@
       pendingProduct = { name: productName, basePrice: basePrice, isVariablePicadera: isVariablePicadera };
 
       if (hasGarnish) {
-        // Mostrar modal paso 1 (Guarnición)
         document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
         document.getElementById('modal-step-1').style.display = 'block';
         document.getElementById('modal-step-2').style.display = 'none';
-        document.getElementById('garnish-modal').classList.add('active');
-      } else if (isVariablePicadera) {
-        // Ir directo a paso 2 si no tuviera guarnición (por si acaso)
-        document.getElementById('modal-product-name').textContent = `🍗 ${productName}`;
-        document.getElementById('modal-step-1').style.display = 'none';
-        document.getElementById('modal-step-2').style.display = 'block';
-        document.getElementById('modal-price-input').value = basePrice;
         document.getElementById('garnish-modal').classList.add('active');
       } else {
         addToCart(productName, basePrice, 'Sin guarnición');
@@ -1019,10 +1106,9 @@
     }
 
     function goToModalStep2() {
-      // Avanzar al paso del precio después de elegir la guarnición
       document.getElementById('modal-step-1').style.display = 'none';
       document.getElementById('modal-step-2').style.display = 'block';
-      document.getElementById('modal-price-input').value = 150; // Inicia en 150 por defecto
+      document.getElementById('modal-price-input').value = 150;
     }
 
     function backToModalStep1() {
@@ -1161,21 +1247,90 @@
       overlay.classList.remove('active');
     }
 
-    function checkout() {
+    // Modal de Checkout / Datos del cliente
+    function openCheckoutModal() {
+      closeCart();
+      document.getElementById('checkout-modal').classList.add('active');
+      togglePaymentFields();
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkout-modal').classList.remove('active');
+    }
+
+    function togglePaymentFields() {
+      const method = document.getElementById('payment-method').value;
+      const cashFields = document.getElementById('cash-fields');
+      const transferFields = document.getElementById('transfer-fields');
+      const sendBtn = document.getElementById('whatsapp-send-btn');
+
+      if (method === 'efectivo') {
+        cashFields.style.display = 'block';
+        transferFields.style.display = 'none';
+        sendBtn.disabled = false;
+      } else {
+        cashFields.style.display = 'none';
+        transferFields.style.display = 'block';
+        checkReceiptUploaded();
+      }
+    }
+
+    function checkReceiptUploaded() {
+      const fileInput = document.getElementById('transfer-receipt');
+      const statusText = document.getElementById('receipt-status');
+      const sendBtn = document.getElementById('whatsapp-send-btn');
+      const method = document.getElementById('payment-method').value;
+
+      if (method === 'transferencia') {
+        if (fileInput.files && fileInput.files.length > 0) {
+          receiptUploaded = true;
+          statusText.innerHTML = '✅ Comprobante adjuntado correctamente';
+          statusText.style.color = 'var(--green)';
+          sendBtn.disabled = false;
+        } else {
+          receiptUploaded = false;
+          statusText.innerHTML = '⚠️ Debes subir el comprobante para poder confirmar';
+          statusText.style.color = '#ff3b30';
+          sendBtn.disabled = true;
+        }
+      }
+    }
+
+    function sendWhatsAppOrder() {
+      const name = document.getElementById('client-name').value.trim();
+      const address = document.getElementById('client-address').value.trim();
+      const method = document.getElementById('payment-method').value;
+      const cashAmount = document.getElementById('cash-amount').value.trim();
+
+      if (!name || !address) {
+        alert('Por favor ingresa tu nombre y tu dirección de entrega.');
+        return;
+      }
+
+      if (method === 'efectivo' && !cashAmount) {
+        alert('Por favor indica de cuánto es el billete con el que vas a pagar para calcular tu cambio.');
+        return;
+      }
+
       const items = Object.keys(cart);
       if (items.length === 0) {
         alert('Tu carrito está vacío');
         return;
       }
 
-      let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      let message = `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n☕ *PEDIDO - CAFETERÍA LA DISTINGANCIA* ☕\n✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
+      message += `👤 *Cliente:* ${name}\n`;
+      message += `📍 *Dirección:* ${address}\n\n`;
+      message += `💳 *Método de Pago:* ${method.toUpperCase()}${method === 'efectivo' ? ` (Paga con: RD$ ${cashAmount})` : ' (Pago por Banreservas con comprobante adjuntado)'}\n\n`;
+      message += `🍽️ *MIS PRODUCTOS:*\n━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
       let subtotalSum = 0;
 
       items.forEach((cartKey, index) => {
         const item = cart[cartKey];
         const itemSubtotal = item.price * item.quantity;
         const garnishText = item.garnish !== 'Sin guarnición' ? ` (Guarnición: ${item.garnish})` : '';
-        message += `${index + 1}. *${item.productName}*${garnishText}\n   Monto/Precio: RD$ ${item.price} | Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
+        message += `${index + 1}. *${item.productName}*${garnishText}\n   Precio: RD$ ${item.price} | Cantidad: ${item.quantity} | Subtotal: RD$ ${itemSubtotal.toLocaleString('es-DO')}\n\n`;
         subtotalSum += itemSubtotal;
       });
 
@@ -1183,15 +1338,16 @@
 
       message += `━━━━━━━━━━━━━━━━━━━━━\n`;
       message += `📦 Subtotal: RD$ ${subtotalSum.toLocaleString('es-DO')}\n`;
-      message += `🚚 Delivery: RD$ ${DELIVERY_FIE || 50}\n`;
+      message += `🚚 Delivery: RD$ ${DELIVERY_FEE.toLocaleString('es-DO')}\n`;
       message += `💰 *TOTAL GENERAL: RD$ ${grandTotal.toLocaleString('es-DO')}*\n`;
       message += `✨✨✨✨✨✨✨✨✨✨✨✨✨✨\n\n`;
-      message += `¡Hola! Me gustaría confirmar mi pedido. ¿Me pueden confirmar la disponibilidad y el tiempo de entrega, por favor?`;
+      message += `¡Hola! Acabo de hacer este pedido por la web. Por favor confirmar recepción y tiempo estimado de entrega.`;
 
       const phone = "18293734628"; // Reemplaza con tu número real de WhatsApp
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
       
       window.open(url, '_blank');
+      closeCheckoutModal();
     }
 
     document.addEventListener('DOMContentLoaded', () => {

@@ -291,7 +291,6 @@
       box-shadow: 0 24px 50px rgba(0,0,0,0.15);
     }
 
-    /* ESTILO PARA MOSTRAR LAS IMÁGENES DE LOS PRODUCTOS */
     .product-image {
       width: 100%;
       height: 180px;
@@ -774,7 +773,7 @@
         <div class="modal-subtitle">🍟 Selecciona la guarnición que deseas:</div>
         <div class="garnish-options">
           <div class="garnish-option">
-            <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa Frita" checked>
+            <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa" checked>
             <label for="garnish-papa">Papa Frita</label>
           </div>
           <div class="garnish-option">
@@ -789,17 +788,17 @@
       </div>
 
       <div id="modal-step-2" style="display: none;">
-        <div class="modal-subtitle">💵 ¿De cuánto deseas tu picadera? (Mín. RD$ 150):</div>
+        <div class="modal-subtitle">💵 ¿De cuánto deseas tu picadera? (Mín. 150, escala de 50):</div>
         <div class="flexible-price-box">
           <div class="price-input-group">
-            <button class="price-step-btn" onclick="adjustModalPrice(-50)">−}</button>
+            <button class="price-step-btn" onclick="adjustModalPrice(-50)">−</button>
             <input type="number" id="modal-price-input" value="150" min="150" step="50">
             <button class="price-step-btn" onclick="adjustModalPrice(50)">+</button>
           </div>
         </div>
         <div class="modal-buttons">
           <button class="modal-btn cancel" onclick="backToModalStep1()">⬅️ Atrás</button>
-          <button class="modal-btn confirm" onclick="confirmFinalPicadera()">✅ Agregar al Carrito</button>
+          <button class="modal-btn confirm" onclick="confirmFinalPicadera()">✅ Agregar</button>
         </div>
       </div>
 
@@ -831,7 +830,7 @@
       </div>
 
       <div class="form-group" id="cash-fields">
-        <label>💵 ¿De cuánto billete pagará? (Para cambio):</label>
+        <label>💵 ¿De cuánto billete pagará? (Para calcular cambio):</label>
         <input type="text" id="cash-amount" placeholder="Ej. 1000 o Exacto">
       </div>
 
@@ -839,17 +838,17 @@
         <div class="bank-info-box">
           <strong>🏦 Cuenta Banreservas (Cafetería La Distingancia):</strong>
           Número de Cuenta: <b>123-456789-0</b><br>
-          Tipo: Corriente<br>
+          Tipo: Corriente / Ahorros<br>
           Titular: Cafetería La Distingancia
           <div class="bank-notice">
-            📌 Coloca tu <b>NOMBRE COMPLETO</b> en el concepto de la transferencia.
+            📌 <b>REQUISITO IMPORTANTE:</b> Al realizar la transferencia, debes colocar <b>TU NOMBRE COMPLETO</b> en el concepto / motivo del pago para validar tu pedido al instante.
           </div>
         </div>
       </div>
 
       <div class="modal-buttons">
         <button class="modal-btn cancel" onclick="closeCheckoutModal()">Cancelar</button>
-        <button class="modal-btn confirm" onclick="sendWhatsAppOrder()">✅ Enviar Pedido</button>
+        <button class="modal-btn confirm" id="whatsapp-send-btn" onclick="sendWhatsAppOrder()">✅ Enviar Pedido a WhatsApp</button>
       </div>
     </div>
   </div>
@@ -867,12 +866,13 @@
       <div class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
         <p>Tu carrito está vacío</p>
+        <small>Agrega productos para hacer tu pedido</small>
       </div>
     </div>
 
     <div class="cart-footer">
       <div class="cart-summary-line">
-        <span>Subtotal:</span>
+        <span>Subtotal productos:</span>
         <span id="cart-subtotal">RD$ 0</span>
       </div>
       <div class="cart-summary-line">
@@ -890,61 +890,64 @@
   </div>
 
   <script>
-    // ARRAY DE PRODUCTOS COMPLETO CON RUTA DE IMÁGENES (`image`)
     const products = [
       // Sandwiches
-      { id: 1, name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg' },
-      { id: 2, name: 'Salami y Queso', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso' },
-      { id: 3, name: 'Queso solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo' },
-      { id: 4, name: 'Pollo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo' },
-      { id: 5, name: 'Pollo y Queso', price: 175, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso' },
-      { id: 6, name: 'Tuna solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+solo' },
-      { id: 7, name: 'Tuna y Queso', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+y+Queso' },
-      { id: 8, name: 'Completo', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Completo' },
-      { id: 9, name: 'Club Sandwich con Papas', price: 350, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Club+Sandwich' },
-      { id: 10, name: 'Huevo y Queso', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso' },
-      { id: 11, name: 'Huevo y Salami', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami' },
-      { id: 12, name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo' },
+      { id: 1, name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false },
+      { id: 2, name: 'Salami y Queso', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso', hasGarnish: false },
+      { id: 3, name: 'Queso solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo', hasGarnish: false },
+      { id: 4, name: 'Pollo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo', hasGarnish: false },
+      { id: 5, name: 'Pollo y Queso', price: 175, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso', hasGarnish: false },
+      { id: 6, name: 'Tuna solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+solo', hasGarnish: false },
+      { id: 7, name: 'Tuna y Queso', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Tuna+y+Queso', hasGarnish: false },
+      { id: 8, name: 'Completo', price: 200, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Completo', hasGarnish: false },
+      { id: 9, name: 'Club Sandwich con Papas', price: 350, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Club+Sandwich', hasGarnish: false },
+      { id: 10, name: 'Huevo y Queso', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Queso', hasGarnish: false },
+      { id: 11, name: 'Huevo y Salami', price: 125, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo+y+Salami', hasGarnish: false },
+      { id: 12, name: 'Huevo', price: 100, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Huevo', hasGarnish: false },
 
       // Yaroa
-      { id: 13, name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Peque%C3%B1a' },
-      { id: 14, name: 'Yaroa Grandes', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande' },
-      { id: 15, name: 'Yaroa mediana', price: 275, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta' },
+      { id: 13, name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Peque%C3%B1a', hasGarnish: false },
+      { id: 14, name: 'Yaroa Grandes', price: 350, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Grande', hasGarnish: false },
+      { id: 15, name: 'Yaroa mediana', price: 275, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Mixta', hasGarnish: false },
 
-      // Picaderas - CON GUARNICIÓN Y PRECIO VARIABLE
+      // Picaderas
       { id: 16, name: 'Salami Picadera', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true, isVariablePicadera: true },
       { id: 17, name: 'Longaniza', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Longaniza', hasGarnish: true, isVariablePicadera: true },
       { id: 18, name: 'Chuleta', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta', hasGarnish: true, isVariablePicadera: true },
       { id: 19, name: 'Costillas', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Costillas', hasGarnish: true, isVariablePicadera: true },
       { id: 20, name: 'Jamón Picadera', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Jam%C3%B3n', hasGarnish: true, isVariablePicadera: true },
       { id: 21, name: 'Queso Frito', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Queso+Frito', hasGarnish: true, isVariablePicadera: true },
-      { id: 22, name: 'Queso Frito + Longaniza + Papa con Queso', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg' },
+      { id: 22, name: 'Queso Frito + Longaniza + Papa con Queso Derretido', price: 520, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: false },
       { id: 23, name: 'Pechuga Frita', minPrice: 150, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Pechuga+Frita', hasGarnish: true, isVariablePicadera: true },
-      { id: 24, name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja' },
+      { id: 24, name: 'Chuleta Frita con Papa y Queso Derretido', price: 250, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Chuleta+con+Papa', hasGarnish: false },
+      { id: 25, name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false },
 
       // Empanadas
-      { id: 25, name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso' },
-      { id: 26, name: 'Empanada Jamón y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Jam%C3%B3n+Queso' },
-      { id: 27, name: 'Empanada Queso', price: 110, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Queso' },
+      { id: 26, name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false },
+      { id: 27, name: 'Empanada Jamón y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Jam%C3%B3n+Queso', hasGarnish: false },
+      { id: 28, name: 'Empanada Queso', price: 110, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Queso', hasGarnish: false },
 
       // Hamburguesas
-      { id: 28, name: 'Hamburguesa Carne de Res', price: 380, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Hamburguesa' },
-      { id: 29, name: 'Hamburguesa con queso frito', price: 420, category: 'sandwich', image: 'https://i.imgur.com/UxZYyxL.jpeg' },
+      { id: 29, name: 'Hamburguesa Carne de Res', price: 380, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Hamburguesa', hasGarnish: false },
+      { id: 30, name: 'Hamburguesa con queso frito', price: 420, category: 'sandwich', image: 'https://i.imgur.com/UxZYyxL.jpeg', hasGarnish: false },
 
       // Batidas
-      { id: 30, name: 'Batida Lechoza', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Lechoza' },
-      { id: 31, name: 'Batida Guineo', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Guineo' },
-      { id: 32, name: 'Batida Chinola y Leche', price: 200, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Chinola' },
+      { id: 31, name: 'Batida Lechoza', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Lechoza', hasGarnish: false },
+      { id: 32, name: 'Batida Guineo', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Guineo', hasGarnish: false },
+      { id: 33, name: 'Batida Chinola y Leche', price: 200, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Chinola', hasGarnish: false },
 
       // Jugos
-      { id: 33, name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola' },
-      { id: 34, name: 'Jugo Cereza', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Cereza' },
-      { id: 35, name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n' },
+      { id: 34, name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola', hasGarnish: false },
+      { id: 35, name: 'Jugo Cereza', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Cereza', hasGarnish: false },
+      { id: 36, name: 'Jugo Chinola Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola+Avena', hasGarnish: false },
+      { id: 37, name: 'Jugo Limón Avena', price: 180, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n+Avena', hasGarnish: false },
+      { id: 38, name: 'Jugo Limón', price: 130, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Lim%C3%B3n', hasGarnish: false },
 
       // Bebidas
-      { id: 36, name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml' },
-      { id: 37, name: 'Coca Cola 400ml', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Coca+Cola+400ml' },
-      { id: 38, name: 'Cerveza Presidente', price: 150, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cerveza+Presidente' }
+      { id: 39, name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml', hasGarnish: false },
+      { id: 40, name: 'Coca Cola 400ml', price: 70, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Coca+Cola+400ml', hasGarnish: false },
+      { id: 41, name: '7Up 400ml', price: 60, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=7Up+400ml', hasGarnish: false },
+      { id: 42, name: 'Cerveza Presidente', price: 150, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cerveza+Presidente', hasGarnish: false }
     ];
 
     let cart = [];
@@ -1055,6 +1058,7 @@
           <div class="empty-cart">
             <div class="empty-cart-icon">🛒</div>
             <p>Tu carrito está vacío</p>
+            <small>Agrega productos para hacer tu pedido</small>
           </div>
         `;
         subtotalEl.innerText = 'RD$ 0';
@@ -1076,7 +1080,7 @@
             </div>
             <div class="cart-item-qty">
               <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-              <span>${item.qty}</span>
+              <span class="qty-display">${item.qty}</span>
               <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
             </div>
           </div>
@@ -1120,7 +1124,7 @@
       document.getElementById('transfer-fields').style.display = method === 'transferencia' ? 'block' : 'none';
     }
 
-    // REGISTRO DE PEDIDOS EN PANEL + ENVÍO A WHATSAPP
+    // FUNCIÓN SEGURA PARA WHATSAPP (COMPATIBLE CON IPHONE Y ANDROID)
     function sendWhatsAppOrder() {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
@@ -1136,42 +1140,50 @@
       let totalGeneral = subtotal + 50;
       let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      // 1. Guardar automáticamente para tu Panel Admin
-      const detalleTexto = cart.map(i => `${i.qty}x ${i.name} (${i.garnish})`).join(', ');
-      const nuevoPedido = {
-        id: Date.now(),
-        hora: hora,
-        cliente: name,
-        detalle: detalleTexto,
-        total: `RD$ ${totalGeneral}`,
-        estado: 'pendiente'
-      };
+      // Guardar en el panel de administrador de forma segura
+      try {
+        const detalleTexto = cart.map(i => `${i.qty}x ${i.name} (${i.garnish})`).join(', ');
+        const nuevoPedido = {
+          id: Date.now(),
+          hora: hora,
+          cliente: name,
+          detalle: detalleTexto,
+          total: `RD$ ${totalGeneral}`,
+          estado: 'pendiente'
+        };
 
-      let pedidosGuardados = JSON.parse(localStorage.getItem('pedidos_distingancia')) || [];
-      pedidosGuardados.unshift(nuevoPedido);
-      localStorage.setItem('pedidos_distingancia', JSON.stringify(pedidosGuardados));
+        let pedidosGuardados = JSON.parse(localStorage.getItem('pedidos_distingancia')) || [];
+        pedidosGuardados.unshift(nuevoPedido);
+        localStorage.setItem('pedidos_distingancia', JSON.stringify(pedidosGuardados));
+      } catch (err) {
+        console.log("Error de almacenamiento:", err);
+      }
 
-      // 2. Enviar a WhatsApp
-      const numeroWhatsApp = "18293734628"; // Cambiar por tu número real
-      let msg = `*¡Nuevo Pedido - Cafetería La Distingancia! ☕*%0A%0A`;
-      msg += `👤 *Cliente:* ${name}%0A`;
-      msg += `📍 *Dirección:* ${address}%0A`;
-      msg += `💳 *Pago:* ${paymentMethod.toUpperCase()}${paymentMethod === 'efectivo' ? ` (Paga con: ${cashAmount || 'Exacto'})` : ''}%0A%0A`;
-      msg += `🛒 *Detalle del Pedido:*%0A`;
+      // Tu número de WhatsApp real con código de país (1)
+      const numeroWhatsApp = "18293734628";
+
+      // Armar el mensaje
+      let msg = `*¡Nuevo Pedido - Cafetería La Distingancia! ☕*\n\n`;
+      msg += `👤 *Cliente:* ${name}\n`;
+      msg += `📍 *Dirección:* ${address}\n`;
+      msg += `💳 *Pago:* ${paymentMethod.toUpperCase()}${paymentMethod === 'efectivo' ? ` (Paga con: ${cashAmount || 'Exacto'})` : ''}\n\n`;
+      msg += `🛒 *Detalle del Pedido:*\n`;
 
       cart.forEach(i => {
-        msg += `• ${i.qty}x ${i.name} [${i.garnish}] - RD$ ${i.price * i.qty}%0A`;
+        msg += `• ${i.qty}x ${i.name} [${i.garnish}] - RD$ ${i.price * i.qty}\n`;
       });
 
-      msg += `%0A📦 Subtotal: RD$ ${subtotal}`;
-      msg += `%0A🚚 Delivery: RD$ 50`;
-      msg += `%0A💰 *TOTAL GENERAL: RD$ ${totalGeneral}*%0A%0A`;
+      msg += `\n📦 Subtotal: RD$ ${subtotal}`;
+      msg += `\n🚚 Delivery: RD$ 50`;
+      msg += `\n💰 *TOTAL GENERAL: RD$ ${totalGeneral}*\n\n`;
       msg += `_Enviado desde el Menú Digital_`;
 
-      const url = `https://wa.me/${numeroWhatsApp}?text=${msg}`;
-      window.open(url, '_blank');
+      const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(msg)}`;
 
-      // Limpiar y cerrar
+      // Redirección infalible para iPhone y PC
+      window.location.href = url;
+
+      // Limpiar carrito
       cart = [];
       updateCartUI();
       closeCheckoutModal();

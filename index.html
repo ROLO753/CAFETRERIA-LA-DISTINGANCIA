@@ -3,200 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafetería La Distingancia - Menú Digital</title>
-    <!-- Tailwind CSS para un diseño limpio y moderno -->
+    <title>Cafetería La Distingancia - Menú Digital y Pedidos</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para iconos -->
+    <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Smooth scrolling and custom scrollbars */
+        html { scroll-behavior: smooth; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans pb-24">
+<body class="bg-stone-100 text-stone-800 font-sans min-h-screen flex flex-col pb-20">
 
-    <!-- Encabezado -->
-    <header class="bg-amber-600 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold">☕ Cafetería La Distingancia</h1>
-                <p class="text-amber-100 text-sm">¡El sabor que marca la diferencia!</p>
+    <!-- Navbar / Header -->
+    <header class="bg-amber-800 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-100 text-amber-900 w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold">
+                    ☕
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Cafetería La Distingancia</h1>
+                    <p class="text-amber-200 text-xs md:text-sm">¡El sabor distintivo en cada bocado!</p>
+                </div>
             </div>
-            <button onclick="toggleCartModal()" class="relative bg-amber-700 hover:bg-amber-800 px-4 py-2 rounded-full flex items-center gap-2 transition">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span id="cart-count" class="bg-white text-amber-800 font-bold px-2 py-0.5 rounded-full text-xs">0</span>
+            
+            <button onclick="toggleCartModal()" class="relative bg-amber-900 hover:bg-amber-950 px-4 py-2 rounded-full flex items-center gap-2 transition shadow-inner">
+                <i class="fa-solid fa-cart-shopping text-amber-200"></i>
+                <span class="font-semibold text-sm hidden sm:inline">Carrito</span>
+                <span id="cart-count" class="bg-amber-500 text-stone-900 font-extrabold text-xs px-2 py-0.5 rounded-full">0</span>
             </button>
         </div>
     </header>
 
-    <!-- Contenido Principal -->
-    <main class="max-w-4xl mx-auto px-4 py-6">
+    <!-- Banner Promocional -->
+    <section class="bg-gradient-to-r from-amber-700 to-amber-900 text-white py-8 px-4 shadow-inner">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="text-2xl md:text-3xl font-extrabold mb-2">Ordena online y recibe al instante</h2>
+            <p class="text-amber-100 text-sm md:text-base max-w-xl mx-auto">Elige tus productos favoritos de nuestro menú, haz tu pedido y te responderemos de inmediato por WhatsApp.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 py-8 flex-1 w-full">
         
-        <!-- Filtros de Categorías -->
-        <div class="flex gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
-            <button onclick="filterCategory('all')" class="category-btn active px-4 py-2 bg-amber-600 text-white rounded-full text-sm font-medium whitespace-nowrap transition">Todos</button>
-            <button onclick="filterCategory('picaderas')" class="category-btn px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-100 transition">Picaderas</button>
-            <button onclick="filterCategory('bebidas')" class="category-btn px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-100 transition">Bebidas</button>
-            <button onclick="filterCategory('desayunos')" class="category-btn px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-100 transition">Desayunos</button>
+        <!-- Categorías -->
+        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-6 border-b border-stone-200">
+            <button onclick="filterCategory('todos')" class="category-btn active border px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition bg-amber-800 text-white border-amber-800 shadow-sm">
+                🍽️ Todos
+            </button>
+            <button onclick="filterCategory('picaderas')" class="category-btn border border-stone-300 bg-white text-stone-600 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap hover:bg-stone-50 transition">
+                🥟 Picaderas
+            </button>
+            <button onclick="filterCategory('bebidas')" class="category-btn border border-stone-300 bg-white text-stone-600 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap hover:bg-stone-50 transition">
+                🥤 Bebidas
+            </button>
+            <button onclick="filterCategory('desayunos')" class="category-btn border border-stone-300 bg-white text-stone-600 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap hover:bg-stone-50 transition">
+                🍳 Desayunos
+            </button>
+            <button onclick="filterCategory('postres')" class="category-btn border border-stone-300 bg-white text-stone-600 px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap hover:bg-stone-50 transition">
+                🍰 Postres
+            </button>
         </div>
 
-        <!-- Listado de Productos -->
-        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Los productos se cargan dinámicamente desde JavaScript -->
+        <!-- Grid de Productos -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Renderizado dinámico vía JavaScript -->
         </div>
 
     </main>
 
-    <!-- Modal del Carrito / Resumen de Pedido -->
-    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-end">
-        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-xl">
-            <div class="p-4 bg-amber-600 text-white flex justify-between items-center">
-                <h2 class="text-lg font-bold"><i class="fa-solid fa-bag-shopping mr-2"></i> Tu Pedido</h2>
-                <button onclick="toggleCartModal()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+    <!-- Modal del Carrito -->
+    <div id="cart-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 hidden flex justify-end transition-opacity duration-300">
+        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
+            <!-- Header Modal -->
+            <div class="p-4 bg-amber-800 text-white flex justify-between items-center shadow-md">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-xl"></i>
+                    <h2 class="text-lg font-bold">Tu Orden de Compra</h2>
+                </div>
+                <button onclick="toggleCartModal()" class="text-amber-200 hover:text-white text-2xl font-bold leading-none">&times;</button>
             </div>
             
-            <div id="cart-items" class="p-4 flex-1 overflow-y-auto divide-y divide-gray-100">
-                <!-- Productos agregados -->
+            <!-- Items del Carrito -->
+            <div id="cart-items" class="p-4 flex-1 overflow-y-auto space-y-3">
+                <!-- Se llena con JS -->
             </div>
 
-            <div class="p-4 bg-gray-50 border-t border-gray-200">
-                <div class="mb-3">
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Nombre del cliente:</label>
-                    <input type="text" id="customer-name" placeholder="Ej. Juan Pérez" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <!-- Footer / Formulario del Carrito -->
+            <div class="p-5 bg-stone-50 border-t border-stone-200 shadow-inner">
+                <div class="space-y-3 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Nombre completo *</label>
+                        <input type="text" id="customer-name" placeholder="Ej. Carlos Martínez" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Dirección de entrega o Nota</label>
+                        <input type="text" id="customer-address" placeholder="Ej. C/ San Francisco #45 o 'Para llevar'" class="w-full px-3 py-2 bg-white border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-600">
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-xs font-bold text-gray-600 mb-1">Dirección de entrega o nota:</label>
-                    <input type="text" id="customer-address" placeholder="Ej. Calle Principal #12" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+
+                <div class="border-t border-stone-200 pt-3 mb-4">
+                    <div class="flex justify-between items-center text-stone-600 text-sm mb-1">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal" class="font-medium">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-lg font-bold text-stone-900">
+                        <span>Total a pagar:</span>
+                        <span id="cart-total" class="text-amber-800">$0.00</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center mb-4 text-lg font-bold">
-                    <span>Total:</span>
-                    <span id="cart-total" class="text-amber-600">$0.00</span>
-                </div>
-                <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Pedido por WhatsApp
+
+                <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition transform active:scale-[0.98]">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    <span>Confirmar y Enviar Pedido</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Script de lógica -->
+    <!-- Footer General -->
+    <footer class="bg-stone-800 text-stone-400 py-6 text-center text-sm border-t border-stone-700 mt-auto">
+        <p>© <span id="year"></span> Cafetería La Distingancia. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Script de Funcionamiento -->
     <script>
-        // Configuración del número de WhatsApp del negocio (agrega tu número con código de país, sin '+' ni espacios)
+        // Configuración de número de WhatsApp del negocio
+        // Reemplaza con tu número completo (código de país + número, sin espacios ni '+')
         const WHATSAPP_NUMBER = "18090000000"; 
 
-        // Base de datos de productos (puedes agregar o modificar fácilmente)
+        // Catálogo de Productos
         const products = [
-            { id: 1, name: "quipe de Res", category: "picaderas", price: 75, description: "Crujiente por fuera y jugoso por dentro.", image: "https://images.unsplash.com/photo-1541529086526-db283c563270?w=500&auto=format&fit=crop&q=60" },
-            { id: 2, name: "Empanada de Pollo", category: "picaderas", price: 60, description: "Masa crujiente rellena de pollo sazonado.", image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop&q=60" },
-            { id: 3, name: "Café Negrito", category: "bebidas", price: 40, description: "Café colado tradicional bien caliente.", image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=60" },
-            { id: 4, name: "Jugo Natural de Chinola", category: "bebidas", price: 90, description: "Refrescante jugo natural de temporada.", image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format&fit=crop&q=60" },
-            { id: 5, name: "Mangú con Tres Golpes", category: "desayunos", price: 250, description: "Mangú de plátano con salami, queso frito y huevos.", image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=500&auto=format&fit=crop&q=60" }
+            {
+                id: 1,
+                name: "Quipe de Res",
+                category: "picaderas",
+                price: 75.00,
+                description: "Crujiente por fuera, relleno de abundante carne picada sazonada al gusto.",
+                image: "https://images.unsplash.com/photo-1541529086526-db283c563270?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 2,
+                name: "Empanada de Pollo y Queso",
+                category: "picaderas",
+                price: 65.00,
+                description: "Masa artesanal dorada con relleno jugoso de pechuga de pollo y queso derretido.",
+                image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 3,
+                name: "Café Espresso Negrito",
+                category: "bebidas",
+                price: 45.00,
+                description: "Café recién colado de grano seleccionado, aroma profundo e intenso.",
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 4,
+                name: "Cappuccino Especial",
+                category: "bebidas",
+                price: 110.00,
+                description: "Mezcla de espresso y leche vaporizada con suave capa de espuma de leche y canela.",
+                image: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 5,
+                name: "Jugo Natural de Chinola",
+                category: "bebidas",
+                price: 90.00,
+                description: "100% fruta natural, bien frío y refrescante.",
+                image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 6,
+                name: "Mangú con Tres Golpes",
+                category: "desayunos",
+                price: 250.00,
+                description: "Mangú de plátanos verdes servido con salami frito, queso frito y huevo frito.",
+                image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 7,
+                name: "Sandwich Club La Distingancia",
+                category: "desayunos",
+                price: 220.00,
+                description: "Pan de molde tostado, jamón, queso, pollo, tocineta, lechuga y tomate.",
+                image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=500&auto=format&fit=crop&q=60"
+            },
+            {
+                id: 8,
+                name: "Bizcocho de Zanahoria",
+                category: "postres",
+                price: 120.00,
+                description: "Bizcocho casero con nueces y cobertura de crema de queso suave.",
+                image: "https://images.unsplash.com/photo-1557925923-cd4648e211a0?w=500&auto=format&fit=crop&q=60"
+            }
         ];
 
+        // Estado del Carrito
         let cart = [];
 
-        // Renderizar productos al iniciar
-        function renderProducts(filter = 'all') {
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('year').textContent = new Date().getFullYear();
+            renderProducts('todos');
+        });
+
+        // Renderizado de tarjetas de productos
+        function renderProducts(category) {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
 
-            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            const filteredProducts = category === 'todos' 
+                ? products 
+                : products.filter(p => p.category === category);
 
-            filtered.forEach(product => {
-                grid.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between">
-                        <img src="${product.image}" alt="${product.name}" class="w-full h-36 object-cover">
-                        <div class="p-4 flex-1 flex flex-col justify-between">
-                            <div>
-                                <h3 class="font-bold text-gray-800">${product.name}</h3>
-                                <p class="text-xs text-gray-500 mt-1 mb-2">${product.description}</p>
-                            </div>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="text-amber-600 font-bold">$${product.price.toFixed(2)}</span>
-                                <button onclick="addToCart(${product.id})" class="bg-amber-100 text-amber-800 hover:bg-amber-600 hover:text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition">
-                                    <i class="fa-solid fa-plus"></i> Agregar
-                                </button>
-                            </div>
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-stone-400">No hay productos disponibles en esta categoría.</div>`;
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="h-44 overflow-hidden relative">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover transform hover:scale-105 transition duration-300">
+                            <span class="absolute top-3 right-3 bg-stone-900/70 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                ${product.category}
+                            </span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-stone-900 text-lg leading-snug">${product.name}</h3>
+                            <p class="text-stone-500 text-xs mt-1 leading-relaxed">${product.description}</p>
                         </div>
                     </div>
+                    <div class="px-4 pb-4 pt-2 flex items-center justify-between border-t border-stone-100">
+                        <span class="text-amber-800 font-extrabold text-lg">$${product.price.toFixed(2)}</span>
+                        <button onclick="addToCart(${product.id})" class="bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-plus text-xs"></i> Agregar
+                        </button>
+                    </div>
                 `;
+                grid.appendChild(card);
             });
         }
 
-        // Filtrar por categoría
+        // Filtrado por categoría
         function filterCategory(category) {
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('bg-amber-600', 'text-white');
-                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            const buttons = document.querySelectorAll('.category-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-amber-800', 'text-white', 'border-amber-800', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-stone-600', 'border-stone-300');
             });
-            event.target.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
-            event.target.classList.add('bg-amber-600', 'text-white');
+
+            event.currentTarget.classList.remove('bg-white', 'text-stone-600', 'border-stone-300');
+            event.currentTarget.classList.add('bg-amber-800', 'text-white', 'border-amber-800', 'shadow-sm');
 
             renderProducts(category);
         }
 
-        // Funciones del Carrito
+        // Agregar al carrito
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
-            const existing = cart.find(item => item.id === productId);
+            const item = cart.find(i => i.id === productId);
 
-            if (existing) {
-                existing.quantity++;
+            if (item) {
+                item.quantity += 1;
             } else {
                 cart.push({ ...product, quantity: 1 });
             }
 
-            updateCartUI();
+            updateCart();
         }
 
-        function updateQuantity(productId, change) {
+        // Modificar cantidad
+        function updateQuantity(productId, delta) {
             const item = cart.find(i => i.id === productId);
-            if (item) {
-                item.quantity += change;
-                if (item.quantity <= 0) {
-                    cart = cart.filter(i => i.id !== productId);
-                }
+            if (!item) return;
+
+            item.quantity += delta;
+            if (item.quantity <= 0) {
+                cart = cart.filter(i => i.id !== productId);
             }
-            updateCartUI();
+
+            updateCart();
         }
 
-        function updateCartUI() {
+        // Actualizar interfaz del carrito
+        function updateCart() {
             const countElem = document.getElementById('cart-count');
-            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            countElem.innerText = totalCount;
+            const totalCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+            countElem.textContent = totalCount;
 
             const itemsContainer = document.getElementById('cart-items');
             itemsContainer.innerHTML = '';
 
             if (cart.length === 0) {
-                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-8 text-sm">Tu carrito está vacío</p>`;
+                itemsContainer.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center py-12 text-stone-400">
+                        <i class="fa-solid fa-basket-shopping text-5xl mb-3 text-stone-300"></i>
+                        <p class="text-sm font-medium">Tu carrito está vacío</p>
+                        <p class="text-xs text-stone-400 mt-1">Agrega productos deliciosos para comenzar</p>
+                    </div>
+                `;
             } else {
                 cart.forEach(item => {
+                    const totalItem = item.price * item.quantity;
                     itemsContainer.innerHTML += `
-                        py-3 flex justify-between items-center">
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-800">${item.name}</h4>
-                                <p class="text-xs text-amber-600 font-semibold">$${item.price} x ${item.quantity}</p>
+                        <div class="flex items-center justify-between bg-stone-50 p-3 rounded-xl border border-stone-200">
+                            <div class="flex-1 pr-2">
+                                <h4 class="font-bold text-stone-800 text-sm">${item.name}</h4>
+                                <span class="text-xs font-semibold text-amber-800">$${item.price.toFixed(2)} c/u</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button onclick="updateQuantity(${item.id}, -1)" class="w-7 h-7 bg-gray-200 rounded-full font-bold text-sm">-</button>
-                                <span class="text-sm font-bold">${item.quantity}</span>
-                                <button onclick="updateQuantity(${item.id}, 1)" class="w-7 h-7 bg-gray-200 rounded-full font-bold text-sm">+</button>
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-7 h-7 rounded-lg bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold flex items-center justify-center transition">-</button>
+                                <span class="text-sm font-bold w-5 text-center">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-7 h-7 rounded-lg bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold flex items-center justify-center transition">+</button>
                             </div>
                         </div>
                     `;
                 });
             }
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            const totalSum = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            document.getElementById('cart-subtotal').textContent = `$${totalSum.toFixed(2)}`;
+            document.getElementById('cart-total').textContent = `$${totalSum.toFixed(2)}`;
         }
 
+        // Abrir/Cerrar Modal
         function toggleCartModal() {
             const modal = document.getElementById('cart-modal');
             modal.classList.toggle('hidden');
         }
 
-        // Enviar pedido estructurado a WhatsApp
+        // Generar enlace y enviar a WhatsApp
         function checkoutWhatsApp() {
             if (cart.length === 0) {
-                alert("Agrega al menos un producto a tu pedido.");
+                alert("Por favor, agrega al menos un producto a tu pedido antes de continuar.");
                 return;
             }
 
@@ -204,29 +352,35 @@
             const address = document.getElementById('customer-address').value.trim();
 
             if (!name) {
-                alert("Por favor ingresa tu nombre.");
+                alert("Por favor ingresa tu nombre completo.");
+                document.getElementById('customer-name').focus();
                 return;
             }
 
-            let message = `*¡Nuevo Pedido - Cafetería La Distingancia!* ☕\n\n`;
-            message += `👤 *Cliente:* ${name}\n`;
-            if (address) message += `📍 *Dirección/Nota:* ${address}\n`;
-            message += `\n*Detalle del pedido:*\n`;
+            let text = `*¡NUEVO PEDIDO - CAFETERÍA LA DISTINGANCIA!* ☕\n`;
+            text += `----------------------------------------\n`;
+            text += `👤 *Cliente:* ${name}\n`;
+            if (address) {
+                text += `📍 *Dirección/Nota:* ${address}\n`;
+            }
+            text += `----------------------------------------\n`;
+            text += `*DETALLE DE LA ORDEN:*\n`;
 
             cart.forEach(item => {
-                message += `- ${item.quantity}x ${item.name} ($${(item.price * item.quantity).toFixed(2)})\n`;
+                const subtotal = item.price * item.quantity;
+                text += `• ${item.quantity}x ${item.name} - $${subtotal.toFixed(2)}\n`;
             });
 
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            message += `\n*Total a pagar:* $${total.toFixed(2)}`;
+            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            text += `----------------------------------------\n`;
+            text += `💰 *TOTAL A PAGAR:* $${total.toFixed(2)}\n\n`;
+            text += `¡Quedo a la espera de su confirmación!`;
 
-            const encodedMessage = encodeURIComponent(message);
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-            window.open(url, '_blank');
+            const encodedText = encodeURIComponent(text);
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`;
+
+            window.open(whatsappUrl, '_blank');
         }
-
-        // Carga inicial
-        renderProducts();
     </script>
 </body>
 </html>

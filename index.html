@@ -773,7 +773,7 @@
         <div class="modal-subtitle">🍟 Selecciona la guarnición que deseas:</div>
         <div class="garnish-options">
           <div class="garnish-option">
-            <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa" checked>
+            <input type="radio" id="garnish-papa" name="garnish-choice" value="Papa Frita" checked>
             <label for="garnish-papa">Papa Frita</label>
           </div>
           <div class="garnish-option">
@@ -1011,45 +1011,54 @@
       input.value = val;
     }
 
-    function confirmFinalPicadera() {
-      const garnish = document.querySelector('input[name="garnish-choice"]:checked').value;
-      const price = parseInt(document.getElementById('modal-price-input').value);
-      const fullName = `${currentCustomProduct.name} (${garnish})`;
-      
-      addToCart(fullName, price, garnish);
-      closeGarnishModal();
-    }
-
     function closeGarnishModal() {
       document.getElementById('garnish-modal').classList.remove('active');
       currentCustomProduct = null;
     }
 
+    function confirmFinalPicadera() {
+      if (!currentCustomProduct) return;
+      const garnish = document.querySelector('input[name="garnish-choice"]:checked').value;
+      const price = parseInt(document.getElementById('modal-price-input').value) || currentCustomProduct.minPrice;
+      const customName = `${currentCustomProduct.name} (${garnish})`;
+      
+      addToCart(customName, price, garnish);
+      closeGarnishModal();
+    }
+
     function addToCart(name, price, garnish) {
-      const existing = cart.find(item => item.name === name && item.garnish === garnish);
-      if (existing) {
-        existing.qty++;
+      const existingItem = cart.find(item => item.name === name && item.garnish === garnish);
+      if (existingItem) {
+        existingItem.qty += 1;
       } else {
         cart.push({ name, price, garnish, qty: 1 });
       }
       updateCartUI();
     }
 
+    function updateQuantity(index, change) {
+      cart[index].qty += change;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartUI();
+    }
+
     function updateCartUI() {
       const itemsContainer = document.getElementById('cart-items');
-      const countEl = document.getElementById('cart-count');
-      const subtotalEl = document.getElementById('cart-subtotal');
-      const totalEl = document.getElementById('cart-total');
+      const cartCount = document.getElementById('cart-count');
+      const cartSubtotal = document.getElementById('cart-subtotal');
+      const cartTotal = document.getElementById('cart-total');
       const checkoutBtn = document.getElementById('checkout-btn');
 
-      const totalItems = cart.reduce((acc, i) => acc + i.qty, 0);
+      const totalItemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
       
-      if (totalItems > 0) {
-        countEl.style.display = 'flex';
-        countEl.innerText = totalItems;
+      if (totalItemsCount > 0) {
+        cartCount.style.display = 'flex';
+        cartCount.innerText = totalItemsCount;
         checkoutBtn.disabled = false;
       } else {
-        countEl.style.display = 'none';
+        cartCount.style.display = 'none';
         checkoutBtn.disabled = true;
       }
 
@@ -1061,8 +1070,8 @@
             <small>Agrega productos para hacer tu pedido</small>
           </div>
         `;
-        subtotalEl.innerText = 'RD$ 0';
-        totalEl.innerText = 'RD$ 0';
+        cartSubtotal.innerText = 'RD$ 0';
+        cartTotal.innerText = 'RD$ 0';
         return;
       }
 
@@ -1073,30 +1082,24 @@
         subtotal += item.price * item.qty;
         itemsContainer.innerHTML += `
           <div class="cart-item">
-            <div class="cart-item-info">
+            <div>
               <div class="cart-item-name">${item.name}</div>
-              <div class="cart-item-garnish">Guarnición: ${item.garnish}</div>
-              <div class="cart-item-price">RD$ ${item.price * item.qty}</div>
+              <div class="cart-item-price">RD$ ${item.price} c/u</div>
             </div>
             <div class="cart-item-qty">
-              <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-              <span class="qty-display">${item.qty}</span>
-              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+              <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
+              <span>${item.qty}</span>
+              <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
             </div>
           </div>
         `;
       });
 
-      subtotalEl.innerText = `RD$ ${subtotal}`;
-      totalEl.innerText = `RD$ ${subtotal + 50}`;
-    }
+      const delivery = 50;
+      const total = subtotal + delivery;
 
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if (cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
-      updateCartUI();
+      cartSubtotal.innerText = `RD$ ${subtotal}`;
+      cartTotal.innerText = `RD$ ${total}`;
     }
 
     function toggleCart() {
@@ -1120,11 +1123,18 @@
 
     function togglePaymentFields() {
       const method = document.getElementById('payment-method').value;
-      document.getElementById('cash-fields').style.display = method === 'efectivo' ? 'block' : 'none';
-      document.getElementById('transfer-fields').style.display = method === 'transferencia' ? 'block' : 'none';
+      const cashFields = document.getElementById('cash-fields');
+      const transferFields = document.getElementById('transfer-fields');
+
+      if (method === 'efectivo') {
+        cashFields.style.display = 'block';
+        transferFields.style.display = 'none';
+      } else {
+        cashFields.style.display = 'none';
+        transferFields.style.display = 'block';
+      }
     }
 
-    // FUNCIÓN SEGURA PARA WHATSAPP (COMPATIBLE CON IPHONE Y ANDROID)
     function sendWhatsAppOrder() {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
@@ -1132,67 +1142,44 @@
       const cashAmount = document.getElementById('cash-amount').value.trim();
 
       if (!name || !address) {
-        alert('Por favor ingresa tu nombre y dirección de entrega.');
+        alert('Por favor completa tu nombre y dirección de entrega.');
         return;
       }
 
-      let subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
-      let totalGeneral = subtotal + 50;
-      let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      let delivery = 50;
+      let total = subtotal + delivery;
 
-      // Guardar en el panel de administrador de forma segura
-      try {
-        const detalleTexto = cart.map(i => `${i.qty}x ${i.name} (${i.garnish})`).join(', ');
-        const nuevoPedido = {
-          id: Date.now(),
-          hora: hora,
-          cliente: name,
-          detalle: detalleTexto,
-          total: `RD$ ${totalGeneral}`,
-          estado: 'pendiente'
-        };
-
-        let pedidosGuardados = JSON.parse(localStorage.getItem('pedidos_distingancia')) || [];
-        pedidosGuardados.unshift(nuevoPedido);
-        localStorage.setItem('pedidos_distingancia', JSON.stringify(pedidosGuardados));
-      } catch (err) {
-        console.log("Error de almacenamiento:", err);
+      let message = `*NUEVO PEDIDO - CAFETERÍA LA DISTINGANCIA*\n\n`;
+      message += `👤 *Cliente:* ${name}\n`;
+      message += `📍 *Dirección:* ${address}\n`;
+      message += `💳 *Método de Pago:* ${paymentMethod.toUpperCase()}\n`;
+      
+      if (paymentMethod === 'efectivo' && cashAmount) {
+        message += `💵 *Paga con:* RD$ ${cashAmount}\n`;
+      } else if (paymentMethod === 'transferencia') {
+        message += `📌 *Nota:* Pago vía transferencia (Enviar comprobante)\n`;
       }
 
-      // Tu número de WhatsApp real con código de país (1)
-      const numeroWhatsApp = "18293734628";
-
-      // Armar el mensaje
-      let msg = `*¡Nuevo Pedido - Cafetería La Distingancia! ☕*\n\n`;
-      msg += `👤 *Cliente:* ${name}\n`;
-      msg += `📍 *Dirección:* ${address}\n`;
-      msg += `💳 *Pago:* ${paymentMethod.toUpperCase()}${paymentMethod === 'efectivo' ? ` (Paga con: ${cashAmount || 'Exacto'})` : ''}\n\n`;
-      msg += `🛒 *Detalle del Pedido:*\n`;
-
-      cart.forEach(i => {
-        msg += `• ${i.qty}x ${i.name} [${i.garnish}] - RD$ ${i.price * i.qty}\n`;
+      message += `\n*DETALLE DEL PEDIDO:*\n`;
+      cart.forEach(item => {
+        message += `• ${item.qty}x ${item.name} - RD$ ${item.price * item.qty}\n`;
       });
 
-      msg += `\n📦 Subtotal: RD$ ${subtotal}`;
-      msg += `\n🚚 Delivery: RD$ 50`;
-      msg += `\n💰 *TOTAL GENERAL: RD$ ${totalGeneral}*\n\n`;
-      msg += `_Enviado desde el Menú Digital_`;
+      message += `\nSubtotal: RD$ ${subtotal}\n`;
+      message += `Delivery: RD$ ${delivery}\n`;
+      message += `*TOTAL A PAGAR: RD$ ${total}*\n`;
 
-      const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(msg)}`;
-
-      // Redirección infalible para iPhone y PC
-      window.location.href = url;
-
-      // Limpiar carrito
-      cart = [];
-      updateCartUI();
-      closeCheckoutModal();
-      document.getElementById('client-name').value = '';
-      document.getElementById('client-address').value = '';
+      // Recuerda cambiar este número por tu número de WhatsApp real con código de país (ej: 1809...)
+      const phone = "18090000000"; 
+      
+      // Uso de api.whatsapp.com y location.href para compatibilidad total con iPhone (Safari/Chrome)
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+      window.location.href = whatsappUrl;
     }
 
-    // Cargar productos al iniciar
-    renderProducts();
+    // Inicializar menú al cargar la página
+    renderProducts('all');
   </script>
 </body>
 </html>

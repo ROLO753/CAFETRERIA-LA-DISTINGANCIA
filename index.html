@@ -516,6 +516,7 @@
       font-weight: 800;
       cursor: pointer;
       font-size: 1rem;
+      text-align: center;
     }
 
     .modal-btn.cancel {
@@ -841,7 +842,8 @@
 
       <div class="modal-buttons">
         <button class="modal-btn cancel" onclick="closeCheckoutModal()">Cancelar</button>
-        <button class="modal-btn confirm" id="whatsapp-send-btn" onclick="sendWhatsAppOrder()">✅ Enviar Pedido a WhatsApp</button>
+        <!-- Enlace nativo optimizado para iOS Safari -->
+        <a href="#" class="modal-btn confirm" id="whatsapp-send-btn" onclick="prepararEnvioWhatsApp(event)">✅ Enviar Pedido a WhatsApp</a>
       </div>
     </div>
   </div>
@@ -1118,7 +1120,7 @@
       document.getElementById('transfer-fields').style.display = method === 'transferencia' ? 'block' : 'none';
     }
 
-    function sendWhatsAppOrder() {
+    function prepararEnvioWhatsApp(event) {
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
       const paymentMethod = document.getElementById('payment-method').value;
@@ -1126,6 +1128,7 @@
 
       if (!name || !address) {
         alert('Por favor completa tu nombre y dirección de entrega.');
+        event.preventDefault(); // Evita la apertura si faltan datos
         return;
       }
 
@@ -1153,11 +1156,10 @@
       text += `%0A💰 *Total General: RD$ ${totalGeneral}*%0A`;
       text += `%0A_Enviado desde la web de la cafetería_`;
 
-      // Recuerda cambiar por tu número de WhatsApp real con código de país sin el + (Ej: 1809...)
-      const phone = "18293734628"; 
+      const phone = "18293734628"; // Reemplaza con tu número real sin el '+' (ej: 1809...)
       
-      const url = `https://wa.me/${phone}?text=${text}`;
-      window.location.href = url;
+      // Asigna el enlace de forma dinámica para que Safari en iOS lo acepte de inmediato
+      event.currentTarget.href = `https://wa.me/${phone}?text=${text}`;
     }
 
     // Inicializar menú al cargar

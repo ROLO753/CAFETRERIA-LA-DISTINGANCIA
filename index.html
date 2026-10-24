@@ -588,13 +588,6 @@
       font-size: 0.95rem;
     }
 
-    .cart-item-garnish {
-      font-size: 0.85rem;
-      color: #ff3b30;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-
     .cart-item-price {
       color: #ff3b30;
       font-weight: 700;
@@ -1011,56 +1004,38 @@
       input.value = val;
     }
 
-    function closeGarnishModal() {
-      document.getElementById('garnish-modal').classList.remove('active');
-      currentCustomProduct = null;
-    }
-
     function confirmFinalPicadera() {
-      if (!currentCustomProduct) return;
       const garnish = document.querySelector('input[name="garnish-choice"]:checked').value;
       const price = parseInt(document.getElementById('modal-price-input').value) || currentCustomProduct.minPrice;
-      const customName = `${currentCustomProduct.name} (${garnish})`;
-      
-      addToCart(customName, price, garnish);
+      const fullName = `${currentCustomProduct.name} (${garnish})`;
+      addToCart(fullName, price, garnish);
       closeGarnishModal();
     }
 
+    function closeGarnishModal() {
+      document.getElementById('garnish-modal').classList.remove('active');
+    }
+
     function addToCart(name, price, garnish) {
-      const existingItem = cart.find(item => item.name === name && item.garnish === garnish);
-      if (existingItem) {
-        existingItem.qty += 1;
+      const existing = cart.find(item => item.name === name && item.garnish === garnish);
+      if (existing) {
+        existing.qty++;
       } else {
         cart.push({ name, price, garnish, qty: 1 });
       }
       updateCartUI();
-    }
-
-    function updateQuantity(index, change) {
-      cart[index].qty += change;
-      if (cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
-      updateCartUI();
+      toggleCart(true);
     }
 
     function updateCartUI() {
       const itemsContainer = document.getElementById('cart-items');
-      const cartCount = document.getElementById('cart-count');
-      const cartSubtotal = document.getElementById('cart-subtotal');
-      const cartTotal = document.getElementById('cart-total');
+      const countBadge = document.getElementById('cart-count');
+      const subtotalEl = document.getElementById('cart-subtotal');
+      const totalEl = document.getElementById('cart-total');
       const checkoutBtn = document.getElementById('checkout-btn');
 
-      const totalItemsCount = cart.reduce((sum, item) => sum + item.qty, 0);
-      
-      if (totalItemsCount > 0) {
-        cartCount.style.display = 'flex';
-        cartCount.innerText = totalItemsCount;
-        checkoutBtn.disabled = false;
-      } else {
-        cartCount.style.display = 'none';
-        checkoutBtn.disabled = true;
-      }
+      let totalCount = 0;
+      let subtotal = 0;
 
       if (cart.length === 0) {
         itemsContainer.innerHTML = `
@@ -1070,15 +1045,16 @@
             <small>Agrega productos para hacer tu pedido</small>
           </div>
         `;
-        cartSubtotal.innerText = 'RD$ 0';
-        cartTotal.innerText = 'RD$ 0';
+        countBadge.style.display = 'none';
+        checkoutBtn.disabled = true;
+        subtotalEl.innerText = 'RD$ 0';
+        totalEl.innerText = 'RD$ 0';
         return;
       }
 
       itemsContainer.innerHTML = '';
-      let subtotal = 0;
-
       cart.forEach((item, index) => {
+        totalCount += item.qty;
         subtotal += item.price * item.qty;
         itemsContainer.innerHTML += `
           <div class="cart-item">
@@ -1087,24 +1063,39 @@
               <div class="cart-item-price">RD$ ${item.price} c/u</div>
             </div>
             <div class="cart-item-qty">
-              <button class="qty-btn" onclick="updateQuantity(${index}, -1)">-</button>
+              <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
               <span>${item.qty}</span>
-              <button class="qty-btn" onclick="updateQuantity(${index}, 1)">+</button>
+              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
             </div>
           </div>
         `;
       });
 
-      const delivery = 50;
-      const total = subtotal + delivery;
-
-      cartSubtotal.innerText = `RD$ ${subtotal}`;
-      cartTotal.innerText = `RD$ ${total}`;
+      countBadge.style.display = 'flex';
+      countBadge.innerText = totalCount;
+      subtotalEl.innerText = `RD$ ${subtotal}`;
+      totalEl.innerText = `RD$ ${subtotal + 50}`;
+      checkoutBtn.disabled = false;
     }
 
-    function toggleCart() {
-      document.getElementById('cart-panel').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('active');
+    function changeQty(index, delta) {
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCartUI();
+    }
+
+    function toggleCart(forceOpen = false) {
+      const panel = document.getElementById('cart-panel');
+      const overlay = document.getElementById('overlay');
+      if (forceOpen) {
+        panel.classList.add('open');
+        overlay.classList.add('active');
+      } else {
+        panel.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
     }
 
     function closeCart() {
@@ -1123,16 +1114,8 @@
 
     function togglePaymentFields() {
       const method = document.getElementById('payment-method').value;
-      const cashFields = document.getElementById('cash-fields');
-      const transferFields = document.getElementById('transfer-fields');
-
-      if (method === 'efectivo') {
-        cashFields.style.display = 'block';
-        transferFields.style.display = 'none';
-      } else {
-        cashFields.style.display = 'none';
-        transferFields.style.display = 'block';
-      }
+      document.getElementById('cash-fields').style.display = method === 'efectivo' ? 'block' : 'none';
+      document.getElementById('transfer-fields').style.display = method === 'transferencia' ? 'block' : 'none';
     }
 
     function sendWhatsAppOrder() {
@@ -1146,40 +1129,39 @@
         return;
       }
 
-      let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      let delivery = 50;
-      let total = subtotal + delivery;
-
-      let message = `*NUEVO PEDIDO - CAFETERÍA LA DISTINGANCIA*\n\n`;
-      message += `👤 *Cliente:* ${name}\n`;
-      message += `📍 *Dirección:* ${address}\n`;
-      message += `💳 *Método de Pago:* ${paymentMethod.toUpperCase()}\n`;
-      
+      let text = `*¡Hola! Nuevo pedido de Cafetería La Distingancia*%0A%0A`;
+      text += `👤 *Cliente:* ${name}%0A`;
+      text += `📍 *Dirección:* ${address}%0A`;
+      text += `💳 *Método de pago:* ${paymentMethod.toUpperCase()}%0A`;
       if (paymentMethod === 'efectivo' && cashAmount) {
-        message += `💵 *Paga con:* RD$ ${cashAmount}\n`;
-      } else if (paymentMethod === 'transferencia') {
-        message += `📌 *Nota:* Pago vía transferencia (Enviar comprobante)\n`;
+        text += `💵 *Paga con:* RD$ ${cashAmount}%0A`;
       }
+      text += `%0A*--- DETALLE DEL PEDIDO ---*%0A`;
 
-      message += `\n*DETALLE DEL PEDIDO:*\n`;
+      let subtotal = 0;
       cart.forEach(item => {
-        message += `• ${item.qty}x ${item.name} - RD$ ${item.price * item.qty}\n`;
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        text += `• ${item.qty}x ${item.name} - RD$ ${itemTotal}%0A`;
       });
 
-      message += `\nSubtotal: RD$ ${subtotal}\n`;
-      message += `Delivery: RD$ ${delivery}\n`;
-      message += `*TOTAL A PAGAR: RD$ ${total}*\n`;
+      const delivery = 50;
+      const totalGeneral = subtotal + delivery;
 
-      // Recuerda cambiar este número por tu número de WhatsApp real con código de país (ej: 1809...)
-      const phone = "18090000000"; 
+      text += `%0A📦 Subtotal: RD$ ${subtotal}`;
+      text += `%0A🚚 Delivery: RD$ ${delivery}`;
+      text += `%0A💰 *Total General: RD$ ${totalGeneral}*%0A`;
+      text += `%0A_Enviado desde la web de la cafetería_`;
+
+      // Recuerda cambiar por tu número de WhatsApp real con código de país sin el + (Ej: 1809...)
+      const phone = "18293734628"; 
       
-      // Uso de api.whatsapp.com y location.href para compatibilidad total con iPhone (Safari/Chrome)
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
-      window.location.href = whatsappUrl;
+      const url = `https://wa.me/${phone}?text=${text}`;
+      window.location.href = url;
     }
 
-    // Inicializar menú al cargar la página
-    renderProducts('all');
+    // Inicializar menú al cargar
+    renderProducts();
   </script>
 </body>
 </html>

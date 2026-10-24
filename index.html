@@ -1128,38 +1128,33 @@
 
       if (!name || !address) {
         alert('Por favor completa tu nombre y dirección de entrega.');
-        event.preventDefault(); // Evita la apertura si faltan datos
         return;
       }
 
-      let text = `*¡Hola! Nuevo pedido de Cafetería La Distingancia*%0A%0A`;
-      text += `👤 *Cliente:* ${name}%0A`;
-      text += `📍 *Dirección:* ${address}%0A`;
-      text += `💳 *Método de pago:* ${paymentMethod.toUpperCase()}%0A`;
+      let message = `¡Hola! Nuevo pedido de Cafetería La Distingancia\n\n`;
+      message += `👤 Cliente: ${name}\n`;
+      message += `📍 Dirección: ${address}\n`;
+      message += `💳 Método de pago: ${paymentMethod.toUpperCase()}\n`;
       if (paymentMethod === 'efectivo' && cashAmount) {
-        text += `💵 *Paga con:* RD$ ${cashAmount}%0A`;
+        message += `💵 Paga con: RD$ ${cashAmount}\n`;
       }
-      text += `%0A*--- DETALLE DEL PEDIDO ---*%0A`;
+      message += `\n--- DETALLE DEL PEDIDO ---\n`;
 
       let subtotal = 0;
       cart.forEach(item => {
         const itemTotal = item.price * item.qty;
         subtotal += itemTotal;
-        text += `• ${item.qty}x ${item.name} - RD$ ${itemTotal}%0A`;
+        message += `${item.qty}x ${item.name} - RD$ ${itemTotal}\n`;
       });
 
       const delivery = 50;
-      const totalGeneral = subtotal + delivery;
+      message += `\n📦 Subtotal: RD$ ${subtotal}`;
+      message += `\n🚚 Delivery: RD$ ${delivery}`;
+      message += `\n💰 Total: RD$ ${subtotal + delivery}`;
 
-      text += `%0A📦 Subtotal: RD$ ${subtotal}`;
-      text += `%0A🚚 Delivery: RD$ ${delivery}`;
-      text += `%0A💰 *Total General: RD$ ${totalGeneral}*%0A`;
-      text += `%0A_Enviado desde la web de la cafetería_`;
-
-      const phone = "18293734628"; // Reemplaza con tu número real sin el '+' (ej: 1809...)
-      
-      // Asigna el enlace de forma dinámica para que Safari en iOS lo acepte de inmediato
-      event.currentTarget.href = `https://wa.me/${phone}?text=${text}`;
+      const phone = '18293734628';
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.location.href = url;
     }
 
     // Inicializar menú al cargar

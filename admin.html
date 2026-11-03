@@ -1,332 +1,72 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel Admin | Cafetería La Distingancia</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#241a16">
+  <title>Administración | Cafetería La Distingancia</title>
   <style>
-    :root {
-      --primary: #ff3b30;
-      --primary-dark: #d92817;
-      --dark: #1a1a2e;
-      --muted: #6b7280;
-      --bg: #f5f1ff;
-      --card: #ffffff;
-      --green: #22c55e;
-      --red: #ef4444;
-      --yellow: #f59e0b;
-      --shadow: 0 16px 40px rgba(0,0,0,0.08);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, sans-serif; }
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-      min-height: 100vh; color: var(--dark);
-    }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-    .card { background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: var(--shadow); padding: 24px; }
-    .login-box { max-width: 420px; margin: 60px auto; }
-    .title { font-size: clamp(1.9rem, 3vw, 2.5rem); margin-bottom: 12px; font-weight: 800; }
-    .subtitle { color: var(--muted); margin-bottom: 22px; }
-
-    .form-group { margin-bottom: 16px; }
-    label { display: block; margin-bottom: 7px; font-weight: 700; }
-    input, select, button { width: 100%; border-radius: 12px; border: 1px solid #e5e7eb; padding: 12px 14px; font-size: 1rem; }
-    input:focus, select:focus { outline: 2px solid rgba(255,59,48,.2); border-color: var(--primary); }
-    button { cursor: pointer; font-weight: 800; }
-    .primary-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; }
-    .secondary-btn { background: #eef2ff; color: var(--dark); border: none; }
-    .danger-btn { background: #fee2e2; color: #991b1b; border: none; }
-
-    .hidden { display: none !important; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 30px; }
-    .topbar h2 { font-size: 1.8rem; }
-
-    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
-    .product-list, .order-list { display: flex; flex-direction: column; gap: 14px; }
-    .product-item, .order-item { background: #f9fafb; border: 1px solid #edf2f7; border-radius: 16px; padding: 16px; }
-    .product-item { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
-    .product-name { font-weight: 700; }
-    .product-meta { color: var(--muted); font-size: 0.9rem; }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
-    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; }
-    .badge.ok { background: #dcfce7; color: #166534; }
-    .badge.bad { background: #fee2e2; color: #991b1b; }
-    .badge.wait { background: #fef3c7; color: #92400e; }
-
-    .order-item strong { display: block; margin-bottom: 8px; }
-    .order-item p { color: var(--muted); margin-bottom: 6px; font-size: 0.95rem; }
-    .order-item .order-header { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
-    .order-items { margin-top: 8px; }
-    .order-items li { list-style: none; margin: 4px 0; color: var(--dark); }
-
-    .status-select { width: 140px; }
-    .small { font-size: 0.8rem; color: var(--muted); }
-
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
-      .topbar { flex-direction: column; align-items: flex-start; }
-      .product-item { flex-direction: column; align-items: flex-start; }
-    }
+    :root{--ink:#241a16;--coffee:#603b2a;--deep:#39251c;--caramel:#c58a52;--cream:#fbf7f0;--paper:#fffdf9;--muted:#766b63;--line:#e9dfd3;--green:#237a4b;--red:#a33b2f;--shadow:0 14px 36px #31201718}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--cream);color:var(--ink);font-family:"Segoe UI",Arial,sans-serif;line-height:1.5}button,input,select{font:inherit}.shell{max-width:1200px;margin:auto;padding:24px 18px 50px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.topbar h1{margin:0;font:700 clamp(1.5rem,4vw,2.3rem) Georgia,serif}.card{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--paper);box-shadow:var(--shadow)}.login-card{max-width:430px;margin:8vh auto}.muted{color:var(--muted)}.field{margin:14px 0}.field label{display:block;margin-bottom:6px;font-weight:800;font-size:.92rem}.field input,.field select{width:100%;min-height:45px;padding:10px;border:1px solid #d9cec1;border-radius:9px;background:white;font-size:16px}.btn{min-height:42px;padding:9px 13px;border:0;border-radius:9px;background:var(--deep);color:white;cursor:pointer;font-weight:800}.btn.light{background:#eee9e2;color:var(--ink)}.btn.green{background:var(--green)}.btn.red{background:#fee2e2;color:#991b1b}.btn:disabled{opacity:.5;cursor:wait}.wide{width:100%}.notice{margin:12px 0;padding:11px;border-radius:9px;background:#fff2d9;color:#60441f}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:18px 0}.stat{padding:16px;border:1px solid var(--line);border-radius:13px;background:white}.stat small{display:block;color:var(--muted);font-weight:700}.stat strong{display:block;margin-top:5px;color:var(--coffee);font-size:1.5rem}.tabs{display:flex;gap:8px;margin:20px 0}.tab{width:auto;padding:10px 16px;border:1px solid var(--line);border-radius:30px;background:white;cursor:pointer;font-weight:800}.tab.active{background:var(--deep);color:white}.panel{display:none}.panel.active{display:block}.product-row,.order-card{margin-top:11px;padding:14px;border:1px solid var(--line);border-radius:12px;background:white}.product-row{display:grid;grid-template-columns:minmax(160px,1fr) 120px 130px auto auto;align-items:center;gap:10px}.product-row input,.product-row select,.order-card select{min-width:0;width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;background:white}.availability{font-size:.83rem;font-weight:800}.available{color:var(--green)}.unavailable{color:var(--red)}.order-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.order-head strong{font-size:1rem}.order-details{margin:7px 0;color:var(--muted);font-size:.92rem;overflow-wrap:anywhere}.order-lines{margin:9px 0;padding-left:18px}.order-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:12px}.order-actions select{width:auto;min-width:145px}.loading{text-align:center;padding:25px;color:var(--muted)}@media(max-width:800px){.product-row{grid-template-columns:1fr 1fr}.product-row .product-ident{grid-column:1/-1}.stats{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.tabs{overflow-x:auto}.tab{flex:0 0 auto}}@media(max-width:500px){.shell{padding:16px 12px 35px}.card{padding:15px}.product-row{grid-template-columns:1fr}.product-row .product-ident{grid-column:auto}.order-head{flex-direction:column}.order-actions select,.order-actions .btn{width:100%}}
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="login-view" class="card login-box">
-      <h1 class="title">Panel Administrativo</h1>
-      <p class="subtitle">Accede para gestionar menú y pedidos.</p>
-
-      <div class="form-group">
-        <label for="admin-password">Contraseña</label>
-        <input id="admin-password" type="password" placeholder="Ingresa la contraseña" />
-      </div>
-      <button class="primary-btn" onclick="loginAdmin()">Entrar</button>
-    </div>
-
-    <div id="admin-view" class="hidden">
-      <div class="topbar">
-        <h2>Administrador</h2>
-        <button class="secondary-btn" style="width:auto;padding-inline:16px;" onclick="logoutAdmin()">Cerrar sesión</button>
-      </div>
-
-      <div class="card" style="margin-bottom: 24px;">
-        <h3 style="margin-bottom: 14px;">Agregar producto</h3>
-        <div class="form-group">
-          <label>Nombre</label>
-          <input id="new-name" type="text" placeholder="Ej. Batida Chinola" />
-        </div>
-        <div class="form-group">
-          <label>Categoría</label>
-          <select id="new-category">
-            <option value="sandwich">Sandwich</option>
-            <option value="yaroa">Yaroa</option>
-            <option value="picaderas">Picaderas</option>
-            <option value="empanadas">Empanadas</option>
-            <option value="batidas">Batidas</option>
-            <option value="jugos">Jugos</option>
-            <option value="bebidas">Bebidas</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Precio</label>
-          <input id="new-price" type="number" placeholder="250" min="0" />
-        </div>
-        <div class="form-group">
-          <label>Imagen URL</label>
-          <input id="new-image" type="text" placeholder="https://..." />
-        </div>
-        <button class="primary-btn" onclick="addProduct()">Guardar producto</button>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3 style="margin-bottom: 18px;">Productos</h3>
-          <div id="products-admin" class="product-list"></div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-bottom: 18px;">Pedidos</h3>
-          <div id="orders-admin" class="order-list"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <main class="shell">
+    <section id="login-view" class="card login-card">
+      <h1>Panel de administración</h1><p class="muted">Inicia sesión con la cuenta de administrador de Firebase.</p>
+      <form id="login-form"><div class="field"><label for="email">Correo electrónico</label><input id="email" type="email" autocomplete="username" required></div><div class="field"><label for="password">Contraseña</label><input id="password" type="password" autocomplete="current-password" required></div><button class="btn wide" id="login-button" type="submit">Iniciar sesión</button><p id="login-error" class="notice" hidden></p></form>
+    </section>
+    <section id="admin-view" hidden>
+      <header class="topbar"><div><h1>La Distingancia · Administración</h1><span class="muted" id="admin-email"></span></div><button class="btn light" id="logout-button" type="button">Cerrar sesión</button></header>
+      <div class="stats"><div class="stat"><small>Pedidos recibidos hoy</small><strong id="today-orders">0</strong></div><div class="stat"><small>Pagos recibidos hoy</small><strong id="today-income">RD$ 0</strong></div><div class="stat"><small>Pedidos pendientes de pago</small><strong id="unpaid-orders">0</strong></div></div>
+      <nav class="tabs"><button class="tab active" data-panel="orders-panel">Pedidos</button><button class="tab" data-panel="products-panel">Productos</button></nav>
+      <section id="orders-panel" class="panel active card"><h2>Pedidos</h2><p class="muted">Los pedidos llegan al guardarse en el menú, aunque el cliente no termine el envío de WhatsApp. Confirma la recepción del dinero antes de marcarlo pagado.</p><div id="orders-list" class="loading">Cargando pedidos…</div></section>
+      <section id="products-panel" class="panel card"><h2>Menú y disponibilidad</h2><p class="muted">Los cambios se reflejan en vivo en el menú público.</p><div class="field"><button class="btn" id="seed-menu-button" type="button">Cargar menú inicial de 42 productos</button></div><div class="field"><label for="search-products">Buscar producto</label><input id="search-products" placeholder="Escribe un nombre"></div><div id="products-list" class="loading">Cargando productos…</div></section>
+    </section>
+  </main>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script>
-    const STORAGE_KEYS = {
-      products: 'cafeteria_products_v1',
-      orders: 'cafeteria_orders_v1',
-      adminAuth: 'cafeteria_admin_logged_v1'
-    };
+    const app = firebase.initializeApp(window.CAFETERIA_FIREBASE_CONFIG);
+    const auth = app.auth();
+    const db = app.database();
+    const ADMIN_UID = window.CAFETERIA_ADMIN_UID;
+    let products = [];
+    let orders = [];
 
-    const DEFAULT_PASSWORD = 'admin123';
-    const defaultProducts = [
-      { id: 1, name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false, agotado: false },
-      { id: 2, name: 'Salami y Queso', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso', hasGarnish: false, agotado: false },
-      { id: 3, name: 'Queso solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo', hasGarnish: false, agotado: false },
-      { id: 4, name: 'Pollo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo', hasGarnish: false, agotado: false },
-      { id: 5, name: 'Pollo y Queso', price: 175, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso', hasGarnish: false, agotado: false },
-      { id: 13, name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Peque%C3%B1a', hasGarnish: false, agotado: false },
-      { id: 16, name: 'Salami Picadera', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true, isVariablePicadera: true, agotado: false },
-      { id: 25, name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false, agotado: false },
-      { id: 26, name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false, agotado: false },
-      { id: 31, name: 'Batida Lechoza', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Lechoza', hasGarnish: false, agotado: false },
-      { id: 34, name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola', hasGarnish: false, agotado: false },
-      { id: 39, name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml', hasGarnish: false, agotado: false }
-    ];
-
-    function loadProductsFromStorage() {
-      const saved = localStorage.getItem(STORAGE_KEYS.products);
-      if (!saved) {
-        localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(defaultProducts));
-        return defaultProducts;
-      }
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) && parsed.length ? parsed : defaultProducts;
-      } catch (error) {
-        return defaultProducts;
-      }
+    document.getElementById('login-form').addEventListener('submit', async event => {
+      event.preventDefault(); const button = document.getElementById('login-button'); const errorBox = document.getElementById('login-error'); button.disabled = true; errorBox.hidden = true;
+      try { await auth.signInWithEmailAndPassword(document.getElementById('email').value.trim(), document.getElementById('password').value); }
+      catch (error) { errorBox.textContent = 'No se pudo iniciar sesión. Revisa el correo y la contraseña.'; errorBox.hidden = false; button.disabled = false; }
+    });
+    document.getElementById('logout-button').addEventListener('click', () => auth.signOut());
+    auth.onAuthStateChanged(user => {
+      if (!user) { document.getElementById('login-view').hidden = false; document.getElementById('admin-view').hidden = true; return; }
+      if (user.uid !== ADMIN_UID) { auth.signOut(); document.getElementById('login-error').textContent = 'Esta cuenta no tiene acceso de administrador.'; document.getElementById('login-error').hidden = false; return; }
+      document.getElementById('login-view').hidden = true; document.getElementById('admin-view').hidden = false; document.getElementById('admin-email').textContent = user.email || ''; listenData();
+    });
+    function listenData() {
+      db.ref('products').on('value', snapshot => { const value = snapshot.val() || {}; products = Object.values(value); renderProducts(); }, error => showError('products-list', error));
+      db.ref('orders').on('value', snapshot => { const value = snapshot.val() || {}; orders = Object.entries(value).map(([key, order]) => ({...order, id:key})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)); renderOrders(); renderStats(); }, error => showError('orders-list', error));
     }
-
-    function loginAdmin() {
-      const password = document.getElementById('admin-password').value;
-      if (password === DEFAULT_PASSWORD) {
-        localStorage.setItem(STORAGE_KEYS.adminAuth, 'true');
-        showAdmin();
-      } else {
-        alert('Contraseña incorrecta. Usa: admin123');
-      }
+    function showError(id, error) { console.error(error); const target = document.getElementById(id); target.className = 'notice'; target.textContent = 'Error de acceso a Realtime Database. Verifica las reglas publicadas en Firebase.'; }
+    function formatMoney(value) { return `RD$ ${Number(value || 0).toLocaleString('es-DO')}`; }
+    function renderStats() { const today = new Date(); const start = new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime(); const todays = orders.filter(o => Number(o.createdAt) >= start); document.getElementById('today-orders').textContent = todays.length; document.getElementById('today-income').textContent = formatMoney(todays.filter(o=>o.paid===true).reduce((sum,o)=>sum+Number(o.total||0),0)); document.getElementById('unpaid-orders').textContent = orders.filter(o=>o.paid!==true).length; }
+    function el(tag, className, text) { const node=document.createElement(tag); if(className)node.className=className; if(text!==undefined)node.textContent=text; return node; }
+    function renderOrders() {
+      const host=document.getElementById('orders-list'); host.replaceChildren(); if(!orders.length){host.appendChild(el('p','loading','Todavía no hay pedidos.'));return;}
+      orders.forEach(order=>{const card=el('article','order-card');const head=el('div','order-head');head.append(el('strong','',`${order.clientName||'Cliente'} · ${order.id}`),el('span',order.paid?'availability available':'availability unavailable',order.paid?'PAGADO':'PENDIENTE DE PAGO'));card.appendChild(head);const date=order.createdAt?new Date(order.createdAt).toLocaleString('es-DO'):'Fecha no disponible';card.append(el('p','order-details',`${date} · ${order.address||''}`),el('p','order-details',`Pago: ${order.paymentMethod||'—'}${order.cashAmount?` · Paga con ${order.cashAmount}`:''}`));const list=el('ul','order-lines');(order.items||[]).forEach(item=>list.appendChild(el('li','',`${item.qty} × ${item.name} — ${formatMoney(Number(item.price)*Number(item.qty))}`)));card.appendChild(list);card.append(el('p','',`Subtotal ${formatMoney(order.subtotal)} + delivery ${formatMoney(order.delivery)} = Total ${formatMoney(order.total)}`));const actions=el('div','order-actions');const status=document.createElement('select');['recibido','preparando','listo','entregado','cancelado'].forEach(value=>{const option=document.createElement('option');option.value=value;option.textContent=value[0].toUpperCase()+value.slice(1);option.selected=(order.status||'recibido')===value;status.appendChild(option)});status.addEventListener('change',()=>updateOrder(order.id,{status:status.value}));const paid=document.createElement('button');paid.type='button';paid.className=`btn ${order.paid?'light':'green'}`;paid.textContent=order.paid?'Marcar no pagado':'Confirmar pago recibido';paid.addEventListener('click',()=>updateOrder(order.id,{paid:!order.paid}));actions.append(status,paid);card.appendChild(actions);host.appendChild(card);});
     }
-
-    function logoutAdmin() {
-      localStorage.removeItem(STORAGE_KEYS.adminAuth);
-      document.getElementById('admin-password').value = '';
-      showLogin();
+    function renderProducts() {
+      const host=document.getElementById('products-list'); host.replaceChildren(); const query=document.getElementById('search-products').value.trim().toLowerCase(); const filtered=products.filter(p=>String(p.name||'').toLowerCase().includes(query)).sort((a,b)=>Number(a.id)-Number(b.id)); if(!filtered.length){host.appendChild(el('p','loading',products.length?'No hay coincidencias.':'Pulsa “Cargar menú inicial” para importar el menú.'));return;}
+      filtered.forEach(product=>{const row=el('div','product-row');const identity=el('div','product-ident');identity.append(el('strong','',product.name),el('div','product-meta',`${product.category} · ${product.variable?'Precio mínimo':'Precio fijo'}`));const name=document.createElement('input');name.value=product.name;name.setAttribute('aria-label','Nombre');const price=document.createElement('input');price.type='number';price.min='0';price.step='1';price.value=Number(product.price)||150;price.setAttribute('aria-label','Precio RD$');const category=document.createElement('select');['sandwich','yaroa','picaderas','empanadas','batidas','jugos','bebidas'].forEach(c=>{const opt=document.createElement('option');opt.value=c;opt.textContent=c;opt.selected=product.category===c;category.appendChild(opt)});const available=document.createElement('button');available.type='button';available.className=`btn ${product.available===false?'red':'green'}`;available.textContent=product.available===false?'Agotado':'Disponible';available.addEventListener('click',()=>updateProduct(product.id,{available:product.available===false}));const save=document.createElement('button');save.type='button';save.className='btn';save.textContent='Guardar';save.addEventListener('click',()=>{const newPrice=Number(price.value);if(!name.value.trim()||!Number.isFinite(newPrice)||newPrice<0){alert('Revisa el nombre y el precio.');return;}updateProduct(product.id,{name:name.value.trim(),price:newPrice,category:category.value});});row.append(identity,name,price,category,available,save);host.appendChild(row);});
     }
-
-    function showLogin() {
-      document.getElementById('login-view').classList.remove('hidden');
-      document.getElementById('admin-view').classList.add('hidden');
-    }
-
-    function showAdmin() {
-      document.getElementById('login-view').classList.add('hidden');
-      document.getElementById('admin-view').classList.remove('hidden');
-      renderProductsAdmin();
-      renderOrdersAdmin();
-    }
-
-    function renderProductsAdmin() {
-      const products = loadProductsFromStorage();
-      const container = document.getElementById('products-admin');
-      if (!products.length) {
-        container.innerHTML = '<div class="product-item">Sin productos cargados.</div>';
-        return;
-      }
-
-      container.innerHTML = products.map(product => {
-        const badge = product.agotado ? '<span class="badge bad">Agotado</span>' : '<span class="badge ok">Disponible</span>';
-        return `
-          <div class="product-item">
-            <div>
-              <div class="product-name">${product.name}</div>
-              <div class="product-meta">${product.category} · RD$ ${product.price ?? product.minPrice ?? 0}</div>
-            </div>
-            <div class="actions">
-              ${badge}
-              <button class="secondary-btn" style="width:auto;padding-inline:12px;" onclick="toggleProduct(${product.id})">
-                ${product.agotado ? 'Marcar disponible' : 'Marcar agotado'}
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderOrdersAdmin() {
-      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
-      const container = document.getElementById('orders-admin');
-      if (!orders.length) {
-        container.innerHTML = '<div class="order-item"><strong>No hay pedidos todavía.</strong></div>';
-        return;
-      }
-
-      container.innerHTML = orders.slice().reverse().map(order => {
-        const itemsHtml = (order.items || []).map(item => `<li>${item.qty}x ${item.name} - RD$ ${item.price * item.qty}</li>`).join('');
-        return `
-          <div class="order-item">
-            <div class="order-header">
-              <strong>${order.cliente}</strong>
-              <span class="badge ${order.status === 'pendiente' ? 'wait' : order.status === 'entregado' ? 'ok' : 'bad'}">${order.status || 'pendiente'}</span>
-            </div>
-            <p>${order.direccion}</p>
-            <p><b>Pago:</b> ${order.metodoPago} · ${order.efectivo || '—'}</p>
-            <ul class="order-items">${itemsHtml}</ul>
-            <p style="margin-top: 10px;"><b>Total:</b> RD$ ${order.total}</p>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
-              <select class="status-select" data-id="${order.id}" onchange="updateOrderStatus(this)">
-                <option value="pendiente" ${order.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
-                <option value="preparando" ${order.status === 'preparando' ? 'selected' : ''}>Preparando</option>
-                <option value="listo" ${order.status === 'listo' ? 'selected' : ''}>Listo</option>
-                <option value="entregado" ${order.status === 'entregado' ? 'selected' : ''}>Entregado</option>
-              </select>
-              <button class="danger-btn" style="width:auto;padding-inline:12px;" onclick="deleteOrder('${order.id}')">Eliminar</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function toggleProduct(productId) {
-      const products = loadProductsFromStorage();
-      const index = products.findIndex(item => item.id === productId);
-      if (index < 0) return;
-      products[index].agotado = !products[index].agotado;
-      localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
-      renderProductsAdmin();
-      if (typeof renderProducts === 'function') {
-        renderProducts(document.querySelector('.chip.active')?.dataset.filter || 'all');
-      }
-    }
-
-    function addProduct() {
-      const name = document.getElementById('new-name').value.trim();
-      const category = document.getElementById('new-category').value;
-      const price = Number(document.getElementById('new-price').value);
-      const image = document.getElementById('new-image').value.trim();
-
-      if (!name || !price) {
-        alert('Completa nombre y precio.');
-        return;
-      }
-
-      const products = loadProductsFromStorage();
-      const nextId = products.length ? Math.max(...products.map(p => Number(p.id) || 0)) + 1 : 1;
-      products.push({
-        id: nextId,
-        name,
-        price,
-        category,
-        image: image || 'https://via.placeholder.com/200x180?text=' + encodeURIComponent(name),
-        hasGarnish: false,
-        agotado: false
-      });
-
-      localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
-      document.getElementById('new-name').value = '';
-      document.getElementById('new-price').value = '';
-      document.getElementById('new-image').value = '';
-      renderProductsAdmin();
-      if (typeof renderProducts === 'function') {
-        renderProducts(document.querySelector('.chip.active')?.dataset.filter || 'all');
-      }
-    }
-
-    function updateOrderStatus(select) {
-      const newStatus = select.value;
-      const orderId = select.dataset.id;
-      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
-      const target = orders.find(item => item.id === orderId);
-      if (!target) return;
-      target.status = newStatus;
-      localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(orders));
-      renderOrdersAdmin();
-    }
-
-    function deleteOrder(orderId) {
-      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
-      const filtered = orders.filter(item => item.id !== orderId);
-      localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(filtered));
-      renderOrdersAdmin();
-    }
-
-    if (localStorage.getItem(STORAGE_KEYS.adminAuth) === 'true') {
-      showAdmin();
-    } else {
-      showLogin();
-    }
+    async function updateProduct(id, changes) { try { await db.ref(`products/${id}`).update(changes); } catch(error) { alert('No se pudo guardar el producto. Verifica las reglas de Firebase.'); console.error(error); } }
+    async function updateOrder(id, changes) { try { await db.ref(`orders/${id}`).update(changes); } catch(error) { alert('No se pudo actualizar el pedido.'); console.error(error); } }
+    document.getElementById('search-products').addEventListener('input',renderProducts);
+    document.querySelectorAll('.tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));button.classList.add('active');document.getElementById(button.dataset.panel).classList.add('active')}));
+    document.getElementById('seed-menu-button').addEventListener('click',async()=>{if(products.length&&!confirm('Ya hay productos. ¿Quieres reemplazar el menú completo por los 42 productos iniciales?'))return;const button=document.getElementById('seed-menu-button');button.disabled=true;try{const response=await fetch('products.json',{cache:'no-store'});if(!response.ok)throw new Error('No se pudo cargar products.json');const list=await response.json();const data={};list.forEach(item=>{data[item.id]=item});await db.ref('products').set(data);alert('Menú inicial cargado.');}catch(error){console.error(error);alert('No se pudo importar el menú. Revisa que products.json esté publicado y que las reglas permitan administrar productos.');}finally{button.disabled=false}});
   </script>
 </body>
 </html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Admin | Cafetería La Distingancia</title>
+  <style>
+    :root {
+      --primary: #ff3b30;
+      --primary-dark: #d92817;
+      --dark: #1a1a2e;
+      --muted: #6b7280;
+      --bg: #f5f1ff;
+      --card: #ffffff;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --shadow: 0 16px 40px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+      min-height: 100vh; color: var(--dark);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+    .card { background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: var(--shadow); padding: 24px; }
+    .login-box { max-width: 420px; margin: 60px auto; }
+    .title { font-size: clamp(1.9rem, 3vw, 2.5rem); margin-bottom: 12px; font-weight: 800; }
+    .subtitle { color: var(--muted); margin-bottom: 22px; }
+
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 7px; font-weight: 700; }
+    input, select, button { width: 100%; border-radius: 12px; border: 1px solid #e5e7eb; padding: 12px 14px; font-size: 1rem; }
+    input:focus, select:focus { outline: 2px solid rgba(255,59,48,.2); border-color: var(--primary); }
+    button { cursor: pointer; font-weight: 800; }
+    .primary-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: none; }
+    .secondary-btn { background: #eef2ff; color: var(--dark); border: none; }
+    .danger-btn { background: #fee2e2; color: #991b1b; border: none; }
+
+    .hidden { display: none !important; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 30px; }
+    .topbar h2 { font-size: 1.8rem; }
+
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; }
+    .product-list, .order-list { display: flex; flex-direction: column; gap: 14px; }
+    .product-item, .order-item { background: #f9fafb; border: 1px solid #edf2f7; border-radius: 16px; padding: 16px; }
+    .product-item { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .product-name { font-weight: 700; }
+    .product-meta { color: var(--muted); font-size: 0.9rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 10px; font-size: 0.75rem; font-weight: 800; }
+    .badge.ok { background: #dcfce7; color: #166534; }
+    .badge.bad { background: #fee2e2; color: #991b1b; }
+    .badge.wait { background: #fef3c7; color: #92400e; }
+
+    .order-item strong { display: block; margin-bottom: 8px; }
+    .order-item p { color: var(--muted); margin-bottom: 6px; font-size: 0.95rem; }
+    .order-item .order-header { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .order-items { margin-top: 8px; }
+    .order-items li { list-style: none; margin: 4px 0; color: var(--dark); }
+
+    .status-select { width: 140px; }
+    .small { font-size: 0.8rem; color: var(--muted); }
+
+    @media (max-width: 860px) {
+      .grid { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .product-item { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="login-view" class="card login-box">
+      <h1 class="title">Panel Administrativo</h1>
+      <p class="subtitle">Accede para gestionar menú y pedidos.</p>
+
+      <div class="form-group">
+        <label for="admin-password">Contraseña</label>
+        <input id="admin-password" type="password" placeholder="Ingresa la contraseña" />
+      </div>
+      <button class="primary-btn" onclick="loginAdmin()">Entrar</button>
+    </div>
+
+    <div id="admin-view" class="hidden">
+      <div class="topbar">
+        <h2>Administrador</h2>
+        <button class="secondary-btn" style="width:auto;padding-inline:16px;" onclick="logoutAdmin()">Cerrar sesión</button>
+      </div>
+
+      <div class="card" style="margin-bottom: 24px;">
+        <h3 style="margin-bottom: 14px;">Agregar producto</h3>
+        <div class="form-group">
+          <label>Nombre</label>
+          <input id="new-name" type="text" placeholder="Ej. Batida Chinola" />
+        </div>
+        <div class="form-group">
+          <label>Categoría</label>
+          <select id="new-category">
+            <option value="sandwich">Sandwich</option>
+            <option value="yaroa">Yaroa</option>
+            <option value="picaderas">Picaderas</option>
+            <option value="empanadas">Empanadas</option>
+            <option value="batidas">Batidas</option>
+            <option value="jugos">Jugos</option>
+            <option value="bebidas">Bebidas</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Precio</label>
+          <input id="new-price" type="number" placeholder="250" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Imagen URL</label>
+          <input id="new-image" type="text" placeholder="https://..." />
+        </div>
+        <button class="primary-btn" onclick="addProduct()">Guardar producto</button>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3 style="margin-bottom: 18px;">Productos</h3>
+          <div id="products-admin" class="product-list"></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom: 18px;">Pedidos</h3>
+          <div id="orders-admin" class="order-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEYS = {
+      products: 'cafeteria_products_v1',
+      orders: 'cafeteria_orders_v1',
+      adminAuth: 'cafeteria_admin_logged_v1'
+    };
+
+    const DEFAULT_PASSWORD = 'admin123';
+    const defaultProducts = [
+      { id: 1, name: 'Jamón y Queso', price: 125, category: 'sandwich', image: 'https://i.imgur.com/UyTcJUG.jpeg', hasGarnish: false, agotado: false },
+      { id: 2, name: 'Salami y Queso', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Salami+y+Queso', hasGarnish: false, agotado: false },
+      { id: 3, name: 'Queso solo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Queso+solo', hasGarnish: false, agotado: false },
+      { id: 4, name: 'Pollo', price: 150, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo', hasGarnish: false, agotado: false },
+      { id: 5, name: 'Pollo y Queso', price: 175, category: 'sandwich', image: 'https://via.placeholder.com/200x180?text=Pollo+y+Queso', hasGarnish: false, agotado: false },
+      { id: 13, name: 'Yaroa Pequeñas', price: 225, category: 'yaroa', image: 'https://via.placeholder.com/200x180?text=Yaroa+Peque%C3%B1a', hasGarnish: false, agotado: false },
+      { id: 16, name: 'Salami Picadera', minPrice: 150, category: 'picaderas', image: 'https://i.imgur.com/8Se9hg2.jpeg', hasGarnish: true, isVariablePicadera: true, agotado: false },
+      { id: 25, name: 'Bandeja mixta', price: 500, category: 'picaderas', image: 'https://via.placeholder.com/200x180?text=Bandeja', hasGarnish: false, agotado: false },
+      { id: 26, name: 'Empanada Pollo y Queso', price: 120, category: 'empanadas', image: 'https://via.placeholder.com/200x180?text=Emp+Pollo+Queso', hasGarnish: false, agotado: false },
+      { id: 31, name: 'Batida Lechoza', price: 180, category: 'batidas', image: 'https://via.placeholder.com/200x180?text=Batida+Lechoza', hasGarnish: false, agotado: false },
+      { id: 34, name: 'Jugo Chinola', price: 150, category: 'jugos', image: 'https://via.placeholder.com/200x180?text=Jugo+Chinola', hasGarnish: false, agotado: false },
+      { id: 39, name: 'Cola Real 400ml', price: 50, category: 'bebidas', image: 'https://via.placeholder.com/200x180?text=Cola+Real+400ml', hasGarnish: false, agotado: false }
+    ];
+
+    function loadProductsFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEYS.products);
+      if (!saved) {
+        localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(defaultProducts));
+        return defaultProducts;
+      }
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) && parsed.length ? parsed : defaultProducts;
+      } catch (error) {
+        return defaultProducts;
+      }
+    }
+
+    function loginAdmin() {
+      const password = document.getElementById('admin-password').value;
+      if (password === DEFAULT_PASSWORD) {
+        localStorage.setItem(STORAGE_KEYS.adminAuth, 'true');
+        showAdmin();
+      } else {
+        alert('Contraseña incorrecta. Usa: admin123');
+      }
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem(STORAGE_KEYS.adminAuth);
+      document.getElementById('admin-password').value = '';
+      showLogin();
+    }
+
+    function showLogin() {
+      document.getElementById('login-view').classList.remove('hidden');
+      document.getElementById('admin-view').classList.add('hidden');
+    }
+
+    function showAdmin() {
+      document.getElementById('login-view').classList.add('hidden');
+      document.getElementById('admin-view').classList.remove('hidden');
+      renderProductsAdmin();
+      renderOrdersAdmin();
+    }
+
+    function renderProductsAdmin() {
+      const products = loadProductsFromStorage();
+      const container = document.getElementById('products-admin');
+      if (!products.length) {
+        container.innerHTML = '<div class="product-item">Sin productos cargados.</div>';
+        return;
+      }
+
+      container.innerHTML = products.map(product => {
+        const badge = product.agotado ? '<span class="badge bad">Agotado</span>' : '<span class="badge ok">Disponible</span>';
+        return `
+          <div class="product-item">
+            <div>
+              <div class="product-name">${product.name}</div>
+              <div class="product-meta">${product.category} · RD$ ${product.price ?? product.minPrice ?? 0}</div>
+            </div>
+            <div class="actions">
+              ${badge}
+              <button class="secondary-btn" style="width:auto;padding-inline:12px;" onclick="toggleProduct(${product.id})">
+                ${product.agotado ? 'Marcar disponible' : 'Marcar agotado'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderOrdersAdmin() {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
+      const container = document.getElementById('orders-admin');
+      if (!orders.length) {
+        container.innerHTML = '<div class="order-item"><strong>No hay pedidos todavía.</strong></div>';
+        return;
+      }
+
+      container.innerHTML = orders.slice().reverse().map(order => {
+        const itemsHtml = (order.items || []).map(item => `<li>${item.qty}x ${item.name} - RD$ ${item.price * item.qty}</li>`).join('');
+        return `
+          <div class="order-item">
+            <div class="order-header">
+              <strong>${order.cliente}</strong>
+              <span class="badge ${order.status === 'pendiente' ? 'wait' : order.status === 'entregado' ? 'ok' : 'bad'}">${order.status || 'pendiente'}</span>
+            </div>
+            <p>${order.direccion}</p>
+            <p><b>Pago:</b> ${order.metodoPago} · ${order.efectivo || '—'}</p>
+            <ul class="order-items">${itemsHtml}</ul>
+            <p style="margin-top: 10px;"><b>Total:</b> RD$ ${order.total}</p>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+              <select class="status-select" data-id="${order.id}" onchange="updateOrderStatus(this)">
+                <option value="pendiente" ${order.status === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                <option value="preparando" ${order.status === 'preparando' ? 'selected' : ''}>Preparando</option>
+                <option value="listo" ${order.status === 'listo' ? 'selected' : ''}>Listo</option>
+                <option value="entregado" ${order.status === 'entregado' ? 'selected' : ''}>Entregado</option>
+              </select>
+              <button class="danger-btn" style="width:auto;padding-inline:12px;" onclick="deleteOrder('${order.id}')">Eliminar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleProduct(productId) {
+      const products = loadProductsFromStorage();
+      const index = products.findIndex(item => item.id === productId);
+      if (index < 0) return;
+      products[index].agotado = !products[index].agotado;
+      localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
+      renderProductsAdmin();
+      if (typeof renderProducts === 'function') {
+        renderProducts(document.querySelector('.chip.active')?.dataset.filter || 'all');
+      }
+    }
+
+    function addProduct() {
+      const name = document.getElementById('new-name').value.trim();
+      const category = document.getElementById('new-category').value;
+      const price = Number(document.getElementById('new-price').value);
+      const image = document.getElementById('new-image').value.trim();
+
+      if (!name || !price) {
+        alert('Completa nombre y precio.');
+        return;
+      }
+
+      const products = loadProductsFromStorage();
+      const nextId = products.length ? Math.max(...products.map(p => Number(p.id) || 0)) + 1 : 1;
+      products.push({
+        id: nextId,
+        name,
+        price,
+        category,
+        image: image || 'https://via.placeholder.com/200x180?text=' + encodeURIComponent(name),
+        hasGarnish: false,
+        agotado: false
+      });
+
+      localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(products));
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-price').value = '';
+      document.getElementById('new-image').value = '';
+      renderProductsAdmin();
+      if (typeof renderProducts === 'function') {
+        renderProducts(document.querySelector('.chip.active')?.dataset.filter || 'all');
+      }
+    }
+
+    function updateOrderStatus(select) {
+      const newStatus = select.value;
+      const orderId = select.dataset.id;
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
+      const target = orders.find(item => item.id === orderId);
+      if (!target) return;
+      target.status = newStatus;
+      localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(orders));
+      renderOrdersAdmin();
+    }
+
+    function deleteOrder(orderId) {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.orders) || '[]');
+      const filtered = orders.filter(item => item.id !== orderId);
+      localStorage.setItem(STORAGE_KEYS.orders, JSON.stringify(filtered));
+      renderOrdersAdmin();
+    }
+
+    if (localStorage.getItem(STORAGE_KEYS.adminAuth) === 'true') {
+      showAdmin();
+    } else {
+      showLogin();
+    }
+  </script>
+</body>
+</html>

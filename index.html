@@ -785,9 +785,9 @@
         <div class="modal-subtitle">💵 ¿De cuánto deseas tu picadera? (Mín. 150, escala de 50):</div>
         <div class="flexible-price-box">
           <div class="price-input-group">
-            <button class="price-step-btn" onclick="adjustModalPrice(-50)">−</button>
+            <button type="button" class="price-step-btn" onclick="adjustModalPrice(-50)">−</button>
             <input type="number" id="modal-price-input" value="150" min="150" step="50">
-            <button class="price-step-btn" onclick="adjustModalPrice(50)">+</button>
+            <button type="button" class="price-step-btn" onclick="adjustModalPrice(50)">+</button>
           </div>
         </div>
         <div class="modal-buttons">
@@ -842,8 +842,7 @@
 
       <div class="modal-buttons">
         <button class="modal-btn cancel" onclick="closeCheckoutModal()">Cancelar</button>
-        <!-- Enlace nativo optimizado para iOS Safari -->
-        <a href="#" class="modal-btn confirm" id="whatsapp-send-btn" onclick="prepararEnvioWhatsApp(event)">✅ Enviar Pedido a WhatsApp</a>
+        <button type="button" class="modal-btn confirm" id="whatsapp-send-btn" onclick="prepararEnvioWhatsApp(event)">✅ Enviar Pedido a WhatsApp</button>
       </div>
     </div>
   </div>
@@ -1065,9 +1064,9 @@
               <div class="cart-item-price">RD$ ${item.price} c/u</div>
             </div>
             <div class="cart-item-qty">
-              <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+              <button type="button" class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
               <span>${item.qty}</span>
-              <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+              <button type="button" class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
             </div>
           </div>
         `;
@@ -1121,6 +1120,13 @@
     }
 
     function prepararEnvioWhatsApp(event) {
+      event.preventDefault();
+
+      if (cart.length === 0) {
+        alert('Agrega productos al carrito antes de enviar el pedido.');
+        return;
+      }
+
       const name = document.getElementById('client-name').value.trim();
       const address = document.getElementById('client-address').value.trim();
       const paymentMethod = document.getElementById('payment-method').value;
@@ -1154,7 +1160,7 @@
 
       const phone = '18293734628';
       const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-      window.location.href = url;
+      window.location.assign(url);
     }
 
     // Inicializar menú al cargar

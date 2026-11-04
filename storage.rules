@@ -6,7 +6,7 @@ service firebase.storage {
       allow write: if request.auth != null
         && request.auth.uid == 'LljctgqdgPNO3K9TRB90UI0yu2c2'
         && request.resource != null
-        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.size <= 5 * 1024 * 1024
         && request.resource.contentType.matches('image/(jpeg|png|webp|gif)');
     }
   }

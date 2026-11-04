@@ -40,5 +40,6 @@
   {"id":39,"name":"Cola Real 400ml","price":50,"category":"bebidas","emoji":"🥤","available":true},
   {"id":40,"name":"Coca Cola 400ml","price":70,"category":"bebidas","emoji":"🥤","available":true},
   {"id":41,"name":"7Up 400ml","price":60,"category":"bebidas","emoji":"🥤","available":true},
-  {"id":42,"name":"Cerveza Presidente","price":150,"category":"bebidas","emoji":"🍺","available":true}
+  {"id":42,"name":"Cerveza Presidente","price":150,"category":"bebidas","emoji":"🍺","available":true},
+  {"id":43,"name":"El Distinguido","price":200,"category":"sandwich","emoji":"🥪","image":"https://i.imgur.com/jv0VNqK.jpeg","available":true}
 ]

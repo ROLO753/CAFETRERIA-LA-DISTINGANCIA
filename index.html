@@ -58,12 +58,14 @@ for(const p of items){const glow=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*
 const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible){last=0;frame=requestAnimationFrame(draw)}else{cancelAnimationFrame(frame)}},{rootMargin:'100px'});observer.observe(menu);resize();new ResizeObserver(resize).observe(menu);window.addEventListener('resize',resize,{passive:true})})();
 
 function sdParts(){const p={};new Intl.DateTimeFormat('en-US',{timeZone:'America/Santo_Domingo',hour:'numeric',minute:'numeric',hour12:false}).formatToParts(new Date()).forEach(x=>p[x.type]=x.value);return{h:Number(p.hour)%24,m:Number(p.minute)}}
-function isOpen(){return sdParts().h>=7}
-function closedMsg(){return'Estamos cerrados. Abrimos todos los días de 7:00 AM a 12:00 AM (medianoche).'}
+let storeMode='auto';
+function isOpen(){if(storeMode==='open')return true;if(storeMode==='closed')return false;return sdParts().h>=7}
+function closedMsg(){return storeMode==='closed'?'Estamos cerrados por ahora. Vuelve a intentarlo más tarde.':'Estamos cerrados. Abrimos todos los días de 7:00 AM a 12:00 AM (medianoche).'}
 let installEvt=null;
-function renderHours(){const bar=document.getElementById('hours-bar'),open=isOpen();bar.className='hours-bar'+(open?'':' closed');bar.textContent=open?'🟢 Abierto ahora · 7:00 AM a 12:00 AM':'🔴 Cerrado · abrimos a las 7:00 AM (puedes ver el menú)';const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;if(standalone)return;const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(installEvt||ios){const b=document.createElement('button');b.textContent='📲 Instalar app';b.onclick=async()=>{if(installEvt){installEvt.prompt();await installEvt.userChoice;installEvt=null;renderHours()}else alert('En iPhone: toca Compartir y luego "Agregar a pantalla de inicio".')};bar.appendChild(b)}}
+function renderHours(){const bar=document.getElementById('hours-bar'),open=isOpen();bar.className='hours-bar'+(open?'':' closed');bar.textContent=open?'🟢 Abierto ahora · 7:00 AM a 12:00 AM':storeMode==='closed'?'🔴 Cerrado por ahora (puedes ver el menú)':'🔴 Cerrado · abrimos a las 7:00 AM (puedes ver el menú)';const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;if(standalone)return;const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(installEvt||ios){const b=document.createElement('button');b.textContent='📲 Instalar app';b.onclick=async()=>{if(installEvt){installEvt.prompt();await installEvt.userChoice;installEvt=null;renderHours()}else alert('En iPhone: toca Compartir y luego "Agregar a pantalla de inicio".')};bar.appendChild(b)}}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;renderHours()});
 window.addEventListener('appinstalled',()=>{installEvt=null;renderHours()});
+db.ref('settings/storeStatus').on('value',s=>{const v=s.val();storeMode=['open','closed'].includes(v)?v:'auto';renderHours()},()=>{});
 renderHours();setInterval(renderHours,60000);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>

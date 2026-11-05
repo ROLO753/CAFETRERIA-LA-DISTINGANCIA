@@ -6,6 +6,13 @@
       ".read": true,
       ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
     },
+    "settings": {
+      "storeStatus": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+        ".validate": "newData.isString() && (newData.val() == 'auto' || newData.val() == 'open' || newData.val() == 'closed')"
+      }
+    },
     "orders": {
       ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
       "$orderId": {

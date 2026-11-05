@@ -4,7 +4,12 @@
     ".write": false,
     "products": {
       ".read": true,
-      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      "$productId": {
+        "stock": {
+          ".write": "auth == null && data.exists() && newData.isNumber() && newData.val() >= 0 && newData.val() < data.val()"
+        }
+      }
     },
     "settings": {
       "storeStatus": {

@@ -52,9 +52,14 @@ function showTracking(id) {
   const driverLine = document.createElement('div');
   driverLine.className = 'tracking-driver';
   driverLine.hidden = true;
+  function updateDriverLine() {
+    const show = driverName && currentState === 'encamino';
+    driverLine.hidden = !show;
+    driverLine.textContent = show ? `🛵 Tu repartidor: ${driverName}` : '';
+  }
   function renderSteps() {
     steps.replaceChildren();
-    const stages = driverName || currentState === 'encamino' ? ['recibido', 'preparando', 'listo', 'encamino', 'entregado'] : ['recibido', 'preparando', 'listo', 'entregado'];
+    const stages = currentState === 'encamino' ? ['recibido', 'preparando', 'listo', 'encamino', 'entregado'] : ['recibido', 'preparando', 'listo', 'entregado'];
     const stage = stages.indexOf(currentState);
     if (stage >= 0) stages.forEach((value, index) => {
       const step = document.createElement('span');
@@ -73,8 +78,7 @@ function showTracking(id) {
   db.ref(`orderDrivers/${id}`).on('value', snapshot => {
     const name = snapshot.val();
     driverName = typeof name === 'string' ? name : '';
-    driverLine.hidden = !driverName;
-    driverLine.textContent = driverName ? `🛵 Tu repartidor: ${driverName}` : '';
+    updateDriverLine();
     renderSteps();
   }, () => {});
   const listener = ref.on('value', snapshot => {
@@ -89,6 +93,7 @@ function showTracking(id) {
       return;
     }
     currentState = state;
+    updateDriverLine();
     renderSteps();
     if (previousState !== undefined && state !== previousState && trackingLabels[state]) {
       toast(`📦 Tu pedido: ${trackingLabels[state]}`);

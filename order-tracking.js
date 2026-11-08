@@ -52,9 +52,14 @@ function showTracking(id) {
   const driverLine = document.createElement('div');
   driverLine.className = 'tracking-driver';
   driverLine.hidden = true;
+  function updateDriverLine() {
+    const show = driverName && currentState === 'encamino';
+    driverLine.hidden = !show;
+    driverLine.textContent = show ? `🛵 Tu repartidor: ${driverName}` : '';
+  }
   function renderSteps() {
     steps.replaceChildren();
-    const stages = driverName || currentState === 'encamino' ? ['recibido', 'preparando', 'listo', 'encamino', 'entregado'] : ['recibido', 'preparando', 'listo', 'entregado'];
+    const stages = currentState === 'encamino' ? ['recibido', 'preparando', 'listo', 'encamino', 'entregado'] : ['recibido', 'preparando', 'listo', 'entregado'];
     const stage = stages.indexOf(currentState);
     if (stage >= 0) stages.forEach((value, index) => {
       const step = document.createElement('span');
@@ -73,8 +78,7 @@ function showTracking(id) {
   db.ref(`orderDrivers/${id}`).on('value', snapshot => {
     const name = snapshot.val();
     driverName = typeof name === 'string' ? name : '';
-    driverLine.hidden = !driverName;
-    driverLine.textContent = driverName ? `🛵 Tu repartidor: ${driverName}` : '';
+    updateDriverLine();
     renderSteps();
   }, () => {});
   const listener = ref.on('value', snapshot => {
@@ -83,7 +87,13 @@ function showTracking(id) {
     icon.textContent = trackingIcons[state] || '📦';
     card.classList.toggle('is-cancelled', state === 'cancelado');
     note.textContent = state === 'cancelado' ? 'Contacta a la cafetería si tienes alguna pregunta.' : state && !trackingLabels[state] ? 'Estado desconocido. Contacta a la cafetería.' : '';
+    if (state === 'entregado') {
+      if (previousState !== undefined) toast('🎉 Tu pedido fue entregado. ¡Buen provecho!');
+      finishTracking(id);
+      return;
+    }
     currentState = state;
+    updateDriverLine();
     renderSteps();
     if (previousState !== undefined && state !== previousState && trackingLabels[state]) {
       toast(`📦 Tu pedido: ${trackingLabels[state]}`);
@@ -102,6 +112,23 @@ function showTracking(id) {
   document.getElementById('tracking-list').prepend(card);
   section.hidden = false;
   document.getElementById('tracking-link').hidden = false;
+}
+
+function finishTracking(id) {
+  const tracked = trackedOrders.get(id);
+  if (!tracked) return;
+  tracked.ref.off('value', tracked.listener);
+  tracked.card.remove();
+  trackedOrders.delete(id);
+  trackingIds = trackingIds.filter(value => value !== id);
+  try {
+    localStorage.setItem(TRACKING_KEY, JSON.stringify(trackingIds));
+  } catch (error) {
+    console.error('No se pudo actualizar el seguimiento:', error);
+  }
+  const empty = !trackedOrders.size;
+  document.getElementById('tracking-section').hidden = empty;
+  document.getElementById('tracking-link').hidden = empty;
 }
 
 function rememberOrder(id) {

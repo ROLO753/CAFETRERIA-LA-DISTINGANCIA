@@ -3,6 +3,7 @@ const trackingLabels = {
   recibido: 'Pedido registrado',
   preparando: 'Preparando',
   listo: 'Listo',
+  encamino: 'En camino',
   entregado: 'Entregado',
   cancelado: 'Cancelado'
 };
@@ -10,6 +11,7 @@ const trackingIcons = {
   recibido: '🧾',
   preparando: '👨‍🍳',
   listo: '✨',
+  encamino: '🛵',
   entregado: '🎉',
   cancelado: '❌'
 };
@@ -46,16 +48,14 @@ function showTracking(id) {
   const steps = document.createElement('div');
   steps.className = 'tracking-steps';
   const ref = db.ref(`orderTracking/${id}`);
-  let previousState;
-  const listener = ref.on('value', snapshot => {
-    const state = snapshot.val();
-    label.textContent = trackingLabels[state] || 'Pedido no disponible';
-    icon.textContent = trackingIcons[state] || '📦';
-    card.classList.toggle('is-cancelled', state === 'cancelado');
-    note.textContent = state === 'cancelado' ? 'Contacta a la cafetería si tienes alguna pregunta.' : state && !trackingLabels[state] ? 'Estado desconocido. Contacta a la cafetería.' : '';
+  let previousState, currentState, driverName = '';
+  const driverLine = document.createElement('div');
+  driverLine.className = 'tracking-driver';
+  driverLine.hidden = true;
+  function renderSteps() {
     steps.replaceChildren();
-    const stages = ['recibido', 'preparando', 'listo', 'entregado'];
-    const stage = stages.indexOf(state);
+    const stages = driverName || currentState === 'encamino' ? ['recibido', 'preparando', 'listo', 'encamino', 'entregado'] : ['recibido', 'preparando', 'listo', 'entregado'];
+    const stage = stages.indexOf(currentState);
     if (stage >= 0) stages.forEach((value, index) => {
       const step = document.createElement('span');
       step.className = 'tracking-step' + (index < stage ? ' done' : index === stage ? ' current' : '');
@@ -69,6 +69,22 @@ function showTracking(id) {
       if (index === stage) step.setAttribute('aria-current', 'step');
       steps.appendChild(step);
     });
+  }
+  db.ref(`orderDrivers/${id}`).on('value', snapshot => {
+    const name = snapshot.val();
+    driverName = typeof name === 'string' ? name : '';
+    driverLine.hidden = !driverName;
+    driverLine.textContent = driverName ? `🛵 Tu repartidor: ${driverName}` : '';
+    renderSteps();
+  }, () => {});
+  const listener = ref.on('value', snapshot => {
+    const state = snapshot.val();
+    label.textContent = trackingLabels[state] || 'Pedido no disponible';
+    icon.textContent = trackingIcons[state] || '📦';
+    card.classList.toggle('is-cancelled', state === 'cancelado');
+    note.textContent = state === 'cancelado' ? 'Contacta a la cafetería si tienes alguna pregunta.' : state && !trackingLabels[state] ? 'Estado desconocido. Contacta a la cafetería.' : '';
+    currentState = state;
+    renderSteps();
     if (previousState !== undefined && state !== previousState && trackingLabels[state]) {
       toast(`📦 Tu pedido: ${trackingLabels[state]}`);
     }
@@ -82,7 +98,7 @@ function showTracking(id) {
     note.textContent = 'Revisa tu conexión y vuelve a abrir la app.';
   });
   trackedOrders.set(id, {ref, listener, card});
-  card.append(heading, steps, note);
+  card.append(heading, driverLine, steps, note);
   document.getElementById('tracking-list').prepend(card);
   section.hidden = false;
   document.getElementById('tracking-link').hidden = false;

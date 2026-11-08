@@ -29,7 +29,31 @@
       "$orderId": {
         ".read": true,
         ".write": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (auth == null && !data.exists() && newData.val() == 'recibido')",
-        ".validate": "newData.isString() && (newData.val() == 'recibido' || newData.val() == 'preparando' || newData.val() == 'listo' || newData.val() == 'entregado' || newData.val() == 'cancelado')"
+        ".validate": "newData.isString() && (newData.val() == 'recibido' || newData.val() == 'preparando' || newData.val() == 'listo' || newData.val() == 'encamino' || newData.val() == 'entregado' || newData.val() == 'cancelado')"
+      }
+    },
+    "drivers": {
+      ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+    },
+    "orderDrivers": {
+      "$orderId": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+        ".validate": "newData.isString() && newData.val().length <= 60"
+      }
+    },
+    "driverOrders": {
+      ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      "$token": {
+        ".read": true,
+        "$orderId": {
+          "status": {
+            ".write": "auth == null && data.exists() && ((data.val() == 'asignado' && newData.val() == 'encamino') || (data.val() != 'entregado' && newData.val() == 'entregado'))",
+            ".validate": "newData.val() == 'asignado' || newData.val() == 'encamino' || newData.val() == 'entregado'"
+          }
+        }
       }
     }
   }

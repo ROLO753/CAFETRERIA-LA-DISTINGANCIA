@@ -83,8 +83,6 @@ async function assignDriver(order, driverId) {
       address: order.address || '',
       paymentMethod: order.paymentMethod || '',
       cashAmount: order.cashAmount || '',
-      subtotal: Number(order.subtotal) || 0,
-      delivery: Number(order.delivery) || 0,
       total: Number(order.total) || 0,
       createdAt: Number(order.createdAt) || Date.now(),
       items: (order.items || []).map(i => ({name: String(i.name || ''), qty: Number(i.qty) || 0})),

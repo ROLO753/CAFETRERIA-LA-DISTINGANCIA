@@ -83,6 +83,11 @@ function showTracking(id) {
     icon.textContent = trackingIcons[state] || '📦';
     card.classList.toggle('is-cancelled', state === 'cancelado');
     note.textContent = state === 'cancelado' ? 'Contacta a la cafetería si tienes alguna pregunta.' : state && !trackingLabels[state] ? 'Estado desconocido. Contacta a la cafetería.' : '';
+    if (state === 'entregado') {
+      if (previousState !== undefined) toast('🎉 Tu pedido fue entregado. ¡Buen provecho!');
+      finishTracking(id);
+      return;
+    }
     currentState = state;
     renderSteps();
     if (previousState !== undefined && state !== previousState && trackingLabels[state]) {
@@ -102,6 +107,23 @@ function showTracking(id) {
   document.getElementById('tracking-list').prepend(card);
   section.hidden = false;
   document.getElementById('tracking-link').hidden = false;
+}
+
+function finishTracking(id) {
+  const tracked = trackedOrders.get(id);
+  if (!tracked) return;
+  tracked.ref.off('value', tracked.listener);
+  tracked.card.remove();
+  trackedOrders.delete(id);
+  trackingIds = trackingIds.filter(value => value !== id);
+  try {
+    localStorage.setItem(TRACKING_KEY, JSON.stringify(trackingIds));
+  } catch (error) {
+    console.error('No se pudo actualizar el seguimiento:', error);
+  }
+  const empty = !trackedOrders.size;
+  document.getElementById('tracking-section').hidden = empty;
+  document.getElementById('tracking-link').hidden = empty;
 }
 
 function rememberOrder(id) {

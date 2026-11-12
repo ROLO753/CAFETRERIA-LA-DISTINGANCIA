@@ -7,7 +7,7 @@
       ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
       "$productId": {
         "stock": {
-          ".write": "auth == null && data.exists() && newData.isNumber() && newData.val() >= 0 && newData.val() < data.val()"
+          ".write": "data.exists() && newData.isNumber() && newData.val() >= 0 && newData.val() < data.val()"
         }
       }
     },
@@ -21,15 +21,54 @@
     "orders": {
       ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
       "$orderId": {
-        ".write": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (!data.exists() && newData.exists() && auth == null)",
-        ".validate": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (!newData.exists() || (newData.hasChildren(['clientName','address','paymentMethod','items','subtotal','delivery','total','status','paid','createdAt']) && newData.child('clientName').isString() && newData.child('clientName').val().length <= 120 && newData.child('address').isString() && newData.child('address').val().length <= 300 && (newData.child('paymentMethod').val() == 'efectivo' || newData.child('paymentMethod').val() == 'transferencia') && newData.child('items').hasChildren() && newData.child('subtotal').isNumber() && newData.child('subtotal').val() >= 0 && newData.child('delivery').isNumber() && newData.child('delivery').val() >= 0 && newData.child('total').isNumber() && newData.child('total').val() == newData.child('subtotal').val() + newData.child('delivery').val() && newData.child('status').val() == 'recibido' && newData.child('paid').val() == false && newData.child('createdAt').isNumber()))"
+        ".write": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (!data.exists() && newData.exists())",
+        ".validate": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (!newData.exists() || (newData.hasChildren(['clientName','address','paymentMethod','items','subtotal','delivery','total','status','paid','createdAt']) && ((auth == null && !newData.child('customerUid').exists()) || (auth != null && newData.child('customerUid').val() == auth.uid)) && newData.child('clientName').isString() && newData.child('clientName').val().length <= 120 && newData.child('address').isString() && newData.child('address').val().length <= 300 && (newData.child('paymentMethod').val() == 'efectivo' || newData.child('paymentMethod').val() == 'transferencia') && newData.child('items').hasChildren() && newData.child('subtotal').isNumber() && newData.child('subtotal').val() >= 0 && newData.child('delivery').isNumber() && newData.child('delivery').val() >= 0 && newData.child('total').isNumber() && newData.child('total').val() == newData.child('subtotal').val() + newData.child('delivery').val() && newData.child('status').val() == 'recibido' && newData.child('paid').val() == false && newData.child('createdAt').isNumber()))"
       }
     },
     "orderTracking": {
       "$orderId": {
         ".read": true,
-        ".write": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (auth == null && !data.exists() && newData.val() == 'recibido')",
+        ".write": "(auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2') || (!data.exists() && newData.val() == 'recibido')",
         ".validate": "newData.isString() && (newData.val() == 'recibido' || newData.val() == 'preparando' || newData.val() == 'listo' || newData.val() == 'encamino' || newData.val() == 'entregado' || newData.val() == 'cancelado')"
+      }
+    },
+    "promoLedger": {
+      ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+    },
+    "promoUsers": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",
+        ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+      }
+    },
+    "promoRequests": {
+      ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        "$requestId": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['type']) && (newData.child('type').val() == 'spin' || newData.child('type').val() == 'coupon')"
+        }
+      }
+    },
+    "promoPublic": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+    },
+    "promoSettings": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      "combo": {
+        ".validate": "newData.hasChildren(['name','description','price','image']) && newData.child('name').isString() && newData.child('name').val().length <= 100 && newData.child('description').isString() && newData.child('description').val().length <= 300 && newData.child('price').isNumber() && newData.child('price').val() > 0 && newData.child('price').val() <= 10000 && newData.child('image').isString() && newData.child('image').val().length <= 500"
+      }
+    },
+    "promoUses": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",
+        ".write": "auth != null && (auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2' || (auth.uid === $uid && !data.exists() && root.child('promoUsers').child($uid).child('coupon').val() == 'aprobado'))",
+        ".validate": "newData.isString() && newData.val().length == 20"
       }
     },
     "drivers": {

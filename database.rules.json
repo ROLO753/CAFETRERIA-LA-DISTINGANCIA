@@ -57,6 +57,13 @@
       ".read": true,
       ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
     },
+    "promoSettings": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+      "combo": {
+        ".validate": "newData.hasChildren(['name','description','price','image']) && newData.child('name').isString() && newData.child('name').val().length <= 100 && newData.child('description').isString() && newData.child('description').val().length <= 300 && newData.child('price').isNumber() && newData.child('price').val() > 0 && newData.child('price').val() <= 10000 && newData.child('image').isString() && newData.child('image').val().length <= 500"
+      }
+    },
     "promoUses": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",

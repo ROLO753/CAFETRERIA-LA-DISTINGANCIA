@@ -1,6 +1,12 @@
 let promoStarted = false;
 let promoLedger = {};
 let promoOrders = {};
+const DEFAULT_PROMO_COMBO = {
+  name: 'Combo hamburguesa y refresco',
+  description: 'Hamburguesa + refresco',
+  price: 200,
+  image: 'promo/combo-primeros-10.png'
+};
 const promoBusy = new Set();
 
 function randomBelow(limit) {
@@ -55,6 +61,24 @@ async function runPromoOperation(operation) {
 function startPromoAdmin() {
   if (promoStarted) return;
   promoStarted = true;
+  db.ref('promoSettings/combo').on('value', snapshot => {
+    const combo = snapshot.val() || DEFAULT_PROMO_COMBO;
+    document.getElementById('promo-combo-name').value = combo.name;
+    document.getElementById('promo-combo-description').value = combo.description;
+    document.getElementById('promo-combo-price').value = combo.price;
+    document.getElementById('promo-combo-image').value = combo.image;
+    setPromoImagePreview(combo.image);
+    if (!snapshot.exists()) {
+      db.ref('promoSettings/combo').set(DEFAULT_PROMO_COMBO).catch(error => {
+        console.error('No se pudo crear el combo promocional:', error);
+        document.getElementById('promo-admin-status').textContent =
+          'No se pudo preparar el combo. Comprueba las reglas de Database.';
+      });
+    }
+  }, error => {
+    console.error(error);
+    document.getElementById('promo-admin-status').textContent = 'No se pudo cargar el combo promocional.';
+  });
   db.ref('promoLedger').on('value', snapshot => {
     promoLedger = snapshot.val() || {};
     renderPromoAdmin();
@@ -79,6 +103,47 @@ function startPromoAdmin() {
     document.getElementById('promo-admin-status').textContent = 'No se pudieron leer las solicitudes.';
   });
 }
+
+function setPromoImagePreview(url) {
+  const image = document.getElementById('promo-combo-preview');
+  image.hidden = true;
+  if (!url) return;
+  image.onload = () => { image.hidden = false; };
+  image.onerror = () => { image.hidden = true; };
+  image.src = url;
+}
+
+function validPromoImage(value) {
+  return validImageUrl(value) ||
+    (/^promo\/[A-Za-z0-9._/-]+$/.test(value) && !value.split('/').includes('..'));
+}
+
+document.getElementById('promo-combo-image').oninput = event => setPromoImagePreview(event.currentTarget.value.trim());
+document.getElementById('promo-combo-form').onsubmit = async event => {
+  event.preventDefault();
+  const name = document.getElementById('promo-combo-name').value.trim();
+  const description = document.getElementById('promo-combo-description').value.trim();
+  const price = Number(document.getElementById('promo-combo-price').value);
+  const image = document.getElementById('promo-combo-image').value.trim();
+  const status = document.getElementById('promo-admin-status');
+  if (!name || name.length > 100 || description.length > 300 ||
+      !Number.isFinite(price) || price <= 0 || price > 10000 ||
+      !validPromoImage(image)) {
+    status.textContent = 'Revisa el nombre, precio (máximo RD$10,000) y la imagen (HTTPS o archivo de promo).';
+    return;
+  }
+  const button = event.currentTarget.querySelector('button[type="submit"]');
+  button.disabled = true;
+  try {
+    await db.ref('promoSettings/combo').set({name, description, price, image});
+    status.textContent = 'Combo promocional actualizado.';
+  } catch (error) {
+    console.error('No se pudo guardar el combo promocional:', error);
+    status.textContent = 'No se pudo guardar. Comprueba las reglas de Database.';
+  } finally {
+    button.disabled = false;
+  }
+};
 
 function syncPromoOrders(list) {
   promoOrders = Object.fromEntries(list.map(order => [order.id, order]));

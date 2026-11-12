@@ -9,6 +9,7 @@ let promoWaiting = false;
 let promoLastResult = null;
 let promoPendingRequest = null;
 let promoPendingType = null;
+let promoCombo = null;
 
 const promoSection = document.getElementById('promo-section');
 const promoStatus = document.getElementById('promo-status');
@@ -18,8 +19,14 @@ const promoSpin = document.getElementById('promo-spin');
 const promoCoupon = document.getElementById('promo-coupon');
 
 function renderPromo() {
+  const combo = promoCombo || {name: 'Combo hamburguesa y refresco', description: 'Hamburguesa + refresco', price: 200, image: 'promo/combo-primeros-10.png'};
   const active = promoRemaining !== null && promoRemaining < 10;
   document.getElementById('promo-offer').hidden = !active;
+  document.getElementById('promo-offer-image').src = combo.image;
+  document.getElementById('promo-offer-image').alt = combo.name;
+  document.getElementById('promo-offer-name').textContent = combo.name;
+  document.getElementById('promo-offer-description').textContent = combo.description;
+  document.getElementById('promo-offer-price').textContent = `RD$${combo.price}`;
   document.getElementById('promo-count').textContent =
     promoRemaining === null ? '' : `${Math.max(0, 10 - promoRemaining)} reservas disponibles`;
   document.getElementById('promo-login').hidden = !!promoUser;
@@ -36,7 +43,7 @@ function renderPromo() {
     promoCoupon.textContent = 'Agregar mi combo reservado';
   } else if (promoUse) promoCoupon.textContent = 'Combo ya utilizado';
   else if (promoAccount?.coupon === 'agotado') promoCoupon.textContent = 'Reservas agotadas';
-  else promoCoupon.textContent = 'Solicitar combo de RD$200';
+  else promoCoupon.textContent = `Solicitar combo de RD$${combo.price}`;
 
   promoRewards.replaceChildren();
   Object.entries(promoAccount?.prizes || {}).forEach(([, prize]) => {
@@ -101,7 +108,8 @@ promoCoupon.onclick = () => {
     return;
   }
   if (!promoUser || promoUse || cart.some(item => item.productId === 'promo-combo-200')) return;
-  cart.push({name: 'Combo hamburguesa y refresco', price: 200, productId: 'promo-combo-200', garnish: 'Combo', qty: 1});
+  const combo = promoCombo || {name: 'Combo hamburguesa y refresco', price: 200};
+  cart.push({name: combo.name, price: Number(combo.price), productId: 'promo-combo-200', garnish: 'Combo', qty: 1});
   updateCart();
   toggleCart(true);
 };
@@ -143,4 +151,11 @@ db.ref('promoPublic/coupons').on('value', snapshot => {
 }, error => {
   console.error(error);
   promoResult.textContent = 'No se pudo consultar la disponibilidad del combo.';
+});
+db.ref('promoSettings/combo').on('value', snapshot => {
+  promoCombo = snapshot.val();
+  renderPromo();
+}, error => {
+  console.error(error);
+  promoResult.textContent = 'No se pudo cargar el combo promocional.';
 });

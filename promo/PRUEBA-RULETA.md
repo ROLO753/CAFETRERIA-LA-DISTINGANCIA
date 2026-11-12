@@ -16,6 +16,7 @@ Esta versión es para pruebas con el panel de administración abierto. No requie
 - Un giro cuesta cinco tokens. La aplicación selecciona un premio al azar en cada grupo de diez giros procesados entre todas las cuentas. Los otros nueve reciben mensajes sin premio. Si el admin está cerrado, las solicitudes esperan a que vuelva a abrirse.
 - En **Promociones** el administrador aprueba los premios y registra cuándo se canjean. Compara el código de cuenta que muestra el cliente con el del panel; para la cerveza, verifica la mayoría de edad antes de entregar.
 - Cada cuenta puede solicitar una reserva del combo. El administrador debe aprobarla. Hay diez reservas, una por cuenta, y el pedido consume esa reserva una sola vez. Una reserva aprobada cuenta contra el límite aunque no se complete la compra. Si se rechaza o abandona una reserva, esta versión no la libera automáticamente.
+- En Admin → Promociones puedes editar nombre, descripción, precio e imagen del combo. Para la imagen, pega un enlace HTTPS o conserva el archivo `promo/combo-primeros-10.png`. El cambio se refleja en la sección de promociones del menú.
 - Una persona puede tener varias cuentas de Google. El límite es por cuenta, no una prueba de identidad. El administrador debe verificar que el pedido y el canje correspondan a una persona antes de aceptarlos.
 - Las solicitudes y los datos de promociones se guardan en la base de datos del proyecto. No se borran automáticamente al finalizar la prueba.
 
@@ -25,4 +26,4 @@ Esta versión es para pruebas con el panel de administración abierto. No requie
 node --test tests/promo-engine.test.js
 ```
 
-La lógica probada localmente no sustituye una prueba de las reglas y del acceso con Google en el proyecto real. Antes de probar, verifica también que el dominio y el proveedor estén habilitados, que los invitados puedan pedir y que un usuario no pueda leer los datos promocionales de otra cuenta.
+La lógica probada localmente no sustituye una prueba de las reglas y del acceso con Google en el proyecto real. Esta versión agrega la ruta `promoSettings` a las reglas y requiere volver a publicar el archivo actualizado después de fusionar. Antes de probar, verifica también que el dominio y el proveedor estén habilitados, que los invitados puedan pedir y que un usuario no pueda leer los datos promocionales de otra cuenta.

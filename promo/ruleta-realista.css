@@ -1,0 +1,11 @@
+.promo-box{align-items:center;gap:26px;background:linear-gradient(145deg,#2c1813,#4a271c);border:1px solid #d5ab6955;box-shadow:inset 0 1px #fff2d21c,0 12px 30px #13080555}
+.promo-banner>div,.promo-box>div{min-width:0;overflow-wrap:anywhere}
+.promo-wheel-frame{position:relative;flex:0 0 200px;width:200px;padding-bottom:24px;display:grid;place-items:center}
+.promo-wheel-frame:before{content:"";position:absolute;bottom:3px;width:14px;height:53px;background:linear-gradient(90deg,#51331c,#e4c487,#644321);border-radius:4px;box-shadow:0 4px 8px #0008}
+.promo-wheel-frame:after{content:"";position:absolute;bottom:0;width:95px;height:12px;border-radius:50%;background:linear-gradient(#e9cf93,#664627);box-shadow:0 6px 12px #0008}
+.promo-wheel{position:relative;z-index:1;width:200px;height:200px;border:0;border-radius:50%;padding:0;background:none;display:block;filter:drop-shadow(0 10px 12px #0009)}
+.promo-wheel img{display:block;width:100%;height:100%}
+.promo-wheel.spinning{animation:wheel-spin 2.8s cubic-bezier(.15,.6,.18,1) both}
+.promo-wheel-caption{margin:0;color:#ead5b6;font-size:.75rem;text-align:center}
+@media(max-width:600px){.promo-wheel-frame{flex-basis:160px;width:160px}.promo-wheel{width:160px;height:160px}}
+@media(prefers-reduced-motion:reduce){.promo-wheel.spinning{animation:none}}

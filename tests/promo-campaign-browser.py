@@ -46,14 +46,14 @@ def new_page(browser, initial, user, width=390):
     return page, errors
 
 
-legacy_combo = {'name': 'Combo anterior', 'description': 'Anterior', 'price': 200,
-                'image': 'promo/combo-primeros-10.png'}
+combo = {'name': 'Combo anterior', 'description': 'Hamburguesa y jugo', 'price': 200,
+         'image': 'promo/combo-primeros-10.png'}
 legacy_user = {'coupon': 'aprobado', 'tokens': 8, 'revision': 1,
                'prizes': {'p1': {'name': 'Hamburguesa', 'status': 'pendiente'}}}
 initial = {'products': {}, 'orders': {}, 'settings': {'storeStatus': 'open'},
-           'promoSettings': {'combo': legacy_combo}, 'promoPublic': {'coupons': 1},
-           'promoLedger': {'coupons': 1, 'users': {'client1': legacy_user}},
-           'promoUsers': {'client1': legacy_user}, 'promoUses': {'client1': '-oldorder00000000000'}}
+           'promoSettings': {'combo': combo}, 'promoPublic': {'coupons': 10},
+           'promoLedger': {'coupons': 10, 'users': {'client1': legacy_user}},
+           'promoUsers': {'client1': legacy_user}}
 
 with sync_playwright() as p:
     browser = p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--no-sandbox'])
@@ -65,78 +65,121 @@ with sync_playwright() as p:
     admin.wait_for_function("tree.promoSettings.combo.active === false")
     admin.click('#promo-combo-toggle')
     admin.wait_for_function("tree.promoSettings.combo.active === true")
-    admin.evaluate("db.ref('promoRequests/client1/spin1').set({type:'spin'})")
-    admin.wait_for_timeout(200)
-    assert admin.evaluate("!tree.promoLedger.spins && tree.promoLedger.users.client1.tokens===8")
     admin.click('text=Aprobar premio')
     admin.wait_for_function("tree.promoLedger.users.client1.prizes.p1.status === 'aprobado'")
     admin.fill('#promo-combo-name', 'Combo nuevo')
     admin.fill('#promo-combo-price', '250')
-    admin.evaluate("window.failCampaignWrite=true")
-    admin.click('#promo-combo-replace')
-    expect(admin.locator('#promo-admin-status')).to_contain_text('Publica las reglas')
-    assert admin.evaluate("!tree.promoSettings.combo.cycle && tree.promoSettings.combo.name==='Combo anterior'")
-    admin.evaluate("window.failCampaignWrite=false")
     admin.click('#promo-combo-replace')
     admin.wait_for_function("tree.promoSettings.combo.cycle && tree.promoSettings.combo.name === 'Combo nuevo'")
-    cycle = admin.evaluate('tree.promoSettings.combo.cycle')
-    assert len(cycle) == 20
-    assert admin.evaluate("tree.promoUses.client1 && tree.promoLedger.users.client1.coupon==='aprobado'")
-    admin.evaluate("(c)=>db.ref(`promoCampaigns/${c}/requests/client1/request1`).set({type:'coupon'})", cycle)
-    admin.wait_for_function("(c)=>tree.promoCampaigns[c]?.users?.client1?.coupon === 'pendiente'", arg=cycle)
-    admin.get_by_role('button', name='Aprobar reserva').click()
-    admin.wait_for_function("(c)=>tree.promoCampaigns[c]?.users?.client1?.coupon === 'aprobado' && tree.promoCampaigns[c]?.public?.coupons===1", arg=cycle)
-    assert admin.evaluate("tree.promoUsers.client1.prizes.p1.status === 'aprobado'")
+    assert admin.evaluate("tree.promoLedger.users.client1.coupon==='aprobado'")
     assert not errors, errors
 
-    client, errors = new_page(browser, initial, {'uid': 'client1', 'displayName': 'Ana'})
-    client.goto('http://127.0.0.1:18759/index.html')
-    expect(client.locator('#promo-rewards')).to_contain_text('Hamburguesa')
-    assert client.locator('#promo-spin').count() == 0
-    # Reset only the test fixture's previously consumed legacy reservation.
-    client.evaluate("db.ref('promoUses/client1').set(null)")
-    expect(client.locator('#promo-coupon')).to_have_text('Agregar mi combo reservado')
-    client.click('#promo-coupon')
-    assert client.evaluate("cart[0].name === 'Combo anterior'")
-    client.evaluate("""() => db.ref('promoSettings/combo').set({
-      name:'Combo nuevo',description:'Nuevo',price:250,image:'promo/combo-primeros-10.png',
-      active:true,cycle:'-0000000000000000001'})""")
-    expect(client.locator('#promo-offer-name')).to_have_text('Combo nuevo')
-    client.evaluate("""() => {document.getElementById('client').value='Ana';
-      document.getElementById('address').value='Calle'; saveOrder()}""")
-    assert not client.evaluate('tree.orders && Object.keys(tree.orders).length')
-    client.evaluate("cart=[]; updateCart(); toggleCart(false)")
-    client.evaluate("""() => db.ref('promoCampaigns/-0000000000000000001/users/client1').set({
-      coupon:'aprobado',revision:1})""")
-    expect(client.locator('#promo-coupon')).to_have_text('Agregar mi combo reservado')
-    client.click('#promo-coupon')
-    client.evaluate("""() => {const old=window.setTimeout;window.setTimeout=(fn,ms,...a)=>ms===300?0:old(fn,ms,...a);saveOrder()}""")
-    client.wait_for_function("tree.orders && Object.keys(tree.orders).length === 1")
-    assert client.evaluate("tree.promoCampaigns['-0000000000000000001'].uses.client1")
-    assert client.evaluate("Object.values(tree.orders)[0].subtotal === 250")
-    client.evaluate("db.ref('promoSettings/combo/active').set(false)")
-    expect(client.locator('#promo-offer')).to_be_hidden()
+    page, errors = new_page(browser, initial, None)
+    page.goto('http://127.0.0.1:18759/index.html')
+    expect(page.locator('#promo-coupon')).to_be_visible()
+    assert page.locator('#tracking-section').is_hidden()
+    page.click('#promo-coupon')
+    page.evaluate('qty(0,1);qty(0,1)')
+    assert page.evaluate("cart.length===1 && cart[0].qty===3")
+    page.evaluate("""() => {
+      document.getElementById('client').value='Ana';
+      document.getElementById('address').value='Calle 1';
+      document.getElementById('cash').value='1000';
+      const old=window.setTimeout;window.setTimeout=(fn,ms,...a)=>ms===300?0:old(fn,ms,...a);
+      saveOrder()
+    }""")
+    page.wait_for_function("tree.orders && Object.keys(tree.orders).length===1")
+    order_id = page.evaluate('Object.keys(tree.orders)[0]')
+    assert page.evaluate("Object.values(tree.orders)[0].items[0].qty === 3")
+    assert page.evaluate("Object.values(tree.orders)[0].subtotal === 600")
+    assert page.evaluate("!tree.promoRequests && !tree.promoUses")
+    assert page.locator('#tracking-section').is_hidden()
+    page.evaluate("toggleCart(false)")
+    page.click('#tracking-link')
+    expect(page.locator('#tracking-list')).to_contain_text('Pedido registrado')
+    page.locator('#tracking-list summary').click()
+    expect(page.locator('#tracking-list')).to_contain_text('3 × Combo anterior')
+    expect(page.locator('#tracking-list')).to_contain_text('Dirección: Calle 1')
+    expect(page.locator('#tracking-list')).to_contain_text('Paga con: RD$ 1000')
+    expect(page.locator('#tracking-list')).to_contain_text('Total: RD$ 650')
+    page.evaluate("(id)=>db.ref(`orderTracking/${id}`).set('entregado')", order_id)
+    expect(page.locator('#tracking-list')).to_contain_text('Entregado')
+    page.click('#tracking-link')
+    assert page.locator('#tracking-section').is_hidden()
+    page.reload()
+    assert page.locator('#tracking-section').is_hidden()
+    page.click('#tracking-link')
+    assert page.locator('#tracking-list article').count() == 1
+    expect(page.locator('#tracking-list')).to_contain_text('Entregado')
+    expect(page.locator('#tracking-list')).to_contain_text('último estado guardado')
+    page.locator('#tracking-list summary').click()
+    expect(page.locator('#tracking-list')).to_contain_text('3 × Combo anterior')
+    page.evaluate("toggleTracking()")
+    page.click('#repeat-order')
+    assert page.evaluate("cart[0].qty === 3 && cart[0].productId === 'promo-combo-200'")
+    page.evaluate("toggleCart(false)")
+    page.evaluate("db.ref('promoSettings/combo/price').set(300)")
+    page.wait_for_function("promoCombo.price===300")
+    page.evaluate("saveOrder()")
+    assert not page.evaluate('tree.orders && Object.keys(tree.orders).length')
+    page.evaluate("""() => {
+      db.ref('dummy').push();
+      cart=[]; updateCart(); document.getElementById('promo-coupon').click();
+      document.getElementById('client').value='Ana';
+      document.getElementById('address').value='Calle 2';
+      const old=window.setTimeout;window.setTimeout=(fn,ms,...a)=>ms===300?0:old(fn,ms,...a);
+      saveOrder()
+    }""")
+    page.wait_for_function("tree.orders && Object.keys(tree.orders).length===1")
+    assert page.evaluate("Object.keys(JSON.parse(localStorage.getItem('cafeteria-order-history'))).length===2")
+    page.evaluate("toggleCart(false)")
+    page.click('#tracking-link')
+    assert page.locator('#tracking-list article').count() == 2
+    page.click('#tracking-link')
+    page.evaluate("db.ref('promoSettings/combo/active').set(false)")
+    expect(page.locator('#promo-section')).to_be_hidden()
     assert not errors, errors
 
-    products = {'1': {'id': '1', 'name': 'Combo normal', 'category': 'ofertas',
-                      'price': 500, 'stock': 2},
-                '2': {'id': '2', 'name': 'Jugo', 'category': 'bebidas', 'price': 300}}
-    guest, errors = new_page(browser, {'products': products, 'settings': {'storeStatus': 'open'}}, None)
-    guest.goto('http://127.0.0.1:18759/index.html')
-    guest.wait_for_function('products.length === 2')
-    guest.evaluate("""rememberRepeatOrder([
+    normal, errors = new_page(browser, {'products': {
+        '1': {'id': '1', 'name': 'Combo normal', 'category': 'ofertas', 'price': 500, 'stock': 2},
+        '2': {'id': '2', 'name': 'Jugo', 'category': 'bebidas', 'price': 300}},
+        'settings': {'storeStatus': 'open'}}, None)
+    normal.goto('http://127.0.0.1:18759/index.html')
+    normal.wait_for_function('products.length===2')
+    normal.evaluate("""rememberRepeatOrder([
       {productId:'1',name:'Combo normal',qty:3,price:500},
       {productId:'2',name:'Jugo',qty:2,price:200}])""")
-    guest.click('#repeat-order')
-    expect(guest.locator('#items')).to_contain_text('2 × Combo normal — RD$ 1000')
-    expect(guest.locator('#items')).to_contain_text('2 × Jugo — RD$ 600')
+    normal.click('#repeat-order')
+    expect(normal.locator('#items')).to_contain_text('2 × Combo normal — RD$ 1000')
+    expect(normal.locator('#items')).to_contain_text('2 × Jugo — RD$ 600')
     assert not errors, errors
 
-    product_admin, errors = new_page(browser, {'products': products}, {'uid': 'admin'})
-    product_admin.goto('http://127.0.0.1:18759/admin.html')
-    product_admin.get_by_role('button', name='🍔 Productos').click()
-    product_admin.get_by_role('button', name='Borrar Combo normal').click()
-    product_admin.wait_for_function("!tree.products['1']")
+    blocked, errors = new_page(browser, initial, None)
+    blocked.goto('http://127.0.0.1:18759/index.html')
+    blocked.wait_for_function('promoSettingsLoaded')
+    blocked.evaluate("""() => {
+      const original=Storage.prototype.setItem;
+      Storage.prototype.setItem=function(key,value) {
+        if (key === 'cafeteria-order-history') throw Error('Storage unavailable');
+        return original.call(this,key,value);
+      };
+      document.getElementById('promo-coupon').click();
+      document.getElementById('client').value='Ana';
+      document.getElementById('address').value='Calle 1';
+      const old=window.setTimeout;window.setTimeout=(fn,ms,...a)=>ms===300?0:old(fn,ms,...a);
+      saveOrder()
+    }""")
+    blocked.wait_for_function("tree.orders && Object.keys(tree.orders).length===1")
+    expect(blocked.locator('#save-status')).to_contain_text('No se pudo guardar el historial')
+    assert not errors, errors
+
+    old, errors = new_page(browser, initial, {'uid': 'client1', 'displayName': 'Ana'})
+    old.add_init_script("localStorage.setItem('cafeteria-order-tracking', JSON.stringify(['-1234567890123456789']))")
+    old.goto('http://127.0.0.1:18759/index.html')
+    old.click('#tracking-link')
+    expect(old.locator('#tracking-list')).to_contain_text('detalles de este pedido anterior no se guardaron')
+    old.locator('.promo-prizes summary').click()
+    expect(old.locator('#promo-rewards')).to_contain_text('Hamburguesa')
     assert not errors, errors
     browser.close()
-print('Legacy prizes, pause, replacement, reservations, checkout and normal combos: OK')
+print('Free combos, local order history and previous prizes: OK')

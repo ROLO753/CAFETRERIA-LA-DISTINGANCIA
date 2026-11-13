@@ -1,29 +1,45 @@
-# Prueba de promociones
+# Combos promocionales y premios anteriores
 
-Esta versión es para pruebas con el panel de administración abierto. No requiere Blaze ni Cloud Functions. No se debe promocionar como sistema seguro de premios sin una revisión y un servidor confiable: los controles dependen del navegador del administrador, de las reglas de Database y de la verificación manual.
+La ruleta está pausada: no se aceptan nuevos giros ni se acreditan tokens. Los datos
+anteriores se conservan y los premios pendientes siguen disponibles en el menú
+del cliente y en Admin → Promociones para aprobarlos o marcarlos como canjeados.
+Para la cerveza, verifica la mayoría de edad antes de entregar.
 
-## Preparación
+## Publicación
 
-1. En Firebase Authentication, activa el proveedor **Google** y configura el correo de asistencia del proyecto.
-2. En Authentication → Configuración → Dominios autorizados, agrega `rolo753.github.io` si no aparece. Si usas otro dominio, agrégalo también.
-3. Publica el contenido completo de `database.rules.json` en Realtime Database → Reglas. Conserva una copia de las reglas anteriores. Las reglas actualizadas permiten a clientes con Google crear pedidos asociados a su propia cuenta; los pedidos sin cuenta siguen permitidos.
-4. Publica los archivos de esta versión y abre el admin con la cuenta autorizada. Mantén el admin abierto durante la prueba. Se recomienda probar con una cuenta de Google distinta a la de administración.
+1. En Firebase Authentication, activa Google y autoriza el dominio del menú.
+2. **Antes de publicar esta versión**, publica el contenido completo de
+   `database.rules.json` en Realtime Database → Reglas. Conserva una copia de las
+   reglas anteriores. Las reglas nuevas impiden solicitudes de giro y permiten
+   las promociones independientes y sus reservas.
+3. Publica los archivos, cierra las pestañas antiguas del admin y vuelve a abrirlo
+   para procesar las solicitudes. Sin el admin abierto, las solicitudes esperan.
 
-## Funcionamiento
+## Uso
 
-- Los clientes que quieran participar entran con Google antes de hacer el pedido. Los pedidos de invitados siguen funcionando, pero no acumulan tokens. El navegador del menú usa una sesión de Firebase separada de la del administrador.
-- Al marcarse **entregado** un pedido con subtotal de productos de al menos RD$200, el admin acredita dos tokens una sola vez. No cuenta el delivery. Los pedidos anteriores a esta versión no tienen cuenta asociada y no acumulan tokens.
-- Un giro cuesta cinco tokens. La aplicación selecciona un premio al azar en cada grupo de diez giros procesados entre todas las cuentas. Los otros nueve reciben mensajes sin premio. Si el admin está cerrado, las solicitudes esperan a que vuelva a abrirse.
-- En **Promociones** el administrador aprueba los premios y registra cuándo se canjean. Compara el código de cuenta que muestra el cliente con el del panel; para la cerveza, verifica la mayoría de edad antes de entregar.
-- Cada cuenta puede solicitar una reserva del combo. El administrador debe aprobarla. Hay diez reservas, una por cuenta, y el pedido consume esa reserva una sola vez. Una reserva aprobada cuenta contra el límite aunque no se complete la compra. Si se rechaza o abandona una reserva, esta versión no la libera automáticamente.
-- En Admin → Promociones puedes editar nombre, descripción, precio e imagen del combo. Para la imagen, pega un enlace HTTPS o conserva el archivo `promo/combo-primeros-10.png`. El cambio se refleja en la sección de promociones del menú.
-- Una persona puede tener varias cuentas de Google. El límite es por cuenta, no una prueba de identidad. El administrador debe verificar que el pedido y el canje correspondan a una persona antes de aceptarlos.
-- Las solicitudes y los datos de promociones se guardan en la base de datos del proyecto. No se borran automáticamente al finalizar la prueba.
+- En Admin → Promociones, «Retirar combo» lo oculta e impide nuevos pedidos con
+  esa reserva. «Activar combo» lo muestra de nuevo con las reservas intactas.
+- Para un combo nuevo, modifica los campos y pulsa «Reemplazar por una promoción
+  nueva». Tras confirmar, hay 10 reservas nuevas y se cancelan las anteriores;
+  los pedidos ya guardados y los premios anteriores no se eliminan. Un carrito
+  con el combo anterior debe actualizarse antes de hacer el pedido.
+- «Guardar cambios» modifica el combo actual y mantiene sus reservas. Se avisa
+  si ya hay reservas aprobadas. El flyer PNG estático no cambia automáticamente.
+- Cada cuenta de Google puede reservar una unidad por promoción. El administrador
+  aprueba cada solicitud; una reserva aprobada cuenta contra el límite aunque no
+  se complete la compra. No se libera automáticamente.
+- Los combos normales se agregan y borran en Admin → Productos, categoría
+  «Ofertas y combos». Se puede configurar su existencia por separado.
 
-## Validación local
+Este sistema depende del navegador del administrador, de las reglas y de la
+verificación manual; no garantiza una persona por cuenta ni sustituye un servidor
+confiable. Antes de usarlo, verifica las reglas reales, el acceso con Google, las
+reservas y los pedidos de invitados. Las pruebas locales no sustituyen esa
+comprobación en Firebase.
 
-```sh
-node --test tests/promo-engine.test.js
-```
+## Pruebas locales
 
-La lógica probada localmente no sustituye una prueba de las reglas y del acceso con Google en el proyecto real. Esta versión agrega la ruta `promoSettings` a las reglas y requiere volver a publicar el archivo actualizado después de fusionar. Antes de probar, verifica también que el dominio y el proveedor estén habilitados, que los invitados puedan pedir y que un usuario no pueda leer los datos promocionales de otra cuenta.
+Ejecuta `node --test tests/*.test.js`. Para la prueba de navegador, sirve la raíz
+del proyecto en `127.0.0.1:18759` y ejecuta `python tests/promo-campaign-browser.py`
+con Playwright para Python y Google Chrome instalados. Firebase se simula; esta
+prueba no comprueba las reglas reales de Database.

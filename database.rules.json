@@ -48,8 +48,8 @@
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
         "$requestId": {
-          ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists()",
-          ".validate": "newData.hasChildren(['type']) && (newData.child('type').val() == 'spin' || newData.child('type').val() == 'coupon')"
+          ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists() && !root.child('promoSettings/combo/cycle').exists() && root.child('promoSettings/combo/active').val() != false",
+          ".validate": "newData.hasChildren(['type']) && newData.child('type').val() == 'coupon'"
         }
       }
     },
@@ -61,14 +61,49 @@
       ".read": true,
       ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
       "combo": {
-        ".validate": "newData.hasChildren(['name','description','price','image']) && newData.child('name').isString() && newData.child('name').val().length <= 100 && newData.child('description').isString() && newData.child('description').val().length <= 300 && newData.child('price').isNumber() && newData.child('price').val() > 0 && newData.child('price').val() <= 10000 && newData.child('image').isString() && newData.child('image').val().length <= 500"
+        ".validate": "newData.hasChildren(['name','description','price','image']) && newData.child('name').isString() && newData.child('name').val().length <= 100 && newData.child('description').isString() && newData.child('description').val().length <= 300 && newData.child('price').isNumber() && newData.child('price').val() > 0 && newData.child('price').val() <= 10000 && newData.child('image').isString() && newData.child('image').val().length <= 500 && (!newData.child('active').exists() || newData.child('active').isBoolean()) && (!newData.child('cycle').exists() || (newData.child('cycle').isString() && newData.child('cycle').val().length == 20))"
       }
     },
     "promoUses": {
       "$uid": {
         ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",
-        ".write": "auth != null && (auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2' || (auth.uid === $uid && !data.exists() && root.child('promoUsers').child($uid).child('coupon').val() == 'aprobado'))",
+        ".write": "auth != null && (auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2' || (auth.uid === $uid && !data.exists() && !root.child('promoSettings/combo/cycle').exists() && root.child('promoSettings/combo/active').val() != false && root.child('promoUsers').child($uid).child('coupon').val() == 'aprobado'))",
         ".validate": "newData.isString() && newData.val().length == 20"
+      }
+    },
+    "promoCampaigns": {
+      "$cycle": {
+        "ledger": {
+          ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+          ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+        },
+        "public": {
+          ".read": true,
+          ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+        },
+        "users": {
+          "$uid": {
+            ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",
+            ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'"
+          }
+        },
+        "requests": {
+          ".read": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+          ".write": "auth != null && auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2'",
+          "$uid": {
+            "$requestId": {
+              ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists() && root.child('promoSettings/combo/cycle').val() === $cycle && root.child('promoSettings/combo/active').val() != false",
+              ".validate": "newData.hasChildren(['type']) && newData.child('type').val() == 'coupon'"
+            }
+          }
+        },
+        "uses": {
+          "$uid": {
+            ".read": "auth != null && (auth.uid === $uid || auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2')",
+            ".write": "auth != null && (auth.uid === 'LljctgqdgPNO3K9TRB90UI0yu2c2' || (auth.uid === $uid && !data.exists() && root.child('promoSettings/combo/cycle').val() === $cycle && root.child('promoSettings/combo/active').val() != false && root.child('promoCampaigns').child($cycle).child('users').child($uid).child('coupon').val() == 'aprobado'))",
+            ".validate": "newData.isString() && newData.val().length == 20"
+          }
+        }
       }
     },
     "drivers": {

@@ -1,41 +1,35 @@
 # Combos promocionales y premios anteriores
 
-La ruleta está pausada: no se aceptan nuevos giros ni se acreditan tokens. Los datos
-anteriores se conservan y los premios pendientes siguen disponibles en el menú
-del cliente y en Admin → Promociones para aprobarlos o marcarlos como canjeados.
-Para la cerveza, verifica la mayoría de edad antes de entregar.
+El combo promocional se pide directamente desde el menú: no requiere cuenta de
+Google ni aprobación previa y se puede agregar más de una unidad. El pedido se
+guarda y se procesa igual que los demás pedidos. El combo promocional no tiene
+un control automático de existencias; el administrador puede retirarlo cuando
+se agote o cambiar sus datos en Admin → Promociones. Los demás combos siguen
+administrándose en Productos y pueden tener existencias configuradas.
 
-## Publicación
+- «Retirar combo» lo oculta e impide hacer pedidos con él; «Activar combo» lo
+  vuelve a mostrar.
+- Para reemplazarlo, cambia los campos y pulsa «Reemplazar combo». Los pedidos
+  ya realizados y los datos históricos no se borran. Si el combo cambia o se
+  retira mientras está en el carrito, el cliente debe quitarlo y revisar el menú.
+- Las reservas anteriores ya no son necesarias. La ruleta sigue pausada y sus
+  premios anteriores se conservan. El cliente puede entrar con Google desde
+  «Consultar premios anteriores»; el administrador puede aprobar o marcar como
+  canjeados esos premios. Para cerveza, verifica la mayoría de edad.
 
-1. En Firebase Authentication, activa Google y autoriza el dominio del menú.
-2. **Antes de publicar esta versión**, publica el contenido completo de
-   `database.rules.json` en Realtime Database → Reglas. Conserva una copia de las
-   reglas anteriores. Las reglas nuevas impiden solicitudes de giro y permiten
-   las promociones independientes y sus reservas.
-3. Publica los archivos, cierra las pestañas antiguas del admin y vuelve a abrirlo
-   para procesar las solicitudes. Sin el admin abierto, las solicitudes esperan.
+## Mis pedidos
 
-## Uso
+El botón «Mis pedidos» abre el historial únicamente cuando el cliente lo pulsa.
+Los pedidos nuevos guardan su información en el navegador de ese dispositivo;
+el estado se consulta en línea y se conserva el último estado conocido. Las
+personas que usen el mismo navegador pueden ver esa información. Al borrar los
+datos del navegador o cambiar de dispositivo el historial no se traslada. Para
+los pedidos anteriores solo se muestra el seguimiento que ya estaba guardado;
+los detalles antiguos no pueden recuperarse desde el navegador del cliente.
 
-- En Admin → Promociones, «Retirar combo» lo oculta e impide nuevos pedidos con
-  esa reserva. «Activar combo» lo muestra de nuevo con las reservas intactas.
-- Para un combo nuevo, modifica los campos y pulsa «Reemplazar por una promoción
-  nueva». Tras confirmar, hay 10 reservas nuevas y se cancelan las anteriores;
-  los pedidos ya guardados y los premios anteriores no se eliminan. Un carrito
-  con el combo anterior debe actualizarse antes de hacer el pedido.
-- «Guardar cambios» modifica el combo actual y mantiene sus reservas. Se avisa
-  si ya hay reservas aprobadas. El flyer PNG estático no cambia automáticamente.
-- Cada cuenta de Google puede reservar una unidad por promoción. El administrador
-  aprueba cada solicitud; una reserva aprobada cuenta contra el límite aunque no
-  se complete la compra. No se libera automáticamente.
-- Los combos normales se agregan y borran en Admin → Productos, categoría
-  «Ofertas y combos». Se puede configurar su existencia por separado.
-
-Este sistema depende del navegador del administrador, de las reglas y de la
-verificación manual; no garantiza una persona por cuenta ni sustituye un servidor
-confiable. Antes de usarlo, verifica las reglas reales, el acceso con Google, las
-reservas y los pedidos de invitados. Las pruebas locales no sustituyen esa
-comprobación en Firebase.
+Si el almacenamiento del navegador falla, el pedido sigue guardado en la base de
+datos y la pantalla de confirmación avisa que no se pudo guardar el historial.
+El historial local no modifica ni borra los pedidos del administrador.
 
 ## Pruebas locales
 

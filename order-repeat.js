@@ -40,7 +40,7 @@ function repeatLastOrder() {
     toast('Todavía no hay un pedido anterior en este dispositivo.');
     return;
   }
-  if (!products.length) {
+  if (!products.length && saved.some(item => item.productId !== 'promo-combo-200')) {
     toast('Espera a que cargue el menú para repetir el pedido.');
     return;
   }
@@ -49,6 +49,22 @@ function repeatLastOrder() {
   const restored = [];
   let unavailable = false;
   saved.forEach(item => {
+    if (item.productId === 'promo-combo-200') {
+      if (!promoSettingsLoaded || promoCombo?.active === false) {
+        unavailable = true;
+        return;
+      }
+      const combo = promoCombo || DEFAULT_CLIENT_COMBO;
+      restored.push({
+        productId: item.productId,
+        name: combo.name,
+        price: Number(combo.price),
+        qty: Math.max(1, Math.floor(Number(item.qty) || 1)),
+        garnish: 'Combo',
+        promoCycle
+      });
+      return;
+    }
     const product = products.find(p => String(p.id) === item.productId);
     if (!product || product.available === false) {
       unavailable = true;

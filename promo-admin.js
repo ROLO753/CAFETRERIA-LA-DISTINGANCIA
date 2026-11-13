@@ -1,9 +1,6 @@
 let promoStarted = false;
-let promoLedger = {};
 let promoLegacyLedger = {};
 let promoAdminCombo = null;
-let promoAdminCycle = null;
-let promoCampaignLedgerRef, promoCampaignLedgerCallback, promoRequestRef, promoRequestCallback;
 const DEFAULT_PROMO_COMBO = {
   name: 'Combo hamburguesa y refresco',
   description: 'Hamburguesa + refresco',
@@ -37,7 +34,7 @@ async function projectPromoPublic(state, cycle) {
   );
 }
 
-async function runPromoOperation(operation, cycle = promoAdminCycle) {
+async function runPromoOperation(operation, cycle = null) {
   const key = `${cycle || 'legacy'}:${operation.type}:${operation.id}`;
   if (promoBusy.has(key)) return;
   promoBusy.add(key);
@@ -70,10 +67,7 @@ function startPromoAdmin() {
   promoStarted = true;
   db.ref('promoSettings/combo').on('value', snapshot => {
     const combo = snapshot.val() || DEFAULT_PROMO_COMBO;
-    const cycle = combo.cycle || null;
-    const changed = !promoAdminCombo || cycle !== promoAdminCycle || combo.active !== promoAdminCombo.active;
     promoAdminCombo = combo;
-    promoAdminCycle = cycle;
     document.getElementById('promo-combo-name').value = combo.name;
     document.getElementById('promo-combo-description').value = combo.description;
     document.getElementById('promo-combo-price').value = combo.price;
@@ -81,7 +75,6 @@ function startPromoAdmin() {
     setPromoImagePreview(combo.image);
     document.getElementById('promo-combo-toggle').textContent =
       combo.active === false ? 'Activar combo' : 'Retirar combo';
-    if (changed) listenPromoCampaign(cycle);
     if (!snapshot.exists()) {
       db.ref('promoSettings/combo').set(DEFAULT_PROMO_COMBO).catch(error => {
         console.error('No se pudo crear el combo promocional:', error);
@@ -99,43 +92,6 @@ function startPromoAdmin() {
   }, error => {
     console.error(error);
     document.getElementById('promo-admin-status').textContent = 'No se pudo leer la promoción.';
-  });
-}
-
-function listenPromoCampaign(cycle) {
-  if (promoCampaignLedgerRef) promoCampaignLedgerRef.off('value', promoCampaignLedgerCallback);
-  if (promoRequestRef) promoRequestRef.off('value', promoRequestCallback);
-  promoLedger = {};
-  promoCampaignLedgerRef = db.ref(promoPath(cycle, 'promoLedger', 'ledger'));
-  promoCampaignLedgerCallback = promoCampaignLedgerRef.on('value', snapshot => {
-    promoLedger = snapshot.val() || {};
-    renderPromoAdmin();
-    Object.entries(promoLedger.users || {}).forEach(([uid, user]) => {
-      projectPromoUser(uid, user, cycle).catch(error => {
-        console.error('Error al actualizar reserva:', error);
-        document.getElementById('promo-admin-status').textContent = 'No se pudo actualizar una reserva.';
-      });
-    });
-    projectPromoPublic(promoLedger, cycle).catch(error => {
-      console.error('Error al actualizar reservas:', error);
-      document.getElementById('promo-admin-status').textContent = 'No se pudo actualizar la disponibilidad.';
-    });
-  }, error => {
-    console.error(error);
-    document.getElementById('promo-admin-status').textContent = 'No se pudo leer la promoción.';
-  });
-  promoRequestRef = db.ref(promoPath(cycle, 'promoRequests', 'requests'));
-  promoRequestCallback = promoRequestRef.on('value', snapshot => {
-    Object.entries(snapshot.val() || {}).forEach(([uid, requests]) => {
-      Object.entries(requests || {}).forEach(([id, request]) => {
-        if (request.type === 'coupon' && promoAdminCombo?.active !== false && cycle === promoAdminCycle) {
-          runPromoOperation({type: request.type, uid, id: `request:${uid}:${id}`, requestId: id}, cycle);
-        }
-      });
-    });
-  }, error => {
-    console.error(error);
-    document.getElementById('promo-admin-status').textContent = 'No se pudieron leer las solicitudes.';
   });
 }
 
@@ -167,10 +123,6 @@ document.getElementById('promo-combo-form').onsubmit = async event => {
     status.textContent = 'Revisa el nombre, precio (máximo RD$10,000) y la imagen (HTTPS o archivo de promo).';
     return;
   }
-  if ((promoLedger.coupons || 0) > 0 && promoAdminCombo &&
-      (name !== promoAdminCombo.name || description !== promoAdminCombo.description ||
-       price !== promoAdminCombo.price || image !== promoAdminCombo.image) &&
-      !confirm('Los cambios afectarán al combo de las reservas ya aprobadas. Para cancelar esas reservas y empezar desde cero, usa «Reemplazar por una promoción nueva». ¿Guardar los cambios?')) return;
   const button = event.currentTarget.querySelector('button[type="submit"]');
   button.disabled = true;
   try {
@@ -201,7 +153,7 @@ document.getElementById('promo-combo-toggle').onclick = async event => {
 };
 
 document.getElementById('promo-combo-replace').onclick = async event => {
-  if (!promoAdminCombo || !confirm('¿Iniciar una promoción nueva? Se cancelarán las reservas anteriores y volverá a haber 10 disponibles. Los pedidos ya realizados se conservan.')) return;
+  if (!promoAdminCombo || !confirm('¿Reemplazar el combo actual? Los pedidos ya realizados se conservan.')) return;
   const form = document.getElementById('promo-combo-form');
   if (!form.reportValidity()) return;
   const name = document.getElementById('promo-combo-name').value.trim();
@@ -216,12 +168,11 @@ document.getElementById('promo-combo-replace').onclick = async event => {
   button.disabled = true;
   try {
     const cycle = db.ref('promoCampaigns').push().key;
-    await db.ref(`promoCampaigns/${cycle}/public/coupons`).set(0);
     await db.ref('promoSettings/combo').set({name, description, price, image, cycle, active: true});
-    document.getElementById('promo-admin-status').textContent = 'Nueva promoción creada con 10 reservas disponibles.';
+    document.getElementById('promo-admin-status').textContent = 'Combo reemplazado y activado.';
   } catch (error) {
     console.error(error);
-    document.getElementById('promo-admin-status').textContent = 'No se pudo crear la promoción. Publica las reglas actualizadas de Database y comprueba la conexión.';
+    document.getElementById('promo-admin-status').textContent = 'No se pudo reemplazar el combo. Comprueba las reglas y la conexión.';
   } finally {
     button.disabled = false;
   }
@@ -231,29 +182,10 @@ function renderPromoAdmin() {
   const host = document.getElementById('promo-admin-list');
   if (!host) return;
   host.replaceChildren();
-  const users = Object.entries(promoLedger.users || {});
   const title = document.createElement('p');
-  title.textContent = `Combos reservados: ${promoLedger.coupons || 0} de 10`;
+  title.textContent = 'Premios anteriores';
   host.appendChild(title);
   let pending = 0;
-  users.forEach(([uid, user]) => {
-    if (user.coupon === 'pendiente') {
-      pending++;
-      const row = document.createElement('div');
-      row.className = 'promo-admin-row';
-      row.textContent = `Solicitud de combo · cuenta ${uid}`;
-      const button = document.createElement('button');
-      button.className = 'btn green';
-      button.type = 'button';
-      button.textContent = 'Aprobar reserva';
-      button.disabled = promoAdminCombo?.active === false;
-      button.onclick = () => {
-        if (promoAdminCombo?.active !== false) runPromoOperation({type: 'approveCoupon', uid, id: `couponApproval:${uid}`});
-      };
-      row.appendChild(button);
-      host.appendChild(row);
-    }
-  });
   Object.entries(promoLegacyLedger.users || {}).forEach(([uid, user]) => {
     Object.entries(user.prizes || {}).forEach(([prizeId, prize]) => {
       if (prize.status === 'canjeado') return;
@@ -273,5 +205,5 @@ function renderPromoAdmin() {
       host.appendChild(row);
     });
   });
-  if (!pending) host.appendChild(document.createTextNode('No hay solicitudes ni premios pendientes.'));
+  if (!pending) host.appendChild(document.createTextNode('No hay premios pendientes.'));
 }

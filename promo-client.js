@@ -10,18 +10,25 @@ let promoLastResult = null;
 let promoPendingRequest = null;
 let promoPendingType = null;
 let promoCombo = null;
+let promoCycle = null;
+let promoSettingsLoaded = false;
+let promoLegacyAccount = null;
+let promoLegacyRef, promoLegacyCallback, promoCountRef, promoCountCallback;
 
 const promoSection = document.getElementById('promo-section');
 const promoStatus = document.getElementById('promo-status');
 const promoResult = document.getElementById('promo-result');
 const promoRewards = document.getElementById('promo-rewards');
-const promoSpin = document.getElementById('promo-spin');
 const promoCoupon = document.getElementById('promo-coupon');
 
 function renderPromo() {
   const combo = promoCombo || {name: 'Combo hamburguesa y refresco', description: 'Hamburguesa + refresco', price: 200, image: 'promo/combo-primeros-10.png'};
-  const active = promoRemaining !== null && promoRemaining < 10;
+  const active = promoSettingsLoaded && combo.active !== false;
+  const available = active && promoRemaining !== null && promoRemaining < 10;
   document.getElementById('promo-offer').hidden = !active;
+  document.getElementById('promo-heading').textContent = active ? 'Combo de los primeros 10 clientes' : 'Premios anteriores';
+  document.getElementById('promo-rules').hidden = !active;
+  promoCoupon.hidden = !active;
   document.getElementById('promo-offer-image').src = combo.image;
   document.getElementById('promo-offer-image').alt = combo.name;
   document.getElementById('promo-offer-name').textContent = combo.name;
@@ -33,31 +40,25 @@ function renderPromo() {
   document.getElementById('promo-logout').hidden = !promoUser;
   document.getElementById('promo-account').hidden = !promoUser;
   promoStatus.textContent = promoUser
-    ? `Hola, ${promoUser.displayName || 'cliente'}. Tus tokens: ${promoAccount?.tokens || 0}. Código de cuenta: ${promoUser.uid}`
-    : 'Entra con Google para participar y guardar tus tokens.';
-  promoSpin.disabled = !promoUser || promoWaiting || (promoAccount?.tokens || 0) < 5;
-  promoCoupon.disabled = !promoUser || promoWaiting || !!promoAccount?.coupon || !active;
+    ? `Hola, ${promoUser.displayName || 'cliente'}. Código de cuenta: ${promoUser.uid}`
+    : active ? 'Entra con Google para solicitar el combo.' : 'Entra con Google para consultar tus premios anteriores.';
+  promoCoupon.disabled = !promoUser || promoWaiting || !!promoAccount?.coupon || !available;
   if (promoAccount?.coupon === 'pendiente') promoCoupon.textContent = 'Reserva pendiente de aprobación';
   else if (promoAccount?.coupon === 'aprobado' && !promoUse) {
-    promoCoupon.disabled = false;
+    promoCoupon.disabled = !active;
     promoCoupon.textContent = 'Agregar mi combo reservado';
   } else if (promoUse) promoCoupon.textContent = 'Combo ya utilizado';
   else if (promoAccount?.coupon === 'agotado') promoCoupon.textContent = 'Reservas agotadas';
   else promoCoupon.textContent = `Solicitar combo de RD$${combo.price}`;
 
   promoRewards.replaceChildren();
-  Object.entries(promoAccount?.prizes || {}).forEach(([, prize]) => {
+  Object.entries(promoLegacyAccount?.prizes || {}).forEach(([, prize]) => {
     const item = document.createElement('li');
     item.textContent = `${prize.name}: ${prize.status}.`;
     promoRewards.appendChild(item);
   });
   const result = promoAccount?.lastResult;
   if (result && result.request !== promoLastResult) {
-    if (result.request === promoPendingRequest && promoPendingType === 'spin') {
-      document.getElementById('promo-wheel').classList.remove('spinning');
-      void document.getElementById('promo-wheel').offsetWidth;
-      document.getElementById('promo-wheel').classList.add('spinning');
-    }
     promoResult.textContent = result.text;
     promoLastResult = result.request;
     if (result.request === promoPendingRequest) {
@@ -72,7 +73,7 @@ function renderPromo() {
 async function submitPromoRequest(type) {
   if (!promoUser || promoWaiting) return;
   promoWaiting = true;
-  const request = db.ref(`promoRequests/${promoUser.uid}`).push();
+  const request = db.ref(promoCycle ? `promoCampaigns/${promoCycle}/requests/${promoUser.uid}` : `promoRequests/${promoUser.uid}`).push();
   promoPendingRequest = `request:${promoUser.uid}:${request.key}`;
   promoPendingType = type;
   renderPromo();
@@ -101,23 +102,22 @@ document.getElementById('promo-logout').onclick = () => promoAuth.signOut().catc
   console.error(error);
   promoResult.textContent = 'No se pudo cerrar la sesión.';
 });
-promoSpin.onclick = () => submitPromoRequest('spin');
 promoCoupon.onclick = () => {
+  if (!promoSettingsLoaded || promoCombo?.active === false) return;
   if (promoAccount?.coupon !== 'aprobado') {
     submitPromoRequest('coupon');
     return;
   }
   if (!promoUser || promoUse || cart.some(item => item.productId === 'promo-combo-200')) return;
   const combo = promoCombo || {name: 'Combo hamburguesa y refresco', price: 200};
-  cart.push({name: combo.name, price: Number(combo.price), productId: 'promo-combo-200', garnish: 'Combo', qty: 1});
+  cart.push({name: combo.name, price: Number(combo.price), productId: 'promo-combo-200', promoCycle, garnish: 'Combo', qty: 1});
   updateCart();
   toggleCart(true);
 };
 
-promoAuth.onAuthStateChanged(user => {
+function listenPromoAccount() {
   if (promoAccountRef) promoAccountRef.off('value', promoAccountCallback);
   if (promoUseRef) promoUseRef.off('value', promoUseCallback);
-  promoUser = user;
   promoAccount = null;
   promoUse = null;
   promoLastResult = null;
@@ -125,8 +125,9 @@ promoAuth.onAuthStateChanged(user => {
   promoPendingRequest = null;
   promoPendingType = null;
   promoResult.textContent = '';
-  if (user) {
-    promoAccountRef = db.ref(`promoUsers/${user.uid}`);
+  if (promoUser && promoSettingsLoaded) {
+    const uid = promoUser.uid;
+    promoAccountRef = db.ref(promoCycle ? `promoCampaigns/${promoCycle}/users/${uid}` : `promoUsers/${uid}`);
     promoAccountCallback = promoAccountRef.on('value', snapshot => {
       promoAccount = snapshot.val();
       renderPromo();
@@ -134,7 +135,7 @@ promoAuth.onAuthStateChanged(user => {
       console.error(error);
       promoResult.textContent = 'No se pudo consultar tu cuenta de promoción.';
     });
-    promoUseRef = db.ref(`promoUses/${user.uid}`);
+    promoUseRef = db.ref(promoCycle ? `promoCampaigns/${promoCycle}/uses/${uid}` : `promoUses/${uid}`);
     promoUseCallback = promoUseRef.on('value', snapshot => {
       promoUse = snapshot.val();
       renderPromo();
@@ -144,16 +145,43 @@ promoAuth.onAuthStateChanged(user => {
     });
   }
   renderPromo();
-});
-db.ref('promoPublic/coupons').on('value', snapshot => {
-  promoRemaining = snapshot.val();
-  renderPromo();
-}, error => {
-  console.error(error);
-  promoResult.textContent = 'No se pudo consultar la disponibilidad del combo.';
+}
+
+promoAuth.onAuthStateChanged(user => {
+  if (promoLegacyRef) promoLegacyRef.off('value', promoLegacyCallback);
+  promoUser = user;
+  promoLegacyAccount = null;
+  if (user) {
+    promoLegacyRef = db.ref(`promoUsers/${user.uid}`);
+    promoLegacyCallback = promoLegacyRef.on('value', snapshot => {
+      promoLegacyAccount = snapshot.val();
+      renderPromo();
+    }, error => {
+      console.error(error);
+      promoResult.textContent = 'No se pudieron consultar tus premios anteriores.';
+    });
+  }
+  listenPromoAccount();
 });
 db.ref('promoSettings/combo').on('value', snapshot => {
+  const oldCycle = promoCycle;
   promoCombo = snapshot.val();
+  promoCycle = promoCombo?.cycle || null;
+  const changed = !promoSettingsLoaded || oldCycle !== promoCycle;
+  promoSettingsLoaded = true;
+  if (changed) {
+    if (promoCountRef) promoCountRef.off('value', promoCountCallback);
+    promoRemaining = null;
+    promoCountRef = db.ref(promoCycle ? `promoCampaigns/${promoCycle}/public/coupons` : 'promoPublic/coupons');
+    promoCountCallback = promoCountRef.on('value', value => {
+      promoRemaining = value.val() || 0;
+      renderPromo();
+    }, error => {
+      console.error(error);
+      promoResult.textContent = 'No se pudo consultar la disponibilidad del combo.';
+    });
+    listenPromoAccount();
+  }
   renderPromo();
 }, error => {
   console.error(error);
